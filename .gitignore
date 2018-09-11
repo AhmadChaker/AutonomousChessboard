@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Python generated directories
+.idea/
+venv/
