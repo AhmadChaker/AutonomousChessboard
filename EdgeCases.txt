@@ -1,0 +1,4 @@
+1) Pawn promotion?
+2) Starting off at a certain configuration on the chess board
+3) Castling move
+4) en-passant

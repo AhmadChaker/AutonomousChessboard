@@ -34,3 +34,11 @@
 # Python generated directories
 .idea/
 venv/
+
+# Python bytecode compilations
+*.pyc
+
+# Log file 
+log.txt
+
+
