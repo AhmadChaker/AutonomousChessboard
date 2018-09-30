@@ -1,11 +1,12 @@
+import Chessboard
 import Pieces.Constants
-from Pieces.BasePiece import IBasePiece
+from Pieces.IBasePiece import IBasePiece
 
 
 class Bishop(IBasePiece):
 
-    def __init__(self, team):
-        IBasePiece.__init__( self, team)
+    def __init__(self, team, coords):
+        IBasePiece.__init__( self, team, coords)
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -18,3 +19,9 @@ class Bishop(IBasePiece):
 
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Bishop
+
+    def CanMove(self, piece:IBasePiece, chessBoard: Chessboard) -> bool:
+        return True
+
+    def Move(self, chessBoard: Chessboard) -> bool:
+        return True

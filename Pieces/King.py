@@ -1,11 +1,11 @@
 import Pieces.Constants
-from Pieces.BasePiece import IBasePiece
+from Pieces.IBasePiece import IBasePiece
 
 
 class King(IBasePiece):
 
-    def __init__(self, team):
-        IBasePiece.__init__( self, team)
+    def __init__(self, team, coords):
+        IBasePiece.__init__( self, team, coords)
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -18,3 +18,9 @@ class King(IBasePiece):
 
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.King
+
+    def CanMove(self, chessBoard):
+        return True
+
+    def Move(self, chessBoard):
+        return True

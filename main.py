@@ -10,7 +10,7 @@ logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
                     datefmt='%d-%m-%Y %H:%M:%S',
                     level=logging.DEBUG)
 
-t1 = Chessboard.ChessBoard()
+t1 = Chessboard.Chessboard()
 t1.PrintBoard()
 
 app = App(title="Hello Sheena", width=600, height=600, layout="grid")

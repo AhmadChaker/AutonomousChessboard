@@ -15,6 +15,9 @@ class PieceEnums:
 
 
 class TeamEnum:
-    Empty = 1
+    NoTeam = 1
     White = 2
     Black = 3
+
+
+
