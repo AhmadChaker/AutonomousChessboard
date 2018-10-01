@@ -6,8 +6,7 @@ class IBasePiece(ABC):
     def __init__(self, team, coordinates):
         self.__team = team
         self.__coordinates = coordinates
-        # Record history of each move, keep appending to vector
-        # self.__history =
+        self.__history = []
 
     @abstractmethod
     def GetPieceStr(self):
@@ -18,11 +17,15 @@ class IBasePiece(ABC):
         pass
 
     @abstractmethod
-    def CanMove(self, chessBoard):
+    def CanMove(self):
         pass
 
     @abstractmethod
-    def Move(self, chessBoard):
+    def Move(self):
+        pass
+
+    @abstractmethod
+    def GetValidMoves(self):
         pass
 
     def GetTeam(self):
@@ -31,5 +34,7 @@ class IBasePiece(ABC):
     def GetCoordinates(self):
         return self.__coordinates
 
+    def GetHistory(self):
+        return self.__history
 
 

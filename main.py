@@ -1,7 +1,7 @@
 import logging
 import Chessboard
-import Utilities.Points
-import Utilities.CoordinateConverters
+from Pieces.PieceHelpers import PieceHelpers
+
 from guizero import App, Text, TextBox, Combo
 
 # setup logger
@@ -11,6 +11,7 @@ logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
                     level=logging.DEBUG)
 
 t1 = Chessboard.Chessboard()
+t2 = PieceHelpers(t1)
 t1.PrintBoard()
 
 app = App(title="Hello Sheena", width=600, height=600, layout="grid")

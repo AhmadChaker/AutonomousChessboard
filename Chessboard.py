@@ -9,6 +9,7 @@ from Pieces.Constants import TeamEnum
 from Utilities.Points import Points
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 

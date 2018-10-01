@@ -18,3 +18,6 @@ class EmptyPiece(IBasePiece):
 
     def Move(self, chessBoard):
         return True
+
+    def GetValidMoves(self, chessBoard):
+        return True
