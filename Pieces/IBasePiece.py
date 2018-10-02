@@ -1,3 +1,4 @@
+import Utilities.Points
 from abc import ABC, abstractmethod
 
 
@@ -17,24 +18,41 @@ class IBasePiece(ABC):
         pass
 
     @abstractmethod
-    def CanMove(self):
-        pass
-
-    @abstractmethod
-    def Move(self):
-        pass
-
-    @abstractmethod
     def GetValidMoves(self):
         pass
 
+    def CanMove(self, toMovePoint:Utilities.Points.Points):
+
+        if toMovePoint == Utilities.Points.POINTS_UNDEFINED:
+            return False
+
+        validMoves = self.GetValidMoves()
+        if len(validMoves) == 0:
+            return False
+
+        canMove = any(move == toMovePoint for move in validMoves)
+        return canMove
+
+    def Move(self, toMovePoint:Utilities.Points.Points):
+
+        if not self.CanMove(self, toMovePoint):
+            return False
+
+        self.SetCoordinates(toMovePoint)
+        return True
+
     def GetTeam(self):
         return self.__team
+
+    def SetCoordinates(self, newCoords):
+        self.__coordinates = newCoords
+        self.__history.append(newCoords)
 
     def GetCoordinates(self):
         return self.__coordinates
 
     def GetHistory(self):
         return self.__history
+
 
 

@@ -1,5 +1,7 @@
+import sys
 import Chessboard
 import Pieces.Constants
+import Utilities.Points
 from Pieces.IBasePiece import IBasePiece
 
 
@@ -7,6 +9,7 @@ class Bishop(IBasePiece):
 
     WhiteString = u'\u2657'
     BlackString = u'\u265D'
+    MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
         IBasePiece.__init__( self, team, coords)
@@ -23,12 +26,12 @@ class Bishop(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Bishop
 
-    def CanMove(self) -> bool:
-        return True
-
-    def Move(self) -> bool:
-        return True
-
     def GetValidMoves(self):
-        return True
+        validMoves = []
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 1), Bishop.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), Bishop.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), Bishop.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), Bishop.MoveIterations))
+        return validMoves
+
 

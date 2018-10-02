@@ -1,3 +1,4 @@
+import Utilities.Points
 import Pieces.Constants
 from Pieces.IBasePiece import IBasePiece
 
@@ -6,6 +7,7 @@ class Knight(IBasePiece):
 
     WhiteString = u'\u2658'
     BlackString = u'\u265E'
+    MoveIterations = 1
 
     def __init__(self, team, coords):
         IBasePiece.__init__(self, team, coords)
@@ -22,11 +24,14 @@ class Knight(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Knight
 
-    def CanMove(self):
-        return True
-
-    def Move(self):
-        return True
-
     def GetValidMoves(self):
-        return True
+        validMoves = []
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(2, 1), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-2, 1), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-2, -1), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(2, -1), Knight.MoveIterations))
+        return validMoves

@@ -13,11 +13,5 @@ class EmptyPiece(IBasePiece):
     def GetPieceEnum(self):
         return PieceEnums.Empty
 
-    def CanMove(self, chessBoard):
-        return True
-
-    def Move(self, chessBoard):
-        return True
-
     def GetValidMoves(self, chessBoard):
-        return True
+        return []

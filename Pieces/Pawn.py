@@ -24,38 +24,13 @@ class Pawn(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Pawn
 
-    def CanMove(self, toMovePoint:Utilities.Points.Points):
-
-        if toMovePoint == Utilities.Points.POINTS_UNDEFINED:
-            return False
-
-        validMoves = self.GetValidMoves()
-        if len(validMoves) == 0:
-            return False
-
-        if any(obj['shape'] == 'square' for obj in shapes):
-
-        return True
-
-    def Move(self):
-
-        if not self.CanMove(self):
-            return False
-
-        return True
-
     def GetValidMoves(self):
-
         isPieceMovingUpwards = (self.GetTeam() == Pieces.Constants.TeamEnum.White)
         moveIterations = 2 if len(self.GetHistory()) == 0 else 1
 
         validMoves = []
         if isPieceMovingUpwards:
-            validMoves = Pieces.PieceHelpers.GetValidMoves(self, Points(0, 1), moveIterations)
+            validMoves = Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), moveIterations)
         else:
-            validMoves = Pieces.PieceHelpers.GetValidMoves(self, Points(0, -1), moveIterations)
-
+            validMoves = Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterations)
         return validMoves
-
-    def GetValidMoves(self, chessBoard):
-        return True

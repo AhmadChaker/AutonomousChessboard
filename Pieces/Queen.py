@@ -1,3 +1,5 @@
+import sys
+import Utilities.Points
 import Pieces.Constants
 from Pieces.IBasePiece import IBasePiece
 
@@ -6,6 +8,7 @@ class Queen(IBasePiece):
 
     WhiteString = u'\u2655'
     BlackString = u'\u265B'
+    MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
         IBasePiece.__init__( self, team, coords)
@@ -22,11 +25,14 @@ class Queen(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Queen
 
-    def CanMove(self):
-        return True
-
-    def Move(self):
-        return True
-
     def GetValidMoves(self):
-        return True
+        validMoves = []
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 1), Queen.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 0), Queen.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), Queen.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), Queen.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), Queen.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 0), Queen.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), Queen.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), Queen.MoveIterations))
+        return validMoves
