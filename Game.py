@@ -99,7 +99,7 @@ class Chessboard:
                          ", ToCoord: " + toCoord.ToString())
             return False
 
-        pieceBeingMoved = self.__board[fromCoord.GetY()][fromCoord.GetY()]
+        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
         canMove = pieceBeingMoved.CanMove(toCoord)
 
         logger.debug("Exiting with argument: " + str(canMove))
@@ -113,8 +113,17 @@ class Chessboard:
                          ", ToCoord: " + toCoord.ToString())
             return False
 
-        pieceBeingMoved = self.__board[fromCoord.GetY()][fromCoord.GetY()]
+        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
+
+        # Move piece! Now update the board
         hasMoved = pieceBeingMoved.Move(toCoord)
+
+        if hasMoved:
+            self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
+
+            # Need provision for castling!
+            self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
+
 
         self.PrintBoard()
 

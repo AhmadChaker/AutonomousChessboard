@@ -35,7 +35,7 @@ class IBasePiece(ABC):
 
     def Move(self, toMovePoint:Utilities.Points.Points):
 
-        if not self.CanMove(self, toMovePoint):
+        if not self.CanMove(toMovePoint):
             return False
 
         self.SetCoordinates(toMovePoint)
