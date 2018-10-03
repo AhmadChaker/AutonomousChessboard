@@ -27,8 +27,8 @@ class Rook(IBasePiece):
 
     def GetValidMoves(self):
         validMoves = []
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 0), Rook.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), Rook.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 0), Rook.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), Rook.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 0), Rook.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), Rook.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 0), Rook.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), Rook.MoveIterations))
         return validMoves

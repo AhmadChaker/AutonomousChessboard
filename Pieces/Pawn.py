@@ -10,7 +10,7 @@ class Pawn(IBasePiece):
     BlackString = u'\u265F'
 
     def __init__(self, team, coords):
-        IBasePiece.__init__( self, team, coords)
+        IBasePiece.__init__(self, team, coords)
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -30,7 +30,7 @@ class Pawn(IBasePiece):
 
         validMoves = []
         if isPieceMovingUpwards:
-            validMoves = Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), moveIterations)
+            validMoves = Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), moveIterations)
         else:
-            validMoves = Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterations)
+            validMoves = Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterations)
         return validMoves

@@ -26,12 +26,12 @@ class Knight(IBasePiece):
 
     def GetValidMoves(self):
         validMoves = []
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(2, 1), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-2, 1), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-2, -1), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(2, -1), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(2, 1), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-2, 1), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-2, -1), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -2), Knight.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(2, -1), Knight.MoveIterations))
         return validMoves

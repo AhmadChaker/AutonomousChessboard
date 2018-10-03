@@ -1,6 +1,6 @@
 import logging
 import Utilities.Points
-import Chessboard
+import Game
 
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ def ConvertArrayToChessCoordinates(arrayCoordinate: Utilities.Points.Points) -> 
     xCoord = arrayCoordinate.GetX()
     yCoord = arrayCoordinate.GetY()
 
-    if 0 <= xCoord < Chessboard.MaxXSquares and 0 <= yCoord < Chessboard.MaxYSquares:
+    if 0 <= xCoord < Game.MaxXSquares and 0 <= yCoord < Game.MaxYSquares:
         return ALPHABETICAL_ORDINATE[xCoord] + NUMERICAL_ORDINATE[xCoord]
     return ""
 

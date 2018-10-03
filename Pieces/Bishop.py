@@ -1,5 +1,5 @@
 import sys
-import Chessboard
+import Game
 import Pieces.Constants
 import Utilities.Points
 from Pieces.IBasePiece import IBasePiece
@@ -28,10 +28,10 @@ class Bishop(IBasePiece):
 
     def GetValidMoves(self):
         validMoves = []
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 1), Bishop.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), Bishop.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), Bishop.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), Bishop.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 1), Bishop.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), Bishop.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), Bishop.MoveIterations))
+        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), Bishop.MoveIterations))
         return validMoves
 
 

@@ -7,6 +7,9 @@ class Points:
     def __eq__(self, other):
         return self.__x == other.__x and self.__y == other.__y
 
+    def ToString(self):
+        return "(X,Y)=(" + str(self.__x) + "," + str(self.__y) + ")"
+
     def GetX(self):
         return self.__x
 

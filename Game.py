@@ -34,6 +34,7 @@ class Chessboard:
 
     def ResetBoard(self):
 
+        logger.debug("Entered ResetBoard")
         # Set empty pieces first
 
         yIndexEmptyPieces = [2, 3, 4, 5]
@@ -76,6 +77,8 @@ class Chessboard:
         self.__board[3][7] = King(TeamEnum.Black, Points(3, 7))
         self.__board[4][7] = Queen(TeamEnum.Black, Points(4, 7))
 
+        logger.debug("End ResetBoard")
+
     def GetBoard(self):
         return self.__board
 
@@ -88,18 +91,32 @@ class Chessboard:
             logger.error(lineToPrint)
 
     def CanMove(self, fromCoord: Points, toCoord: Points):
+
+        logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
+
         if fromCoord == Utilities.Points.POINTS_UNDEFINED or toCoord == Utilities.Points.POINTS_UNDEFINED:
+            logger.error("Exiting CanMove prematurely, FromCoord: " + fromCoord.ToString() +
+                         ", ToCoord: " + toCoord.ToString())
             return False
 
-        pieceBeingMoved = self.__board[fromCoord.GetY(), fromCoord.GetY()]
-        return pieceBeingMoved.CanMove(toCoord)
+        pieceBeingMoved = self.__board[fromCoord.GetY()][fromCoord.GetY()]
+        canMove = pieceBeingMoved.CanMove(toCoord)
 
-    def Move(self, fromCoord:Points, toCoord:Points):
+        logger.debug("Exiting with argument: " + str(canMove))
+        return canMove
+
+    def Move(self, fromCoord: Points, toCoord:Points):
+
+        logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
         if not self.CanMove(fromCoord, toCoord):
+            logger.error("Can't move piece to requested coordinated, FromCoord: " + fromCoord.ToString() +
+                         ", ToCoord: " + toCoord.ToString())
             return False
 
-        pieceBeingMoved = self.__board[fromCoord.GetY(), fromCoord.GetY()]
+        pieceBeingMoved = self.__board[fromCoord.GetY()][fromCoord.GetY()]
         hasMoved = pieceBeingMoved.Move(toCoord)
 
         self.PrintBoard()
+
+        logger.debug("Exiting with argument: " + str(hasMoved))
         return hasMoved

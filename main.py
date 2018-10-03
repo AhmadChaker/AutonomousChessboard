@@ -1,5 +1,5 @@
 import logging
-import Chessboard
+import Game
 import Utilities.CoordinateConverters
 import Utilities.Points
 from Pieces.PieceHelpers import PieceHelpers
@@ -12,7 +12,7 @@ logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
                     datefmt='%d-%m-%Y %H:%M:%S',
                     level=logging.DEBUG)
 
-t1 = Chessboard.Chessboard()
+t1 = Game.Chessboard()
 t2 = PieceHelpers(t1)
 t1.PrintBoard()
 
