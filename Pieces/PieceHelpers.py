@@ -62,7 +62,7 @@ class PieceHelpers:
             if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
                 hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Pieces.Constants.TeamEnum.NoTeam)
                 if abs(xPotentialCoord) == abs(yPotentialCoord):
-                    # Diagonal move, need to check that the opposite team is at this position (due to earlier if statement
+                    # Diagonal move, check that the opposite team is at this position (due to earlier if statement
                     # this is equivalent to checking the above boolean
                     if not hasNoTeamAtCalculatedPosition:
                         validMoves.append(Points(xPotentialCoord, yPotentialCoord))

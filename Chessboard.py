@@ -1,3 +1,5 @@
+import Utilities.Points
+from Pieces.IBasePiece import IBasePiece
 from Pieces.EmptyPiece import EmptyPiece
 from Pieces.Pawn import Pawn
 from Pieces.Rook import Rook
@@ -84,3 +86,20 @@ class Chessboard:
             for xCoord in range(Chessboard.MaxXSquares):
                 lineToPrint += self.__board[xCoord][yCoord].GetPieceStr() + "\t"
             logger.error(lineToPrint)
+
+    def CanMove(self, fromCoord: Points, toCoord: Points):
+        if fromCoord == Utilities.Points.POINTS_UNDEFINED or toCoord == Utilities.Points.POINTS_UNDEFINED:
+            return False
+
+        pieceBeingMoved = self.__board[fromCoord.GetY(), fromCoord.GetY()]
+        return pieceBeingMoved.CanMove(toCoord)
+
+    def Move(self, fromCoord:Points, toCoord:Points):
+        if not self.CanMove(fromCoord, toCoord):
+            return False
+
+        pieceBeingMoved = self.__board[fromCoord.GetY(), fromCoord.GetY()]
+        hasMoved = pieceBeingMoved.Move(toCoord)
+
+        self.PrintBoard()
+        return hasMoved
