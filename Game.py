@@ -1,5 +1,5 @@
 import Utilities.Points
-from Pieces.IBasePiece import IBasePiece
+import Utilities.CoordinateConverters
 from Pieces.EmptyPiece import EmptyPiece
 from Pieces.Pawn import Pawn
 from Pieces.Rook import Rook
@@ -83,12 +83,25 @@ class Chessboard:
         return self.__board
 
     def PrintBoard(self):
+
+        # Top reference coordinates
+        boardReferenceAlphabeticalDigits = "\t"
+        for alphaOrdinate in Utilities.CoordinateConverters.ALPHABETICAL_ORDINATES:
+            boardReferenceAlphabeticalDigits += alphaOrdinate + "\t"
+
+        logger.error(boardReferenceAlphabeticalDigits)
+
         for yCoord in reversed(range(Chessboard.MaxYSquares)):
             # cycle over y coordinates
-            lineToPrint = ""
+            boardReferenceNumericalDigit = str(yCoord+1)
+            lineToPrint = boardReferenceNumericalDigit + "\t"
             for xCoord in range(Chessboard.MaxXSquares):
                 lineToPrint += self.__board[xCoord][yCoord].GetPieceStr() + "\t"
+            lineToPrint += boardReferenceNumericalDigit
             logger.error(lineToPrint)
+
+        # Bottom reference coordinates
+        logger.error(boardReferenceAlphabeticalDigits)
 
     def CanMove(self, fromCoord: Points, toCoord: Points):
 
@@ -120,10 +133,8 @@ class Chessboard:
 
         if hasMoved:
             self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
-
             # Need provision for castling!
             self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
-
 
         self.PrintBoard()
 
