@@ -1,3 +1,5 @@
+import Utilities.Constants
+
 class Points:
 
     def __init__(self, x, y):
@@ -8,7 +10,13 @@ class Points:
         return self.__x == other.__x and self.__y == other.__y
 
     def ToString(self):
-        return "Array Coords: (X,Y)=(" + str(self.__x) + "," + str(self.__y) + ")"
+        strCoords = "Array Coords: (X,Y)=(" + str(self.__x) + "," + str(self.__y) + ") "
+        if 0 <= self.__x < len(Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES)-1 and \
+                0 <= self.__y < len(Utilities.Constants.NUMERICAL_BOARD_ORDINATES)-1:
+            boardCoords = "Board Coords: (X,Y)=(" + Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES[self.__x] \
+                         + "," + Utilities.Constants.NUMERICAL_BOARD_ORDINATES[self.__y] + ")"
+            strCoords += boardCoords
+        return strCoords
 
     def GetX(self):
         return self.__x

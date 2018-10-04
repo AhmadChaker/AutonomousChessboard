@@ -133,11 +133,11 @@ class Game:
         # Need provision for castling!
         self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
 
+        self.PrintBoard()
+
         logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
         self.__playersTurn = (TeamEnum.Black if self.__playersTurn == TeamEnum.White else TeamEnum.White)
         logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
-
-        self.PrintBoard()
 
     def Move(self, fromCoord: Points, toCoord:Points):
 
@@ -164,6 +164,7 @@ class Game:
 
         if hasMoved:
             self.__UpdateBoardWithMove(fromCoord, toCoord)
+
 
         logger.debug("Exiting with argument: " + str(hasMoved))
         return hasMoved
