@@ -1,6 +1,7 @@
 import Pieces.Constants
 import Pieces.PieceHelpers
 import Utilities.Points
+import Utilities.Constants
 from Pieces.IBasePiece import IBasePiece
 
 
@@ -14,18 +15,18 @@ class Pawn(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Pieces.Constants.TeamEnum.White:
+        if team == Utilities.Constants.TeamEnum.White:
             return Pawn.WhiteString
-        elif team == Pieces.Constants.TeamEnum.Black:
+        elif team == Utilities.Constants.TeamEnum.Black:
             return Pawn.BlackString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Utilities.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Pawn
 
     def GetValidMoves(self):
-        isPieceMovingUpwards = (self.GetTeam() == Pieces.Constants.TeamEnum.White)
+        isPieceMovingUpwards = (self.GetTeam() == Utilities.Constants.TeamEnum.White)
         moveIterations = 2 if len(self.GetHistory()) == 0 else 1
 
         validMoves = []

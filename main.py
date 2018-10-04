@@ -12,7 +12,7 @@ logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
                     datefmt='%d-%m-%Y %H:%M:%S',
                     level=logging.DEBUG)
 
-t1 = Game.Chessboard()
+t1 = Game.Game()
 t2 = PieceHelpers(t1)
 t1.PrintBoard()
 

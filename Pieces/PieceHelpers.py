@@ -18,6 +18,7 @@ class PieceHelpers:
     # Direction vector is the direction which which to move.
     # moveIterations variable corresponds to iterations of the direction vector.
     def GetValidMoves(cls, piece: Pieces.IBasePiece, directionVector: Points, moveIterations: int):
+        logger.debug("Entered method")
 
         pieceToMoveTeam = piece.GetTeam()
         pieceToMovePieceEnum = piece.GetPieceEnum()
@@ -34,7 +35,7 @@ class PieceHelpers:
                          ", Vector Coords:" + str(directionVector.GetX()) + "," + str(directionVector.GetY()))
             return validMoves
 
-        if pieceToMoveTeam == Pieces.Constants.TeamEnum.NoTeam or \
+        if pieceToMoveTeam == Utilities.Constants.TeamEnum.NoTeam or \
                 pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Empty:
             return validMoves
 
@@ -47,9 +48,9 @@ class PieceHelpers:
             xPotentialCoord += directionVector.GetX()
             yPotentialCoord += directionVector.GetY()
             if xPotentialCoord < 0 or \
-                    xPotentialCoord > (Game.Chessboard.MaxXSquares - 1) or \
+                    xPotentialCoord > (Game.Game.MaxXSquares - 1) or \
                     yPotentialCoord < 0 or \
-                    yPotentialCoord > (Game.Chessboard.MaxYSquares - 1):
+                    yPotentialCoord > (Game.Game.MaxYSquares - 1):
                 break
 
             pieceAtCalculatedPosition = cls.__game.GetBoard()[xPotentialCoord][yPotentialCoord]
@@ -61,7 +62,7 @@ class PieceHelpers:
             # 1) Can only kill diagonally of the opposite team (NOT vertically)
             # 2) They can only move forward in empty spaces of 1 (and 2 at the beginning)
             if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
-                hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Pieces.Constants.TeamEnum.NoTeam)
+                hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Utilities.Constants.TeamEnum.NoTeam)
                 if abs(xPotentialCoord) == abs(yPotentialCoord):
                     # Diagonal move, check that the opposite team is at this position (due to earlier if statement
                     # this is equivalent to checking the above boolean
@@ -74,4 +75,9 @@ class PieceHelpers:
             else:
                 validMoves.append(Points(xPotentialCoord, yPotentialCoord))
 
+        logger.info("Printing valid moves (" + str(len(validMoves)) + ")")
+        for validMove in validMoves:
+            logger.info(validMove.ToString())
+
+        logger.debug("Exiting method with: " + str(len(validMoves)) + " valid moves")
         return validMoves

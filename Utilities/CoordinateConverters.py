@@ -1,21 +1,27 @@
 import logging
 import Utilities.Points
+import Utilities.Constants
 import Game
 
 
 logger = logging.getLogger(__name__)
 
-# Chess board coordinates
-ALPHABETICAL_ORDINATES = "ABCDEFGH"
-NUMERICAL_ORDINATES = "12345678"
+
+def ValidatePointIsInRange(arrayCoordinate: Utilities.Points.Points) -> bool:
+    xCoord = arrayCoordinate.GetX()
+    yCoord = arrayCoordinate.GetY()
+
+    if 0 <= xCoord < Game.Game.MaxXSquares and 0 <= yCoord < Game.Game.MaxYSquares:
+        return True
+    return False
 
 
 def ConvertArrayToChessCoordinates(arrayCoordinate: Utilities.Points.Points) -> str:
     xCoord = arrayCoordinate.GetX()
     yCoord = arrayCoordinate.GetY()
 
-    if 0 <= xCoord < Game.MaxXSquares and 0 <= yCoord < Game.MaxYSquares:
-        return ALPHABETICAL_ORDINATES[xCoord] + NUMERICAL_ORDINATES[xCoord]
+    if 0 <= xCoord < Game.Game.MaxXSquares and 0 <= yCoord < Game.Game.MaxYSquares:
+        return Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES[xCoord] + Utilities.Constants.NUMERICAL_BOARD_ORDINATES[xCoord]
     return ""
 
 
@@ -31,7 +37,7 @@ def ConvertChessToArrayCoordinates(chessCoordinate: str) -> Utilities.Points.Poi
         logger.error("First ordinate is not alphabetical, ChessCoordinates: " + strChessCoords)
         return Utilities.Points.POINTS_UNDEFINED
 
-    indexAlpha = ALPHABETICAL_ORDINATES.find(firstOrdinate)
+    indexAlpha = Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES.find(firstOrdinate)
     if indexAlpha == -1:
         logger.error("First ordinate is not in approved alphabetical list, ChessCoordinates: " + strChessCoords)
         return Utilities.Points.POINTS_UNDEFINED
@@ -40,7 +46,7 @@ def ConvertChessToArrayCoordinates(chessCoordinate: str) -> Utilities.Points.Poi
         logger.error("Second ordinate is not numerical, ChessCoordinates: " + strChessCoords)
         return Utilities.Points.POINTS_UNDEFINED
 
-    indexNumeric = NUMERICAL_ORDINATES.find(secondOrdinate)
+    indexNumeric = Utilities.Constants.NUMERICAL_BOARD_ORDINATES.find(secondOrdinate)
     if indexNumeric == -1:
         logger.error("Second ordinate is not in approved numerical list, ChessCoordinates: " + strChessCoords)
         return Utilities.Points.POINTS_UNDEFINED

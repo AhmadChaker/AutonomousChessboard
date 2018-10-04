@@ -8,7 +8,7 @@ class Points:
         return self.__x == other.__x and self.__y == other.__y
 
     def ToString(self):
-        return "(X,Y)=(" + str(self.__x) + "," + str(self.__y) + ")"
+        return "Array Coords: (X,Y)=(" + str(self.__x) + "," + str(self.__y) + ")"
 
     def GetX(self):
         return self.__x

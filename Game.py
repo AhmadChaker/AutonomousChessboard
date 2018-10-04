@@ -7,7 +7,7 @@ from Pieces.Knight import Knight
 from Pieces.Bishop import Bishop
 from Pieces.Queen import Queen
 from Pieces.King import King
-from Pieces.Constants import TeamEnum
+from Utilities.Constants import TeamEnum
 from Utilities.Points import Points
 import logging
 
@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Chessboard:
+class Game:
 
     MaxXSquares = 8
     MaxYSquares = 8
@@ -23,11 +23,13 @@ class Chessboard:
     def __init__(self):
         logger.debug("Entered constructor")
 
+        self.__playersTurn = TeamEnum.White
+
         # Initialise chess board 2D structure
-        self.__board = [None] * Chessboard.MaxXSquares
-        for xIndex in range(Chessboard.MaxXSquares):
+        self.__board = [None] * Game.MaxXSquares
+        for xIndex in range(Game.MaxXSquares):
             # for each y line
-            self.__board[xIndex] = [None] * Chessboard.MaxYSquares
+            self.__board[xIndex] = [None] * Game.MaxYSquares
 
         # Set board to initial positions
         self.ResetBoard()
@@ -40,15 +42,15 @@ class Chessboard:
         yIndexEmptyPieces = [2, 3, 4, 5]
 
         for yIndex in yIndexEmptyPieces:
-            for xIndex in range(Chessboard.MaxXSquares):
+            for xIndex in range(Game.MaxXSquares):
                 self.__board[xIndex][yIndex] = EmptyPiece(TeamEnum.NoTeam, Points(xIndex, yIndex))
 
         yIndexWhitePawns = 1
-        for xIndex in range(Chessboard.MaxXSquares):
+        for xIndex in range(Game.MaxXSquares):
             self.__board[xIndex][yIndexWhitePawns] = Pawn(TeamEnum.White, Points(xIndex, yIndexWhitePawns))
 
         yIndexBlackPawns = 6
-        for xIndex in range(Chessboard.MaxXSquares):
+        for xIndex in range(Game.MaxXSquares):
             self.__board[xIndex][yIndexBlackPawns] = Pawn(TeamEnum.Black, Points(xIndex, yIndexBlackPawns))
 
         # White major pieces
@@ -86,16 +88,16 @@ class Chessboard:
 
         # Top reference coordinates
         boardReferenceAlphabeticalDigits = "\t"
-        for alphaOrdinate in Utilities.CoordinateConverters.ALPHABETICAL_ORDINATES:
+        for alphaOrdinate in Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES:
             boardReferenceAlphabeticalDigits += alphaOrdinate + "\t"
 
         logger.error(boardReferenceAlphabeticalDigits)
 
-        for yCoord in reversed(range(Chessboard.MaxYSquares)):
+        for yCoord in reversed(range(Game.MaxYSquares)):
             # cycle over y coordinates
             boardReferenceNumericalDigit = str(yCoord+1)
             lineToPrint = boardReferenceNumericalDigit + "\t"
-            for xCoord in range(Chessboard.MaxXSquares):
+            for xCoord in range(Game.MaxXSquares):
                 lineToPrint += self.__board[xCoord][yCoord].GetPieceStr() + "\t"
             lineToPrint += boardReferenceNumericalDigit
             logger.error(lineToPrint)
@@ -113,30 +115,57 @@ class Chessboard:
             return False
 
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
+
         canMove = pieceBeingMoved.CanMove(toCoord)
 
         logger.debug("Exiting with argument: " + str(canMove))
         return canMove
 
+    def __UpdateBoardWithMove(self, fromCoord: Points, toCoord: Points):
+
+        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
+            logger.error("Point not in range returning")
+            return
+
+        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
+        self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
+
+        # Need provision for castling!
+        self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
+
+        logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
+        self.__playersTurn = (TeamEnum.Black if self.__playersTurn == TeamEnum.White else TeamEnum.White)
+        logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
+
+        self.PrintBoard()
+
     def Move(self, fromCoord: Points, toCoord:Points):
 
         logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
+
+        if fromCoord == Utilities.Points.POINTS_UNDEFINED or toCoord == Utilities.Points.POINTS_UNDEFINED:
+            logger.error("Exiting CanMove prematurely, FromCoord: " + fromCoord.ToString() +
+                         ", ToCoord: " + toCoord.ToString())
+            return False
+
+        # Check persons turn!
+        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
+        if pieceBeingMoved.GetTeam() != self.__playersTurn:
+            logger.error("Not this players turn, not moving!")
+            return False
+
         if not self.CanMove(fromCoord, toCoord):
             logger.error("Can't move piece to requested coordinated, FromCoord: " + fromCoord.ToString() +
                          ", ToCoord: " + toCoord.ToString())
             return False
 
-        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
-
         # Move piece! Now update the board
         hasMoved = pieceBeingMoved.Move(toCoord)
 
         if hasMoved:
-            self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
-            # Need provision for castling!
-            self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
-
-        self.PrintBoard()
+            self.__UpdateBoardWithMove(fromCoord, toCoord)
 
         logger.debug("Exiting with argument: " + str(hasMoved))
         return hasMoved
+
+

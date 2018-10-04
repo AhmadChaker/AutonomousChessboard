@@ -2,6 +2,7 @@ import sys
 import Game
 import Pieces.Constants
 import Utilities.Points
+import Utilities.Constants
 from Pieces.IBasePiece import IBasePiece
 
 
@@ -16,12 +17,12 @@ class Bishop(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Pieces.Constants.TeamEnum.White:
+        if team == Utilities.Constants.TeamEnum.White:
             return Bishop.WhiteString
-        elif team == Pieces.Constants.TeamEnum.Black:
+        elif team == Utilities.Constants.TeamEnum.Black:
             return Bishop.BlackString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Utilities.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Bishop
