@@ -33,15 +33,16 @@ class Pawn(IBasePiece):
         moveIterToKillMoves = 1
         validMoves = []
         if isPieceMovingUpwards:
-            logger.error("Getting Pawn non-kill moves")
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), moveIterNonKillMoves))
-            logger.error("Getting Pawn kill moves")
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), moveIterToKillMoves))
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 1), moveIterToKillMoves))
         else:
-            logger.error("Getting Pawn non-kill moves")
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterNonKillMoves))
-            logger.error("Getting Pawn kill moves")
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), moveIterToKillMoves))
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), moveIterToKillMoves))
+
+        logger.info("Printing valid moves (" + str(len(validMoves)) + "), FromCoord: " + self.GetCoordinates().ToString())
+        for validMove in validMoves:
+            logger.info(validMove.ToString())
+
         return validMoves

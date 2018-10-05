@@ -2,6 +2,8 @@ import Pieces.Constants
 import Utilities.Points
 import Utilities.Constants
 from Pieces.IBasePiece import IBasePiece
+import logging
+logger = logging.getLogger(__name__)
 
 
 class King(IBasePiece):
@@ -36,4 +38,9 @@ class King(IBasePiece):
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 0), King.MoveIterations))
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), King.MoveIterations))
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), King.MoveIterations))
+
+        logger.info("Printing valid moves (" + str(len(validMoves)) + "), FromCoord: " + self.GetCoordinates().ToString())
+        for validMove in validMoves:
+            logger.info(validMove.ToString())
+
         return validMoves

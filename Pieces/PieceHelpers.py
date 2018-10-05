@@ -1,12 +1,10 @@
-import logging
 import Pieces.IBasePiece
 import Pieces.Constants
 import Utilities.CoordinateConverters
 import Utilities.Points
 import Utilities.Constants
+import logging
 from Utilities.Points import Points
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -19,7 +17,6 @@ class PieceHelpers:
     # Direction vector is the direction which which to move.
     # moveIterations variable corresponds to iterations of the direction vector.
     def GetValidMoves(cls, piece: Pieces.IBasePiece, directionVector: Points, moveIterations: int):
-        logger.debug("Entered method")
 
         pieceToMoveTeam = piece.GetTeam()
         pieceToMovePieceEnum = piece.GetPieceEnum()
@@ -76,9 +73,4 @@ class PieceHelpers:
             else:
                 validMoves.append(Points(xPotentialCoord, yPotentialCoord))
 
-        logger.info("Printing valid moves (" + str(len(validMoves)) + ")")
-        for validMove in validMoves:
-            logger.info(validMove.ToString())
-
-        logger.debug("Exiting method with: " + str(len(validMoves)) + " valid moves")
         return validMoves

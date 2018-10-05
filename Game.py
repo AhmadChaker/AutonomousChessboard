@@ -85,22 +85,24 @@ class Game:
     def PrintBoard(self):
 
         # Top reference coordinates
-        boardReferenceAlphabeticalDigits = "\t"
-        for alphaOrdinate in Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES:
-            boardReferenceAlphabeticalDigits += alphaOrdinate + "\t"
+        boardReferenceAlphabeticalDigits = "\t\t"
+        for index in range(len(Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES)):
+            boardReferenceAlphabeticalDigits += Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES[index] + "|" + str(index) + "\t"
 
         logger.error(boardReferenceAlphabeticalDigits)
+        logger.error("")
 
         for yCoord in reversed(range(Utilities.Constants.MAXIMUM_Y_SQUARES)):
             # cycle over y coordinates
-            boardReferenceNumericalDigit = str(yCoord+1)
-            lineToPrint = boardReferenceNumericalDigit + "\t"
+            boardReferenceNumericalDigits = str(yCoord+1) + "|" + str(yCoord) + "\t"
+            lineToPrint = boardReferenceNumericalDigits
             for xCoord in range(Utilities.Constants.MAXIMUM_X_SQUARES):
                 lineToPrint += self.__board[xCoord][yCoord].GetPieceStr() + "\t"
-            lineToPrint += boardReferenceNumericalDigit
+            lineToPrint += "  " + boardReferenceNumericalDigits
             logger.error(lineToPrint)
 
         # Bottom reference coordinates
+        logger.error("")
         logger.error(boardReferenceAlphabeticalDigits)
 
     def CanMove(self, fromCoord: Points, toCoord: Points):

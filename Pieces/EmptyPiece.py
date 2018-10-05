@@ -8,7 +8,7 @@ class EmptyPiece(IBasePiece):
         IBasePiece.__init__( self, team, coords)
 
     def GetPieceStr(self):
-        return "-"
+        return '-'
 
     def GetPieceEnum(self):
         return PieceEnums.Empty
