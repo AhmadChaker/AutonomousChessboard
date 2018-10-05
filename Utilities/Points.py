@@ -11,8 +11,8 @@ class Points:
 
     def ToString(self):
         strCoords = "Array Coords: (X,Y)=(" + str(self.__x) + "," + str(self.__y) + ") "
-        if 0 <= self.__x < len(Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES)-1 and \
-                0 <= self.__y < len(Utilities.Constants.NUMERICAL_BOARD_ORDINATES)-1:
+        if 0 <= self.__x < len(Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES) and \
+                0 <= self.__y < len(Utilities.Constants.NUMERICAL_BOARD_ORDINATES):
             boardCoords = "Board Coords: (X,Y)=(" + Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES[self.__x] \
                          + "," + Utilities.Constants.NUMERICAL_BOARD_ORDINATES[self.__y] + ")"
             strCoords += boardCoords

@@ -1,8 +1,6 @@
 import logging
 import Utilities.Points
 import Utilities.Constants
-import Game
-
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +9,7 @@ def ValidatePointIsInRange(arrayCoordinate: Utilities.Points.Points) -> bool:
     xCoord = arrayCoordinate.GetX()
     yCoord = arrayCoordinate.GetY()
 
-    if 0 <= xCoord < Game.Game.MaxXSquares and 0 <= yCoord < Game.Game.MaxYSquares:
+    if 0 <= xCoord < Utilities.Constants.MAXIMUM_X_SQUARES and 0 <= yCoord < Utilities.Constants.MAXIMUM_Y_SQUARES:
         return True
     return False
 
@@ -20,7 +18,7 @@ def ConvertArrayToChessCoordinates(arrayCoordinate: Utilities.Points.Points) -> 
     xCoord = arrayCoordinate.GetX()
     yCoord = arrayCoordinate.GetY()
 
-    if 0 <= xCoord < Game.Game.MaxXSquares and 0 <= yCoord < Game.Game.MaxYSquares:
+    if 0 <= xCoord < Utilities.Constants.MAXIMUM_X_SQUARES and 0 <= yCoord < Utilities.Constants.MAXIMUM_Y_SQUARES:
         return Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES[xCoord] + Utilities.Constants.NUMERICAL_BOARD_ORDINATES[xCoord]
     return ""
 

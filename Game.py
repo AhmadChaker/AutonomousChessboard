@@ -1,5 +1,6 @@
 import Utilities.Points
 import Utilities.CoordinateConverters
+import Utilities.Constants
 from Pieces.EmptyPiece import EmptyPiece
 from Pieces.Pawn import Pawn
 from Pieces.Rook import Rook
@@ -17,19 +18,16 @@ logger = logging.getLogger(__name__)
 
 class Game:
 
-    MaxXSquares = 8
-    MaxYSquares = 8
-
     def __init__(self):
         logger.debug("Entered constructor")
 
         self.__playersTurn = TeamEnum.White
 
         # Initialise chess board 2D structure
-        self.__board = [None] * Game.MaxXSquares
-        for xIndex in range(Game.MaxXSquares):
+        self.__board = [None] * Utilities.Constants.MAXIMUM_X_SQUARES
+        for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
             # for each y line
-            self.__board[xIndex] = [None] * Game.MaxYSquares
+            self.__board[xIndex] = [None] * Utilities.Constants.MAXIMUM_Y_SQUARES
 
         # Set board to initial positions
         self.ResetBoard()
@@ -42,15 +40,15 @@ class Game:
         yIndexEmptyPieces = [2, 3, 4, 5]
 
         for yIndex in yIndexEmptyPieces:
-            for xIndex in range(Game.MaxXSquares):
+            for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
                 self.__board[xIndex][yIndex] = EmptyPiece(TeamEnum.NoTeam, Points(xIndex, yIndex))
 
         yIndexWhitePawns = 1
-        for xIndex in range(Game.MaxXSquares):
+        for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
             self.__board[xIndex][yIndexWhitePawns] = Pawn(TeamEnum.White, Points(xIndex, yIndexWhitePawns))
 
         yIndexBlackPawns = 6
-        for xIndex in range(Game.MaxXSquares):
+        for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
             self.__board[xIndex][yIndexBlackPawns] = Pawn(TeamEnum.Black, Points(xIndex, yIndexBlackPawns))
 
         # White major pieces
@@ -93,11 +91,11 @@ class Game:
 
         logger.error(boardReferenceAlphabeticalDigits)
 
-        for yCoord in reversed(range(Game.MaxYSquares)):
+        for yCoord in reversed(range(Utilities.Constants.MAXIMUM_Y_SQUARES)):
             # cycle over y coordinates
             boardReferenceNumericalDigit = str(yCoord+1)
             lineToPrint = boardReferenceNumericalDigit + "\t"
-            for xCoord in range(Game.MaxXSquares):
+            for xCoord in range(Utilities.Constants.MAXIMUM_X_SQUARES):
                 lineToPrint += self.__board[xCoord][yCoord].GetPieceStr() + "\t"
             lineToPrint += boardReferenceNumericalDigit
             logger.error(lineToPrint)
@@ -109,7 +107,8 @@ class Game:
 
         logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
 
-        if fromCoord == Utilities.Points.POINTS_UNDEFINED or toCoord == Utilities.Points.POINTS_UNDEFINED:
+        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not \
+                Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
             logger.error("Exiting CanMove prematurely, FromCoord: " + fromCoord.ToString() +
                          ", ToCoord: " + toCoord.ToString())
             return False
@@ -124,7 +123,7 @@ class Game:
     def __UpdateBoardWithMove(self, fromCoord: Points, toCoord: Points):
 
         if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
-            logger.error("Point not in range returning")
+            logger.error("Points are not in range, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
             return
 
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
@@ -143,10 +142,10 @@ class Game:
 
         logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
 
-        if fromCoord == Utilities.Points.POINTS_UNDEFINED or toCoord == Utilities.Points.POINTS_UNDEFINED:
-            logger.error("Exiting CanMove prematurely, FromCoord: " + fromCoord.ToString() +
-                         ", ToCoord: " + toCoord.ToString())
-            return False
+        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not \
+                Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
+            logger.error("Exiting prematurely, fromCoord or toCoord are not in range, exiting prematurely, FromCoord: "
+                         + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
 
         # Check persons turn!
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
@@ -165,8 +164,5 @@ class Game:
         if hasMoved:
             self.__UpdateBoardWithMove(fromCoord, toCoord)
 
-
         logger.debug("Exiting with argument: " + str(hasMoved))
         return hasMoved
-
-

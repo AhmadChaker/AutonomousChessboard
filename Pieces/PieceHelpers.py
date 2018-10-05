@@ -1,8 +1,9 @@
 import logging
 import Pieces.IBasePiece
 import Pieces.Constants
-import Game
+import Utilities.CoordinateConverters
 import Utilities.Points
+import Utilities.Constants
 from Utilities.Points import Points
 
 
@@ -47,10 +48,9 @@ class PieceHelpers:
         for step in range(moveIterations):
             xPotentialCoord += directionVector.GetX()
             yPotentialCoord += directionVector.GetY()
-            if xPotentialCoord < 0 or \
-                    xPotentialCoord > (Game.Game.MaxXSquares - 1) or \
-                    yPotentialCoord < 0 or \
-                    yPotentialCoord > (Game.Game.MaxYSquares - 1):
+
+            if not Utilities.CoordinateConverters.ValidatePointIsInRange(Points(xPotentialCoord, yPotentialCoord)):
+                # Not in range
                 break
 
             pieceAtCalculatedPosition = cls.__game.GetBoard()[xPotentialCoord][yPotentialCoord]
@@ -63,6 +63,8 @@ class PieceHelpers:
             # 2) They can only move forward in empty spaces of 1 (and 2 at the beginning)
             if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
                 hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Utilities.Constants.TeamEnum.NoTeam)
+
+                #TODO FIX THIS!
                 if abs(xPotentialCoord) == abs(yPotentialCoord):
                     # Diagonal move, check that the opposite team is at this position (due to earlier if statement
                     # this is equivalent to checking the above boolean
