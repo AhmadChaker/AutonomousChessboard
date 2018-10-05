@@ -64,8 +64,7 @@ class PieceHelpers:
             if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
                 hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Utilities.Constants.TeamEnum.NoTeam)
 
-                #TODO FIX THIS!
-                if abs(xPotentialCoord) == abs(yPotentialCoord):
+                if abs(directionVector.GetX()) == abs(directionVector.GetY()):
                     # Diagonal move, check that the opposite team is at this position (due to earlier if statement
                     # this is equivalent to checking the above boolean
                     if not hasNoTeamAtCalculatedPosition:

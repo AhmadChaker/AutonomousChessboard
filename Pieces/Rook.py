@@ -1,6 +1,7 @@
 import sys
 import Utilities.Points
 import Utilities.Constants
+import Pieces.Constants
 import Pieces.PieceHelpers
 from Pieces.IBasePiece import IBasePiece
 
@@ -21,10 +22,10 @@ class Rook(IBasePiece):
         elif team == Utilities.Constants.TeamEnum.Black:
             return Rook.BlackString
 
-        return Utilities.Constants.BOARD_ERROR_STRING
+        return Pieces.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
-        return Utilities.Constants.PieceEnums.Rook
+        return Pieces.Constants.PieceEnums.Rook
 
     def GetValidMoves(self):
         validMoves = []

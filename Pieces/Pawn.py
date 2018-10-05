@@ -3,6 +3,8 @@ import Pieces.PieceHelpers
 import Utilities.Points
 import Utilities.Constants
 from Pieces.IBasePiece import IBasePiece
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Pawn(IBasePiece):
@@ -27,11 +29,19 @@ class Pawn(IBasePiece):
 
     def GetValidMoves(self):
         isPieceMovingUpwards = (self.GetTeam() == Utilities.Constants.TeamEnum.White)
-        moveIterations = 2 if len(self.GetHistory()) == 0 else 1
-
+        moveIterNonKillMoves = 2 if len(self.GetHistory()) == 0 else 1
+        moveIterToKillMoves = 1
         validMoves = []
         if isPieceMovingUpwards:
-            validMoves = Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), moveIterations)
+            logger.error("Getting Pawn non-kill moves")
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), moveIterNonKillMoves))
+            logger.error("Getting Pawn kill moves")
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), moveIterToKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 1), moveIterToKillMoves))
         else:
-            validMoves = Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterations)
+            logger.error("Getting Pawn non-kill moves")
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterNonKillMoves))
+            logger.error("Getting Pawn kill moves")
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), moveIterToKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), moveIterToKillMoves))
         return validMoves
