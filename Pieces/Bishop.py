@@ -34,11 +34,6 @@ class Bishop(IBasePiece):
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), Bishop.MoveIterations))
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), Bishop.MoveIterations))
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), Bishop.MoveIterations))
-
-        logger.info("Printing valid moves (" + str(len(validMoves)) + "), FromCoord: " + self.GetCoordinates().ToString())
-        for validMove in validMoves:
-            logger.info(validMove.ToString())
-
         return validMoves
 
 

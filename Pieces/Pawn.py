@@ -40,9 +40,4 @@ class Pawn(IBasePiece):
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterNonKillMoves))
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), moveIterToKillMoves))
             validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), moveIterToKillMoves))
-
-        logger.info("Printing valid moves (" + str(len(validMoves)) + "), FromCoord: " + self.GetCoordinates().ToString())
-        for validMove in validMoves:
-            logger.info(validMove.ToString())
-
         return validMoves

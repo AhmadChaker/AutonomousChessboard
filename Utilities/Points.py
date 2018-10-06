@@ -1,4 +1,6 @@
+import sys
 import Utilities.Constants
+
 
 class Points:
 
@@ -25,4 +27,4 @@ class Points:
         return self.__y
 
 
-POINTS_UNDEFINED = Points(-1, -1)
+POINTS_UNDEFINED = Points(-sys.maxsize, -sys.maxsize)

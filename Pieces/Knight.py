@@ -37,9 +37,4 @@ class Knight(IBasePiece):
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -2), Knight.MoveIterations))
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -2), Knight.MoveIterations))
         validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(2, -1), Knight.MoveIterations))
-
-        logger.info("Printing valid moves (" + str(len(validMoves)) + "), FromCoord: " + self.GetCoordinates().ToString())
-        for validMove in validMoves:
-            logger.info(validMove.ToString())
-
         return validMoves

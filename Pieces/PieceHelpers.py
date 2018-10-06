@@ -72,5 +72,7 @@ class PieceHelpers:
                         validMoves.append(Points(xPotentialCoord, yPotentialCoord))
             else:
                 validMoves.append(Points(xPotentialCoord, yPotentialCoord))
+                if pieceAtCalculatedPosition.GetTeam() != Utilities.Constants.TeamEnum.NoTeam:
+                    break
 
         return validMoves
