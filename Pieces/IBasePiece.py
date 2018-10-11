@@ -41,6 +41,10 @@ class IBasePiece(ABC):
         self.SetCoordinates(toMovePoint)
         return True
 
+    def ForceMove(self, toMovePoint:Utilities.Points.Points):
+        self.SetCoordinates(toMovePoint)
+        return True
+
     def GetTeam(self):
         return self.__team
 

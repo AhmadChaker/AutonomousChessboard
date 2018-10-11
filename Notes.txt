@@ -1,4 +1,11 @@
-1) Pawn promotion?
-2) Starting off at a certain configuration on the chess board
-3) Castling move
-4) en-passant
+To do:
+1) Determine Check/Checkmate
+2) Stalemate
+3) Castling
+3) en-passant
+
+
+Chess specific things coding challenges
+1) Starting off at a certain configuration on the chess board
+2) en-passant
+
