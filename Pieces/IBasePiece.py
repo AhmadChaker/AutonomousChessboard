@@ -18,7 +18,7 @@ class IBasePiece(ABC):
         pass
 
     @abstractmethod
-    def GetValidMoves(self):
+    def GetValidMoves(self, board):
         pass
 
     def CanMove(self, toMovePoint:Utilities.Points.Points):

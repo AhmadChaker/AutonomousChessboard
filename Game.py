@@ -100,7 +100,7 @@ class Game:
                     continue
 
                 # Get valid moves from the perspective of the piece independent of the board
-                pieceCentricValidMoves = piece.GetValidMoves()
+                pieceCentricValidMoves = piece.GetValidMoves(board)
                 moves.extend(pieceCentricValidMoves)
         return moves
 
@@ -126,6 +126,7 @@ class Game:
                 return True
         return False
 
+    # Gets all valid moves
     @staticmethod
     def GetValidMovesForTeam(board, teamToPrint: Utilities.Constants.TeamEnum):
 
@@ -141,7 +142,7 @@ class Game:
 
                 # Get valid moves for this piece, if this move results in the King being in check, then it's not
                 # actually a valid move
-                validPieceCentricMoves = piece.GetValidMoves()
+                validPieceCentricMoves = piece.GetValidMoves(board)
                 if len(validPieceCentricMoves) == 0:
                     continue
 
@@ -166,6 +167,9 @@ class Game:
                         continue
 
                     validPieceMoves.append(pieceMove)
+
+                if len(validPieceMoves) == 0:
+                    continue
 
                 moves.extend(validPieceMoves)
 
@@ -300,4 +304,4 @@ class Game:
         logger.info("Printing all valid white moves")
 
         self.GetValidMovesForTeam(self.GetBoard(), Utilities.Constants.TeamEnum.White)
-        self.GetValidMovesForTeam(self.GetBoard(), Utilities.Constants.TeamEnum.Black)
+        #self.GetValidMovesForTeam(self.GetBoard(), Utilities.Constants.TeamEnum.Black)

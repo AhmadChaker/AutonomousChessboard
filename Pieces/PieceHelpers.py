@@ -10,13 +10,10 @@ logger = logging.getLogger(__name__)
 
 class PieceHelpers:
 
-    def __init__(self, game):
-        PieceHelpers.__game = game
-
     @classmethod
     # Direction vector is the direction which which to move.
     # moveIterations variable corresponds to iterations of the direction vector.
-    def GetValidMoves(cls, piece: Pieces.IBasePiece, directionVector: Points, moveIterations: int):
+    def GetValidMoves(cls, piece: Pieces.IBasePiece, board, directionVector: Points, moveIterations: int):
 
         pieceToMoveTeam = piece.GetTeam()
         pieceToMovePieceEnum = piece.GetPieceEnum()
@@ -50,7 +47,7 @@ class PieceHelpers:
                 # Not in range
                 break
 
-            pieceAtCalculatedPosition = cls.__game.GetBoard()[xPotentialCoord][yPotentialCoord]
+            pieceAtCalculatedPosition = board[xPotentialCoord][yPotentialCoord]
             if pieceAtCalculatedPosition.GetTeam() == pieceToMoveTeam:
                 # Can't move to this position as it's occupied by the same team
                 break

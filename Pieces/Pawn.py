@@ -27,17 +27,17 @@ class Pawn(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Pawn
 
-    def GetValidMoves(self):
+    def GetValidMoves(self, board):
         isPieceMovingUpwards = (self.GetTeam() == Utilities.Constants.TeamEnum.White)
         moveIterNonKillMoves = 2 if len(self.GetHistory()) == 0 else 1
         moveIterToKillMoves = 1
         validMoves = []
         if isPieceMovingUpwards:
-            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, 1), moveIterNonKillMoves))
-            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, 1), moveIterToKillMoves))
-            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, 1), moveIterToKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, 1), moveIterNonKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 1), moveIterToKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 1), moveIterToKillMoves))
         else:
-            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(0, -1), moveIterNonKillMoves))
-            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(-1, -1), moveIterToKillMoves))
-            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, Utilities.Points.Points(1, -1), moveIterToKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, -1), moveIterNonKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, -1), moveIterToKillMoves))
+            validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, -1), moveIterToKillMoves))
         return validMoves
