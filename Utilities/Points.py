@@ -1,5 +1,5 @@
 import sys
-import Utilities.Constants
+import Board.Constants
 
 
 class Points:
@@ -12,11 +12,11 @@ class Points:
         return self.__x == other.__x and self.__y == other.__y
 
     def ToString(self):
-        strCoords = "Array Coords: (X,Y)=(" + str(self.__x) + "," + str(self.__y) + ") "
-        if 0 <= self.__x < len(Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES) and \
-                0 <= self.__y < len(Utilities.Constants.NUMERICAL_BOARD_ORDINATES):
-            boardCoords = "Board Coords: (X,Y)=(" + Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES[self.__x] \
-                         + "," + Utilities.Constants.NUMERICAL_BOARD_ORDINATES[self.__y] + ")"
+        strCoords = "Array:(" + str(self.__x) + "," + str(self.__y) + "), "
+        if 0 <= self.__x < len(Board.Constants.ALPHABETICAL_BOARD_ORDINATES) and \
+                0 <= self.__y < len(Board.Constants.NUMERICAL_BOARD_ORDINATES):
+            boardCoords = "Board:(" + Board.Constants.ALPHABETICAL_BOARD_ORDINATES[self.__x] \
+                          + "," + Board.Constants.NUMERICAL_BOARD_ORDINATES[self.__y] + ")"
             strCoords += boardCoords
         return strCoords
 

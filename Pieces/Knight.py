@@ -1,5 +1,5 @@
 import Utilities.Points
-import Utilities.Constants
+import Board.Constants
 import Pieces.Constants
 from Pieces.IBasePiece import IBasePiece
 import logging
@@ -17,9 +17,9 @@ class Knight(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Utilities.Constants.TeamEnum.White:
+        if team == Board.Constants.TeamEnum.White:
             return Knight.WhiteString
-        elif team == Utilities.Constants.TeamEnum.Black:
+        elif team == Board.Constants.TeamEnum.Black:
             return Knight.BlackString
 
         return Pieces.Constants.BOARD_ERROR_STRING

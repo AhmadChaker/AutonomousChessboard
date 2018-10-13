@@ -1,7 +1,6 @@
-import sys
 import Utilities.Points
 import Utilities.CoordinateConverters
-import Utilities.Constants
+import Board.Constants
 import Pieces.Constants
 from copy import deepcopy
 from Pieces.EmptyPiece import EmptyPiece
@@ -11,9 +10,10 @@ from Pieces.Knight import Knight
 from Pieces.Bishop import Bishop
 from Pieces.Queen import Queen
 from Pieces.King import King
-from Utilities.Constants import TeamEnum
+from Board.Constants import TeamEnum
 from Pieces.Constants import PieceEnums
 from Utilities.Points import Points
+from Board.History import History
 import logging
 
 
@@ -26,15 +26,19 @@ class Game:
         logger.debug("Entered constructor")
 
         self.__playersTurn = TeamEnum.White
+        self.__history = []
 
         # Initialise chess board 2D structure
-        self.__board = [None] * Utilities.Constants.MAXIMUM_X_SQUARES
-        for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+        self.__board = [None] * Board.Constants.MAXIMUM_X_SQUARES
+        for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
             # for each y line
-            self.__board[xIndex] = [None] * Utilities.Constants.MAXIMUM_Y_SQUARES
+            self.__board[xIndex] = [None] * Board.Constants.MAXIMUM_Y_SQUARES
 
         # Set board to initial positions
         self.ResetBoard()
+
+    def GetHistory(self):
+        return self.__history
 
     def ResetBoard(self):
 
@@ -44,15 +48,15 @@ class Game:
         yIndexEmptyPieces = [2, 3, 4, 5]
 
         for yIndex in yIndexEmptyPieces:
-            for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+            for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
                 self.__board[xIndex][yIndex] = EmptyPiece(TeamEnum.NoTeam, Points(xIndex, yIndex))
 
         yIndexWhitePawns = 1
-        for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+        for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
             self.__board[xIndex][yIndexWhitePawns] = Pawn(TeamEnum.White, Points(xIndex, yIndexWhitePawns))
 
         yIndexBlackPawns = 6
-        for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+        for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
             self.__board[xIndex][yIndexBlackPawns] = Pawn(TeamEnum.Black, Points(xIndex, yIndexBlackPawns))
 
         # White major pieces
@@ -89,12 +93,12 @@ class Game:
     # This method gets all legal moves from the piece's perspective, this does not take into account board
     # considerations such as being in check
     @staticmethod
-    def GetPieceCentricMovesForTeam(board, teamToGet: Utilities.Constants.TeamEnum):
+    def GetPieceCentricMovesForTeam(board, teamToGet: Board.Constants.TeamEnum):
         moves = []
-        for yCoord in range(Utilities.Constants.MAXIMUM_Y_SQUARES):
+        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
             # cycle over y coordinates
 
-            for xCoord in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = board[xCoord][yCoord]
                 if piece.GetTeam() != teamToGet:
                     continue
@@ -105,9 +109,9 @@ class Game:
         return moves
 
     @staticmethod
-    def GetKing(board, team:Utilities.Constants.TeamEnum):
-        for yCoord in range(Utilities.Constants.MAXIMUM_Y_SQUARES):
-            for xCoord in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+    def GetKing(board, team: Board.Constants.TeamEnum):
+        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = board[xCoord][yCoord]
                 if piece.GetTeam() == team and piece.GetPieceEnum() == Pieces.Constants.PieceEnums.King:
                     return piece
@@ -115,11 +119,11 @@ class Game:
 
     # For the team passed in, check if that King is in check
     @staticmethod
-    def IsKingInCheck(board, teamA: Utilities.Constants.TeamEnum):
+    def IsKingInCheck(board, teamA: Board.Constants.TeamEnum):
 
         teamAKing = Game.GetKing(board, teamA)
-        teamB = Utilities.Constants.TeamEnum.Black if teamA == Utilities.Constants.TeamEnum.White else \
-            Utilities.Constants.TeamEnum.White
+        teamB = Board.Constants.TeamEnum.Black if teamA == Board.Constants.TeamEnum.White else \
+            Board.Constants.TeamEnum.White
         teamBMoves = Game.GetPieceCentricMovesForTeam(board, teamB)
         for teamBMove in teamBMoves:
             if teamBMove == teamAKing.GetCoordinates():
@@ -128,14 +132,14 @@ class Game:
 
     # Gets all valid moves
     @staticmethod
-    def GetValidMovesForTeam(board, teamToPrint: Utilities.Constants.TeamEnum):
+    def GetValidMovesForTeam(board, teamToPrint: Board.Constants.TeamEnum):
 
         moves = []
         copyBoard = deepcopy(board)
-        for yCoord in range(Utilities.Constants.MAXIMUM_Y_SQUARES):
+        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
             # cycle over y coordinates
 
-            for xCoord in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = copyBoard[xCoord][yCoord]
                 if piece.GetTeam() != teamToPrint:
                     continue
@@ -183,17 +187,17 @@ class Game:
 
         # Top reference coordinates
         boardReferenceAlphabeticalDigits = "\t\t"
-        for index in range(len(Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES)):
-            boardReferenceAlphabeticalDigits += Utilities.Constants.ALPHABETICAL_BOARD_ORDINATES[index] + "|" + str(index) + "\t"
+        for index in range(len(Board.Constants.ALPHABETICAL_BOARD_ORDINATES)):
+            boardReferenceAlphabeticalDigits += Board.Constants.ALPHABETICAL_BOARD_ORDINATES[index] + "|" + str(index) + "\t"
 
         logger.error(boardReferenceAlphabeticalDigits)
         logger.error("")
 
-        for yCoord in reversed(range(Utilities.Constants.MAXIMUM_Y_SQUARES)):
+        for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
             # cycle over y coordinates
             boardReferenceNumericalDigits = str(yCoord+1) + "|" + str(yCoord) + "\t"
             lineToPrint = boardReferenceNumericalDigits
-            for xCoord in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
                 lineToPrint += self.__board[xCoord][yCoord].GetPieceStr() + "\t"
             lineToPrint += "  " + boardReferenceNumericalDigits
             logger.error(lineToPrint)
@@ -203,6 +207,16 @@ class Game:
         logger.error(boardReferenceAlphabeticalDigits)
 
         self.PrintAllValidMoves()
+
+    def PrintHistory(self):
+        logger.error("Printing history")
+
+        for historicalMove in self.GetHistory():
+            strToPrint = PieceEnums(historicalMove.GetPieceFrom()).name + " at [" + \
+                         historicalMove.GetFromCoord().ToString() + "] moved to [" + \
+                         historicalMove.GetToCoord().ToString() + "], IsCaptureMove: " + \
+                         str(historicalMove.IsCaptureMove())
+            logger.error(strToPrint)
 
     def CanMove(self, fromCoord: Points, toCoord: Points):
 
@@ -216,7 +230,7 @@ class Game:
 
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
 
-        isValidPieceMove = pieceBeingMoved.CanMove(toCoord)
+        isValidPieceMove = pieceBeingMoved.CanMove(toCoord, self.__board)
 
         if not isValidPieceMove:
             logger.debug("Not a valid piece move, returning false")
@@ -243,9 +257,9 @@ class Game:
 
     def __PerformPawnPromotionCheck(self):
         # Use the fact that a pawn promotion only occurs for one pawn at a time and on the top or bottom squares
-        yIndexPawnPromotions = [0, Utilities.Constants.MAXIMUM_Y_SQUARES-1]
+        yIndexPawnPromotions = [0, Board.Constants.MAXIMUM_Y_SQUARES - 1]
         for yIndex in yIndexPawnPromotions:
-            for xIndex in range(Utilities.Constants.MAXIMUM_X_SQUARES):
+            for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = self.__board[xIndex][yIndex]
                 if piece.GetPieceEnum() == PieceEnums.Pawn:
                     self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), Points(xIndex, yIndex))
@@ -255,6 +269,11 @@ class Game:
         if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
             logger.error("Points are not in range, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
             return
+
+        # Update history, check if this was a capture and if so what piece!
+        self.GetHistory().append(History(self.__board[fromCoord.GetX()][fromCoord.GetY()].GetPieceEnum(),
+                                         self.__board[toCoord.GetX()][toCoord.GetY()].GetPieceEnum(),
+                                         fromCoord, toCoord))
 
         # Update board
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
@@ -270,6 +289,8 @@ class Game:
         self.__TurnChanged()
 
         self.PrintBoard()
+
+        self.PrintHistory()
 
     def Move(self, fromCoord: Points, toCoord:Points):
 
@@ -292,7 +313,7 @@ class Game:
             return False
 
         # Move piece! Now update the board
-        hasMoved = pieceBeingMoved.Move(toCoord)
+        hasMoved = pieceBeingMoved.Move(toCoord, self.__board)
 
         if hasMoved:
             self.__PerformPostMoveProcessing(fromCoord, toCoord)
@@ -303,5 +324,5 @@ class Game:
     def PrintAllValidMoves(self):
         logger.info("Printing all valid white moves")
 
-        self.GetValidMovesForTeam(self.GetBoard(), Utilities.Constants.TeamEnum.White)
+        self.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
         #self.GetValidMovesForTeam(self.GetBoard(), Utilities.Constants.TeamEnum.Black)

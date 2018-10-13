@@ -2,7 +2,7 @@ import Pieces.IBasePiece
 import Pieces.Constants
 import Utilities.CoordinateConverters
 import Utilities.Points
-import Utilities.Constants
+import Board.Constants
 import logging
 from Utilities.Points import Points
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class PieceHelpers:
                          ", Vector Coords:" + str(directionVector.GetX()) + "," + str(directionVector.GetY()))
             return validMoves
 
-        if pieceToMoveTeam == Utilities.Constants.TeamEnum.NoTeam or \
+        if pieceToMoveTeam == Board.Constants.TeamEnum.NoTeam or \
                 pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Empty:
             return validMoves
 
@@ -56,7 +56,7 @@ class PieceHelpers:
             # 1) Can only kill diagonally of the opposite team (NOT vertically)
             # 2) They can only move forward in empty spaces of 1 (and 2 at the beginning)
             if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
-                hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Utilities.Constants.TeamEnum.NoTeam)
+                hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Board.Constants.TeamEnum.NoTeam)
 
                 if abs(directionVector.GetX()) == abs(directionVector.GetY()):
                     # Diagonal move, check that the opposite team is at this position (due to earlier if statement
@@ -69,7 +69,7 @@ class PieceHelpers:
                         validMoves.append(Points(xPotentialCoord, yPotentialCoord))
             else:
                 validMoves.append(Points(xPotentialCoord, yPotentialCoord))
-                if pieceAtCalculatedPosition.GetTeam() != Utilities.Constants.TeamEnum.NoTeam:
+                if pieceAtCalculatedPosition.GetTeam() != Board.Constants.TeamEnum.NoTeam:
                     break
 
         return validMoves

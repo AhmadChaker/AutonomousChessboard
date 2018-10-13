@@ -1,6 +1,6 @@
 import sys
 import Utilities.Points
-import Utilities.Constants
+import Board.Constants
 import Pieces.Constants
 import Pieces.PieceHelpers
 from Pieces.IBasePiece import IBasePiece
@@ -19,9 +19,9 @@ class Rook(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Utilities.Constants.TeamEnum.White:
+        if team == Board.Constants.TeamEnum.White:
             return Rook.WhiteString
-        elif team == Utilities.Constants.TeamEnum.Black:
+        elif team == Board.Constants.TeamEnum.Black:
             return Rook.BlackString
 
         return Pieces.Constants.BOARD_ERROR_STRING

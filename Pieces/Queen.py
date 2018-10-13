@@ -1,6 +1,6 @@
 import sys
 import Utilities.Points
-import Utilities.Constants
+import Board.Constants
 import Pieces.Constants
 from Pieces.IBasePiece import IBasePiece
 import logging
@@ -18,12 +18,12 @@ class Queen(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Utilities.Constants.TeamEnum.White:
+        if team == Board.Constants.TeamEnum.White:
             return Queen.WhiteString
-        elif team == Utilities.Constants.TeamEnum.Black:
+        elif team == Board.Constants.TeamEnum.Black:
             return Queen.BlackString
 
-        return Utilities.Constants.BOARD_ERROR_STRING
+        return Board.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Queen

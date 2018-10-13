@@ -21,24 +21,25 @@ class IBasePiece(ABC):
     def GetValidMoves(self, board):
         pass
 
-    def CanMove(self, toMovePoint:Utilities.Points.Points):
+    def CanMove(self, toMovePoint:Utilities.Points.Points, board):
 
         if toMovePoint == Utilities.Points.POINTS_UNDEFINED:
             return False
 
-        validMoves = self.GetValidMoves()
+        validMoves = self.GetValidMoves(board)
         if len(validMoves) == 0:
             return False
 
         canMove = any(move == toMovePoint for move in validMoves)
         return canMove
 
-    def Move(self, toMovePoint:Utilities.Points.Points):
+    def Move(self, toMovePoint:Utilities.Points.Points, board):
 
-        if not self.CanMove(toMovePoint):
+        if not self.CanMove(toMovePoint, board):
             return False
 
         self.SetCoordinates(toMovePoint)
+        self.GetHistory().append(toMovePoint)
         return True
 
     def ForceMove(self, toMovePoint:Utilities.Points.Points):

@@ -1,7 +1,7 @@
 import sys
 import Pieces.Constants
 import Utilities.Points
-import Utilities.Constants
+import Board.Constants
 from Pieces.IBasePiece import IBasePiece
 import logging
 logger = logging.getLogger(__name__)
@@ -18,9 +18,9 @@ class Bishop(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Utilities.Constants.TeamEnum.White:
+        if team == Board.Constants.TeamEnum.White:
             return Bishop.WhiteString
-        elif team == Utilities.Constants.TeamEnum.Black:
+        elif team == Board.Constants.TeamEnum.Black:
             return Bishop.BlackString
 
         return Pieces.Constants.BOARD_ERROR_STRING
