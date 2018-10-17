@@ -33,6 +33,8 @@
 
 # Python generated directories
 venv/
+**/.idea/workspace.xml
+**/.idea/tasks.xml
 
 # Python bytecode compilations
 *.pyc

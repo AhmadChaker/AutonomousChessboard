@@ -32,6 +32,7 @@ def ClickedButton():
 
     t1.Move(fromArrayCoords, toArrayCoords)
 
+
 app = App(title="Sheena", width=600, height=600, layout="grid")
 FromCoordinateTextBlock = Text(app, text="From Coordinates", grid=[0,0], align="left")
 FromCoordinateTextBox = TextBox(app, grid=[1,0], align="left")
