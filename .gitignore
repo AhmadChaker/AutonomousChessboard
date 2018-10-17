@@ -32,7 +32,6 @@
 *.app
 
 # Python generated directories
-.idea/
 venv/
 
 # Python bytecode compilations
