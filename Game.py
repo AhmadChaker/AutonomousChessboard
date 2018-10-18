@@ -250,10 +250,8 @@ class Game:
         logger.debug("Exiting method with value True")
         return True
 
-    def __TurnChanged(self):
-        logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
-        self.__playersTurn = (TeamEnum.Black if self.__playersTurn == TeamEnum.White else TeamEnum.White)
-        logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
+    def __GetOpposingTeam(self):
+        return TeamEnum.Black if self.__playersTurn == TeamEnum.White else TeamEnum.White
 
     def __PerformPawnPromotionCheck(self):
         # Use the fact that a pawn promotion only occurs for one pawn at a time and on the top or bottom squares
@@ -263,6 +261,118 @@ class Game:
                 piece = self.__board[xIndex][yIndex]
                 if piece.GetPieceEnum() == PieceEnums.Pawn:
                     self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), Points(xIndex, yIndex))
+
+    def __GetPieces(self, board):
+        piecesCurrentTeam = []
+        piecesOtherTeam = []
+
+        currentTeam = self.__playersTurn
+        otherTeam = self.__GetOpposingTeam()
+        for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
+            for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
+                piece = board[xIndex][yIndex]
+                if piece.GetTeam() == currentTeam:
+                    piecesCurrentTeam.append(piece)
+                if piece.GetTeam() == otherTeam:
+                    piecesOtherTeam.append(piece)
+        return piecesCurrentTeam, piecesOtherTeam
+
+    def IsInCheckMate(self, team: TeamEnum):
+        # Check if King is in check and that there are NO valid moves
+        validMoves = self.GetValidMovesForTeam(self.__board, team)
+        if len(validMoves) == 0:
+            return False
+
+        isKingInCheck = self.IsKingInCheck(self.__board, team)
+        return isKingInCheck
+
+    def IsDrawByInsufficientPieces(self, board):
+
+        # Insufficient pieces for checkmate:
+        # a) King vs King
+        # b) King and Bishop vs King
+        # c) King and Knight vs King
+        # d) King and Bishop versus King and Bishop with Bishops on same color.
+        teamAPieces, teamBPieces = self.__GetPieces(board)
+
+        numberOfPiecesTeamA = len(teamAPieces)
+        numberOfPiecesTeamB = len(teamBPieces)
+
+        if numberOfPiecesTeamA > 2 and numberOfPiecesTeamB > 2:
+            return False
+
+        # King vs King
+        if numberOfPiecesTeamA == 1 and numberOfPiecesTeamB == 1:
+            return True
+
+        # King and Bishop vs King and King and Knight vs King
+        if numberOfPiecesTeamA == 1 and numberOfPiecesTeamB == 2:
+            for piece in teamBPieces:
+                if piece.GetPieceEnum() == PieceEnums.Bishop or piece.GetPieceEnum() == PieceEnums.Knight:
+                    return True
+
+        if numberOfPiecesTeamB == 1 and numberOfPiecesTeamA == 2:
+            for piece in teamAPieces:
+                if piece.GetPieceEnum() == PieceEnums.Bishop or piece.GetPieceEnum() == PieceEnums.Knight:
+                    return True
+
+        # King and Bishop versus King and Bishop with Bishops on same color
+        if numberOfPiecesTeamA == 2 and numberOfPiecesTeamB == 2:
+            teamABishop = None
+            teamBBishop = None
+            for pieceForTeamA in teamAPieces:
+                if pieceForTeamA.GetPieceEnum() == PieceEnums.Bishop:
+                    teamABishop = pieceForTeamA
+            for pieceForTeamB in teamBPieces:
+                if pieceForTeamB.GetPieceEnum() == PieceEnums.Bishop:
+                    teamBBishop = pieceForTeamB
+
+            if teamABishop is not None and teamBBishop is not None:
+                # Test to see if they are on the same color
+                # TO DO
+                pass
+
+        return False
+
+    def IsDraw(self, opposingTeam: TeamEnum):
+
+        # If player whose turn it will now be has no legal move but is not in check
+        validMovesOpposingTeam = self.GetValidMovesForTeam(self.__board, opposingTeam)
+        if len(validMovesOpposingTeam) == 0 and not self.IsKingInCheck(self.GetBoard(), opposingTeam):
+            return True
+
+        # Fifty move rule: If previous 50 moves by EACH side, no pawn has moved and no capture has been made
+        history = self.GetHistory()
+        if len(history) > Board.Constants.DRAW_CONDITION_TOTAL_MOVES:
+
+            # Get last x moves
+            pertinentMoves = history[-Board.Constants.DRAW_CONDITION_TOTAL_MOVES:]
+
+            hasPawnMoved = False
+            hasCaptureBeenMade = False
+
+            for move in pertinentMoves:
+                if move.IsCaptureMove():
+                    hasCaptureBeenMade = True
+                    break
+
+                if move.GetPieceFrom() == PieceEnums.Pawn:
+                    hasPawnMoved = True
+                    break
+
+            if not hasPawnMoved and not hasCaptureBeenMade:
+                return True
+
+        if self.IsDrawByInsufficientPieces(self.GetBoard()):
+            return True
+
+
+
+
+        # TODO: implement if the position has occurred 5 times before (including right to castle being kept) then
+        # it's an automatic draw
+
+        pass
 
     def __PerformPostMoveProcessing(self, fromCoord: Points, toCoord: Points):
 
@@ -285,8 +395,17 @@ class Game:
         # Check if pawn is being promoted
         self.__PerformPawnPromotionCheck()
 
+        # Check if player whos turn it's about to be is checkmated
+        opposingTeam = self.__GetOpposingTeam()
+        isCheckMated = self.IsInCheckMate(opposingTeam)
+
+        # Check draw conditions
+        self.IsDraw()
+
         # Change players turn
-        self.__TurnChanged()
+        logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
+        self.__playersTurn = self.__GetOpposingTeam()
+        logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
 
         self.PrintBoard()
 

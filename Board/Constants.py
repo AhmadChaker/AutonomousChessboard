@@ -4,9 +4,12 @@ from enum import Enum
 ALPHABETICAL_BOARD_ORDINATES = "ABCDEFGH"
 NUMERICAL_BOARD_ORDINATES = "12345678"
 
+# Board dimensions
 MAXIMUM_X_SQUARES = 8
 MAXIMUM_Y_SQUARES = 8
 
+# Gameplay constants
+DRAW_CONDITION_TOTAL_MOVES = 100
 
 class TeamEnum(Enum):
     NoTeam = 1
