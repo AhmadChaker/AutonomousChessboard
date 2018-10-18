@@ -328,9 +328,17 @@ class Game:
                     teamBBishop = pieceForTeamB
 
             if teamABishop is not None and teamBBishop is not None:
-                # Test to see if they are on the same color
-                # TO DO
-                pass
+                # Two bishops remaining, test to see if they are on the same color
+                teamABishopCoords = teamABishop.GetCoordinates()
+                teamBBishopCoords = teamBBishop.GetCoordinates()
+
+                # Check that both are on light squares
+                if (teamABishopCoords.GetX() % 2) == (teamABishopCoords.GetY() % 2) and \
+                        (teamBBishopCoords.GetX() % 2) == (teamBBishopCoords.GetY() % 2):
+                    return True
+                elif (teamABishopCoords.GetX() % 2) != (teamABishopCoords.GetY() % 2) and \
+                        (teamBBishopCoords.GetX() % 2) != (teamBBishopCoords.GetY() % 2):
+                    return True
 
         return False
 
@@ -400,7 +408,7 @@ class Game:
         isCheckMated = self.IsInCheckMate(opposingTeam)
 
         # Check draw conditions
-        self.IsDraw()
+        self.IsDraw(opposingTeam)
 
         # Change players turn
         logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
