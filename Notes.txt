@@ -1,8 +1,6 @@
 To do:
-1) Determine Check/Checkmate
-2) Stalemate
-3) Castling
-4) en-passant
+1) Castling
+2) en-passant
 
 
 Chess specific things coding challenges

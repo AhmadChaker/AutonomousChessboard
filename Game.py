@@ -109,6 +109,10 @@ class Game:
         return moves
 
     @staticmethod
+    def GetOpposingTeam(team: TeamEnum):
+        return TeamEnum.Black if team == TeamEnum.White else TeamEnum.White
+
+    @staticmethod
     def GetKing(board, team: Board.Constants.TeamEnum):
         for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
@@ -122,8 +126,7 @@ class Game:
     def IsKingInCheck(board, teamA: Board.Constants.TeamEnum):
 
         teamAKing = Game.GetKing(board, teamA)
-        teamB = Board.Constants.TeamEnum.Black if teamA == Board.Constants.TeamEnum.White else \
-            Board.Constants.TeamEnum.White
+        teamB = Game.GetOpposingTeam(teamA)
         teamBMoves = Game.GetPieceCentricMovesForTeam(board, teamB)
         for teamBMove in teamBMoves:
             if teamBMove == teamAKing.GetCoordinates():
@@ -250,9 +253,6 @@ class Game:
         logger.debug("Exiting method with value True")
         return True
 
-    def __GetOpposingTeam(self):
-        return TeamEnum.Black if self.__playersTurn == TeamEnum.White else TeamEnum.White
-
     def __PerformPawnPromotionCheck(self):
         # Use the fact that a pawn promotion only occurs for one pawn at a time and on the top or bottom squares
         yIndexPawnPromotions = [0, Board.Constants.MAXIMUM_Y_SQUARES - 1]
@@ -267,7 +267,7 @@ class Game:
         piecesOtherTeam = []
 
         currentTeam = self.__playersTurn
-        otherTeam = self.__GetOpposingTeam()
+        otherTeam = Game.GetOpposingTeam(currentTeam)
         for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = board[xIndex][yIndex]
@@ -343,10 +343,12 @@ class Game:
         return False
 
     def IsDraw(self, opposingTeam: TeamEnum):
+        logger.debug("Entered")
 
         # If player whose turn it will now be has no legal move but is not in check
         validMovesOpposingTeam = self.GetValidMovesForTeam(self.__board, opposingTeam)
         if len(validMovesOpposingTeam) == 0 and not self.IsKingInCheck(self.GetBoard(), opposingTeam):
+            logger.error("Player whose turn it is has no legal move and is now in check")
             return True
 
         # Fifty move rule: If previous 50 moves by EACH side, no pawn has moved and no capture has been made
@@ -369,18 +371,14 @@ class Game:
                     break
 
             if not hasPawnMoved and not hasCaptureBeenMade:
+                logger.error("No capture or pawn move in last n moves, draw declared")
                 return True
 
         if self.IsDrawByInsufficientPieces(self.GetBoard()):
+            logger.error("Draw by insufficient pieces is declared")
             return True
 
-
-
-
-        # TODO: implement if the position has occurred 5 times before (including right to castle being kept) then
-        # it's an automatic draw
-
-        pass
+        return False
 
     def __PerformPostMoveProcessing(self, fromCoord: Points, toCoord: Points):
 
@@ -404,7 +402,7 @@ class Game:
         self.__PerformPawnPromotionCheck()
 
         # Check if player whos turn it's about to be is checkmated
-        opposingTeam = self.__GetOpposingTeam()
+        opposingTeam = Game.GetOpposingTeam(self.__playersTurn)
         isCheckMated = self.IsInCheckMate(opposingTeam)
 
         # Check draw conditions
@@ -412,7 +410,7 @@ class Game:
 
         # Change players turn
         logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
-        self.__playersTurn = self.__GetOpposingTeam()
+        self.__playersTurn = Game.GetOpposingTeam(self.__playersTurn)
         logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
 
         self.PrintBoard()
