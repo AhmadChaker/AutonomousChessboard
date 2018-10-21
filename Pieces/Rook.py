@@ -2,7 +2,7 @@ import sys
 import Utilities.Points
 import Board.Constants
 import Pieces.Constants
-import Pieces.PieceHelpers
+from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
 logger = logging.getLogger(__name__)
@@ -29,10 +29,10 @@ class Rook(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Rook
 
-    def GetValidMoves(self, board):
+    def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 0), Rook.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, 1), Rook.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 0), Rook.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, -1), Rook.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, 0), Rook.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(0, 1), Rook.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, 0), Rook.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(0, -1), Rook.MoveIterations))
         return validMoves

@@ -6,3 +6,5 @@ To do:
 Chess specific things coding challenges
 1) Starting off at a certain configuration on the chess board
 
+- Each team needs to determine if it has Castled once already
+

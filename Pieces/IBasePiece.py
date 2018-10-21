@@ -1,4 +1,5 @@
 import Utilities.Points
+from copy import deepcopy
 from abc import ABC, abstractmethod
 
 
@@ -7,7 +8,7 @@ class IBasePiece(ABC):
     def __init__(self, team, coordinates):
         self.__team = team
         self.__coordinates = coordinates
-        self.__history = []
+        self.__history = [coordinates]
 
     @abstractmethod
     def GetPieceStr(self):
@@ -18,7 +19,7 @@ class IBasePiece(ABC):
         pass
 
     @abstractmethod
-    def GetValidMoves(self, board):
+    def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         pass
 
     def CanMove(self, toMovePoint:Utilities.Points.Points, board):
@@ -26,7 +27,8 @@ class IBasePiece(ABC):
         if toMovePoint == Utilities.Points.POINTS_UNDEFINED:
             return False
 
-        validMoves = self.GetValidMoves(board)
+        enforceKingUnderAttackCheck = True
+        validMoves = self.GetValidMoves(board, enforceKingUnderAttackCheck)
         if len(validMoves) == 0:
             return False
 
@@ -42,8 +44,9 @@ class IBasePiece(ABC):
         self.GetHistory().append(toMovePoint)
         return True
 
+    # Don't go through the normal mechanisms, set everything itself
     def ForceMove(self, toMovePoint:Utilities.Points.Points):
-        self.SetCoordinates(toMovePoint)
+        self.__coordinates = toMovePoint
         return True
 
     def GetTeam(self):

@@ -1,6 +1,7 @@
 import Utilities.Points
 import Board.Constants
 import Pieces.Constants
+from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
 logger = logging.getLogger(__name__)
@@ -27,14 +28,14 @@ class Knight(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Knight
 
-    def GetValidMoves(self, board):
+    def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(2, 1), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-2, 1), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-2, -1), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, -2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, -2), Knight.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(2, -1), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(2, 1), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, 2), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, 2), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-2, 1), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-2, -1), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, -2), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, -2), Knight.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(2, -1), Knight.MoveIterations))
         return validMoves

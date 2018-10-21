@@ -1,8 +1,7 @@
 import Utilities.Points
 import Utilities.CoordinateConverters
 import Board.Constants
-import Pieces.Constants
-from copy import deepcopy
+from Utilities.BoardHelpers import BoardHelpers
 from Pieces.EmptyPiece import EmptyPiece
 from Pieces.Pawn import Pawn
 from Pieces.Rook import Rook
@@ -90,102 +89,6 @@ class Game:
     def GetBoard(self):
         return self.__board
 
-    # This method gets all legal moves from the piece's perspective, this does not take into account board
-    # considerations such as being in check
-    @staticmethod
-    def GetPieceCentricMovesForTeam(board, teamToGet: Board.Constants.TeamEnum):
-        moves = []
-        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            # cycle over y coordinates
-
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = board[xCoord][yCoord]
-                if piece.GetTeam() != teamToGet:
-                    continue
-
-                # Get valid moves from the perspective of the piece independent of the board
-                pieceCentricValidMoves = piece.GetValidMoves(board)
-                moves.extend(pieceCentricValidMoves)
-        return moves
-
-    @staticmethod
-    def GetOpposingTeam(team: TeamEnum):
-        return TeamEnum.Black if team == TeamEnum.White else TeamEnum.White
-
-    @staticmethod
-    def GetKing(board, team: Board.Constants.TeamEnum):
-        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = board[xCoord][yCoord]
-                if piece.GetTeam() == team and piece.GetPieceEnum() == Pieces.Constants.PieceEnums.King:
-                    return piece
-        return Pieces.EmptyPiece()
-
-    # For the team passed in, check if that King is in check
-    @staticmethod
-    def IsKingInCheck(board, teamA: Board.Constants.TeamEnum):
-
-        teamAKing = Game.GetKing(board, teamA)
-        teamB = Game.GetOpposingTeam(teamA)
-        teamBMoves = Game.GetPieceCentricMovesForTeam(board, teamB)
-        for teamBMove in teamBMoves:
-            if teamBMove == teamAKing.GetCoordinates():
-                return True
-        return False
-
-    # Gets all valid moves
-    @staticmethod
-    def GetValidMovesForTeam(board, teamToPrint: Board.Constants.TeamEnum):
-
-        moves = []
-        copyBoard = deepcopy(board)
-        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            # cycle over y coordinates
-
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = copyBoard[xCoord][yCoord]
-                if piece.GetTeam() != teamToPrint:
-                    continue
-
-                # Get valid moves for this piece, if this move results in the King being in check, then it's not
-                # actually a valid move
-                validPieceCentricMoves = piece.GetValidMoves(board)
-                if len(validPieceCentricMoves) == 0:
-                    continue
-
-                validPieceMoves = []
-                # For all these moves try them out and see if we are in check afterwards!
-                for pieceMove in validPieceCentricMoves:
-                    preMovePieceCoords = piece.GetCoordinates()
-                    pieceAtMoveCoordinateBeforeMove = copyBoard[pieceMove.GetX()][pieceMove.GetY()]
-
-                    piece.ForceMove(pieceMove)
-                    copyBoard[pieceMove.GetX()][pieceMove.GetY()] = piece
-
-                    # Moved, now check if King is in check
-                    isKingInCheck = Game.IsKingInCheck(copyBoard, piece.GetTeam())
-
-                    # Undo the previous moves
-                    piece.ForceMove(preMovePieceCoords)
-                    copyBoard[preMovePieceCoords.GetX()][preMovePieceCoords.GetY()] = piece
-                    copyBoard[pieceMove.GetX()][pieceMove.GetY()] = pieceAtMoveCoordinateBeforeMove
-
-                    if isKingInCheck:
-                        continue
-
-                    validPieceMoves.append(pieceMove)
-
-                if len(validPieceMoves) == 0:
-                    continue
-
-                moves.extend(validPieceMoves)
-
-                logger.info("Printing valid moves (" + str(len(validPieceMoves)) + ") " + "for: " + piece.GetPieceStr()
-                            + ", at: " + piece.GetCoordinates().ToString())
-                for validMove in validPieceMoves:
-                    logger.info(validMove.ToString())
-        return moves
-
     def PrintBoard(self):
 
         # Top reference coordinates
@@ -234,26 +137,14 @@ class Game:
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
 
         isValidPieceMove = pieceBeingMoved.CanMove(toCoord, self.__board)
-
         if not isValidPieceMove:
             logger.debug("Not a valid piece move, returning false")
-            return False
-
-        # Check if after this move the king is in check.
-        pieceBeingMovedCopy = deepcopy(pieceBeingMoved)
-        boardCopy = deepcopy(self.GetBoard())
-        boardCopy[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
-        pieceBeingMovedCopy.SetCoordinates(toCoord)
-        isKingInCheckAfterMove = Game.IsKingInCheck(boardCopy, self.__playersTurn)
-
-        if isKingInCheckAfterMove:
-            logger.debug("King is in check after move, returning false")
             return False
 
         logger.debug("Exiting method with value True")
         return True
 
-    def __PerformPawnPromotionCheck(self):
+    def PerformPawnPromotionCheck(self):
         # Use the fact that a pawn promotion only occurs for one pawn at a time and on the top or bottom squares
         yIndexPawnPromotions = [0, Board.Constants.MAXIMUM_Y_SQUARES - 1]
         for yIndex in yIndexPawnPromotions:
@@ -262,12 +153,12 @@ class Game:
                 if piece.GetPieceEnum() == PieceEnums.Pawn:
                     self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), Points(xIndex, yIndex))
 
-    def __GetPieces(self, board):
+    def GetPieces(self, board):
         piecesCurrentTeam = []
         piecesOtherTeam = []
 
         currentTeam = self.__playersTurn
-        otherTeam = Game.GetOpposingTeam(currentTeam)
+        otherTeam = BoardHelpers.GetOpposingTeam(currentTeam)
         for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = board[xIndex][yIndex]
@@ -279,11 +170,11 @@ class Game:
 
     def IsInCheckMate(self, team: TeamEnum):
         # Check if King is in check and that there are NO valid moves
-        validMoves = self.GetValidMovesForTeam(self.__board, team)
+        validMoves = BoardHelpers.GetValidMovesForTeam(self.__board, team)
         if len(validMoves) == 0:
             return False
 
-        isKingInCheck = self.IsKingInCheck(self.__board, team)
+        isKingInCheck = BoardHelpers.IsKingInCheck(self.__board, team)
         return isKingInCheck
 
     def IsDrawByInsufficientPieces(self, board):
@@ -293,7 +184,7 @@ class Game:
         # b) King and Bishop vs King
         # c) King and Knight vs King
         # d) King and Bishop versus King and Bishop with Bishops on same color.
-        teamAPieces, teamBPieces = self.__GetPieces(board)
+        teamAPieces, teamBPieces = self.GetPieces(board)
 
         numberOfPiecesTeamA = len(teamAPieces)
         numberOfPiecesTeamB = len(teamBPieces)
@@ -346,7 +237,7 @@ class Game:
         logger.debug("Entered")
 
         # If player whose turn it will now be has no legal move but is not in check
-        validMovesOpposingTeam = self.GetValidMovesForTeam(self.__board, opposingTeam)
+        validMovesOpposingTeam = BoardHelpers.GetValidMovesForTeam(self.__board, opposingTeam)
         if len(validMovesOpposingTeam) == 0 and not self.IsKingInCheck(self.GetBoard(), opposingTeam):
             logger.error("Player whose turn it is has no legal move and is now in check")
             return True
@@ -380,7 +271,9 @@ class Game:
 
         return False
 
-    def __PerformPostMoveProcessing(self, fromCoord: Points, toCoord: Points):
+    def PerformPostMoveProcessing(self, fromCoord: Points, toCoord: Points):
+
+        logger.debug("Entered method")
 
         if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
             logger.error("Points are not in range, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
@@ -399,10 +292,10 @@ class Game:
         self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
 
         # Check if pawn is being promoted
-        self.__PerformPawnPromotionCheck()
+        self.PerformPawnPromotionCheck()
 
         # Check if player whos turn it's about to be is checkmated
-        opposingTeam = Game.GetOpposingTeam(self.__playersTurn)
+        opposingTeam = BoardHelpers.GetOpposingTeam(self.__playersTurn)
         isCheckMated = self.IsInCheckMate(opposingTeam)
 
         # Check draw conditions
@@ -410,7 +303,7 @@ class Game:
 
         # Change players turn
         logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
-        self.__playersTurn = Game.GetOpposingTeam(self.__playersTurn)
+        self.__playersTurn = BoardHelpers.GetOpposingTeam(self.__playersTurn)
         logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
 
         self.PrintBoard()
@@ -441,7 +334,7 @@ class Game:
         hasMoved = pieceBeingMoved.Move(toCoord, self.__board)
 
         if hasMoved:
-            self.__PerformPostMoveProcessing(fromCoord, toCoord)
+            self.PerformPostMoveProcessing(fromCoord, toCoord)
 
         logger.debug("Exiting with argument: " + str(hasMoved))
         return hasMoved
@@ -449,5 +342,5 @@ class Game:
     def PrintAllValidMoves(self):
         logger.info("Printing all valid white moves")
 
-        self.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
+        BoardHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
         #self.GetValidMovesForTeam(self.GetBoard(), Utilities.Constants.TeamEnum.Black)

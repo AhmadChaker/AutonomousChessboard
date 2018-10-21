@@ -2,6 +2,7 @@ import sys
 import Pieces.Constants
 import Utilities.Points
 import Board.Constants
+from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
 logger = logging.getLogger(__name__)
@@ -28,12 +29,12 @@ class Bishop(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Bishop
 
-    def GetValidMoves(self, board):
+    def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 1), Bishop.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, -1), Bishop.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 1), Bishop.MoveIterations))
-        validMoves.extend(Pieces.PieceHelpers.PieceHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, -1), Bishop.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, 1), Bishop.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, -1), Bishop.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, 1), Bishop.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, -1), Bishop.MoveIterations))
         return validMoves
 
 

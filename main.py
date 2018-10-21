@@ -2,7 +2,6 @@ import logging
 import Game
 import Utilities.CoordinateConverters
 import Utilities.Points
-from Pieces.PieceHelpers import PieceHelpers
 
 from guizero import App, Text, TextBox, PushButton
 
