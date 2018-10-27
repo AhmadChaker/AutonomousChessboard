@@ -12,7 +12,7 @@ from Pieces.King import King
 from Board.Constants import TeamEnum
 from Pieces.Constants import PieceEnums
 from Utilities.Points import Points
-from Board.History import History
+from Board.Movement import Movement
 import logging
 
 
@@ -118,7 +118,7 @@ class Game:
         logger.error("Printing history")
 
         for historicalMove in self.GetHistory():
-            strToPrint = PieceEnums(historicalMove.GetPieceFrom()).name + " at [" + \
+            strToPrint = PieceEnums(historicalMove.GetPieceEnumFrom()).name + " at [" + \
                          historicalMove.GetFromCoord().ToString() + "] moved to [" + \
                          historicalMove.GetToCoord().ToString() + "], IsCaptureMove: " + \
                          str(historicalMove.IsCaptureMove())
@@ -162,21 +162,21 @@ class Game:
             return
 
         # Update history, check if this was a capture and if so what piece!
-        self.GetHistory().append(History(self.__board[fromCoord.GetX()][fromCoord.GetY()].GetPieceEnum(),
-                                         self.__board[toCoord.GetX()][toCoord.GetY()].GetPieceEnum(),
+        self.GetHistory().append(Movement(self.__board[fromCoord.GetX()][fromCoord.GetY()],
+                                         self.__board[toCoord.GetX()][toCoord.GetY()],
                                          fromCoord, toCoord))
 
         # Update board
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
         self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
+        self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
 
         # Need provision for castling!
-        self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
 
         # Check if pawn is being promoted
         self.PerformPawnPromotionCheck()
 
-        # Check if player whos turn it's about to be is checkmated
+        # Check if player whose turn it's about to be is checkmated
         opposingTeam = BoardHelpers.GetOpposingTeam(self.__playersTurn)
         isCheckMated = BoardHelpers.IsInCheckMate(self.GetBoard(), opposingTeam)
 
@@ -192,7 +192,7 @@ class Game:
 
         self.PrintHistory()
 
-    def Move(self, fromCoord: Points, toCoord:Points):
+    def Move(self, fromCoord: Points, toCoord: Points):
 
         logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
 
