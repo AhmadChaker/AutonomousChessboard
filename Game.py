@@ -13,6 +13,7 @@ from Board.Constants import TeamEnum
 from Pieces.Constants import PieceEnums
 from Utilities.Points import Points
 from Board.Movement import Movement
+from Board.History import History
 import logging
 
 
@@ -25,7 +26,7 @@ class Game:
         logger.debug("Entered constructor")
 
         self.__playersTurn = TeamEnum.White
-        self.__history = []
+        self.__history = History()
 
         # Initialise chess board 2D structure
         self.__board = [None] * Board.Constants.MAXIMUM_X_SQUARES
@@ -117,7 +118,7 @@ class Game:
     def PrintHistory(self):
         logger.error("Printing history")
 
-        for historicalMove in self.GetHistory():
+        for historicalMove in self.GetHistory().GetHistoricalMoves():
             strToPrint = PieceEnums(historicalMove.GetPieceEnumFrom()).name + " at [" + \
                          historicalMove.GetFromCoord().ToString() + "] moved to [" + \
                          historicalMove.GetToCoord().ToString() + "], IsCaptureMove: " + \
@@ -162,7 +163,7 @@ class Game:
             return
 
         # Update history, check if this was a capture and if so what piece!
-        self.GetHistory().append(Movement(self.__board[fromCoord.GetX()][fromCoord.GetY()],
+        self.GetHistory().AppendMovement(Movement(self.__board[fromCoord.GetX()][fromCoord.GetY()],
                                          self.__board[toCoord.GetX()][toCoord.GetY()],
                                          fromCoord, toCoord))
 
@@ -181,7 +182,7 @@ class Game:
         isCheckMated = BoardHelpers.IsInCheckMate(self.GetBoard(), opposingTeam)
 
         # Check draw conditions
-        isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetHistory(), self.__playersTurn)
+        isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetHistory().GetHistoricalMoves(), self.__playersTurn)
 
         # Change players turn
         logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
