@@ -8,6 +8,9 @@ import Board.Constants
 import logging
 from Utilities.Points import Points
 from Board.Constants import TeamEnum
+from Pieces.Constants import PieceEnums
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,18 +41,25 @@ class BoardHelpers:
         return moves
 
     @staticmethod
-    def GetKing(board, team: Board.Constants.TeamEnum):
+    def GetPieceByPieceType(board, pieceType, team: Board.Constants.TeamEnum):
+        pieces = []
         for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = board[xCoord][yCoord]
-                if piece.GetTeam() == team and piece.GetPieceEnum() == Pieces.Constants.PieceEnums.King:
-                    return piece
-        return Pieces.EmptyPiece()
+                if piece.GetTeam() == team and piece.GetPieceEnum() == pieceType:
+                    pieces.append(piece)
+        return pieces
 
     # For the team passed in, check if that King is in check
     @staticmethod
-    def IsKingInCheck(board, teamA: Board.Constants.TeamEnum):
-        teamAKing = BoardHelpers.GetKing(board, teamA)
+    def IsInCheck(board, teamA: Board.Constants.TeamEnum):
+        teamAKingArray = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.King, teamA)
+        if len(teamAKingArray) == 0:
+            # Should never happen really
+            logger.error("Can't find a King for this team! Something horrible has happened")
+            return True
+
+        teamAKing = teamAKingArray[0]
         teamB = BoardHelpers.GetOpposingTeam(teamA)
         teamBMoves = BoardHelpers.GetPieceCentricMovesForTeam(board, teamB)
         for teamBMove in teamBMoves:
@@ -58,9 +68,35 @@ class BoardHelpers:
         return False
 
     @staticmethod
+    def FilterMovesThatPutKingInCheck(copyBoard, piece: Pieces.IBasePiece, potentialMoves):
+        # Check each potential move and see if that move puts the King in check!
+        validMoves = []
+
+        for potentialMove in potentialMoves:
+            preMovePieceCoords = piece.GetCoordinates()
+            pieceAtMoveCoordinateBeforeMove = copyBoard[potentialMove.GetX()][potentialMove.GetY()]
+
+            piece.ForceMove(potentialMove)
+            copyBoard[potentialMove.GetX()][potentialMove.GetY()] = piece
+
+            # Moved, now check if King if own team is in check
+            isInCheck = BoardHelpers.IsInCheck(copyBoard, piece.GetTeam())
+
+            if not isInCheck:
+                validMoves.append(potentialMove)
+
+            # Undo the previous moves
+            piece.ForceMove(preMovePieceCoords)
+            copyBoard[preMovePieceCoords.GetX()][preMovePieceCoords.GetY()] = piece
+            copyBoard[potentialMove.GetX()][potentialMove.GetY()] = pieceAtMoveCoordinateBeforeMove
+
+        return validMoves
+
+    @staticmethod
     # Direction vector is the direction with which to move.
     # moveIterations variable corresponds to iterations of the direction vector.
-    def GetValidMoves(piece: Pieces.IBasePiece, board, enforceKingUnderAttackCheck, directionVector: Points, moveIterations: int):
+    def GetValidMoves(piece: Pieces.IBasePiece, board, directionVector: Points, moveIterations: int,
+                      enforceKingUnderAttackCheck):
 
         pieceToMoveTeam = piece.GetTeam()
         pieceToMovePieceEnum = piece.GetPieceEnum()
@@ -73,11 +109,11 @@ class BoardHelpers:
             logger.error("Problems with input variables, radius of movement: " + str(moveIterations) +
                          ", Piece Coords: " + str(pieceToMoveCoords.GetX()) + "," + str(pieceToMoveCoords.GetY()) +
                          ", Vector Coords:" + str(directionVector.GetX()) + "," + str(directionVector.GetY()))
-            return None
+            return []
 
         if pieceToMoveTeam == Board.Constants.TeamEnum.NoTeam or \
                 pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Empty:
-            return None
+            return []
 
         # killing pieces logic
 
@@ -118,32 +154,14 @@ class BoardHelpers:
                 if pieceAtCalculatedPosition.GetTeam() != Board.Constants.TeamEnum.NoTeam:
                     break
 
+        if len(potentialMoves) == 0:
+            return []
+
         if not enforceKingUnderAttackCheck:
             return potentialMoves
 
-        # Check each potential move and see if that move puts the King in check!
-        validMoves = []
-        if len(potentialMoves) > 0:
-            copyBoard = deepcopy(board)
-            for potentialMove in potentialMoves:
-                preMovePieceCoords = piece.GetCoordinates()
-                pieceAtMoveCoordinateBeforeMove = copyBoard[potentialMove.GetX()][potentialMove.GetY()]
-
-                piece.ForceMove(potentialMove)
-                copyBoard[potentialMove.GetX()][potentialMove.GetY()] = piece
-
-                # Moved, now check if King if own team is in check
-                isKingInCheck = BoardHelpers.IsKingInCheck(copyBoard, piece.GetTeam())
-
-                if not isKingInCheck:
-                    validMoves.append(potentialMove)
-
-                # Undo the previous moves
-                piece.ForceMove(preMovePieceCoords)
-                copyBoard[preMovePieceCoords.GetX()][preMovePieceCoords.GetY()] = piece
-                copyBoard[potentialMove.GetX()][potentialMove.GetY()] = pieceAtMoveCoordinateBeforeMove
-
-        return validMoves
+        copyBoard = deepcopy(board)
+        return BoardHelpers.FilterMovesThatPutKingInCheck(copyBoard, piece, potentialMoves)
 
     # Gets all valid moves for the team, this takes into account moves which result in the player being in check
     @staticmethod
@@ -196,8 +214,8 @@ class BoardHelpers:
         if len(validMoves) == 0:
             return False
 
-        isKingInCheck = BoardHelpers.IsKingInCheck(board, team)
-        return isKingInCheck
+        isInCheck = BoardHelpers.IsInCheck(board, team)
+        return isInCheck
 
     # Checkmate will not be possible for certain piece configurations, they are:
     # a) King vs King

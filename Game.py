@@ -72,10 +72,10 @@ class Game:
         self.__board[3][0] = Queen(TeamEnum.White, Points(3, 0))
         self.__board[4][0] = King(TeamEnum.White, Points(4, 0))
 
+        # Black Major pieces
         self.__board[0][7] = Rook(TeamEnum.Black, Points(0, 7))
         self.__board[7][7] = Rook(TeamEnum.Black, Points(7, 7))
 
-        # Black Major pieces
         self.__board[1][7] = Knight(TeamEnum.Black, Points(1, 7))
         self.__board[6][7] = Knight(TeamEnum.Black, Points(6, 7))
 

@@ -34,16 +34,16 @@ class Pawn(IBasePiece):
         validMoves = []
         if isPieceMovingUpwards:
             validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(0, 1), moveIterNonKillMoves))
+                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, 1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
             validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, 1), moveIterToKillMoves))
+                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
             validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, 1), moveIterToKillMoves))
+                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
         else:
             validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(0, -1), moveIterNonKillMoves))
+                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, -1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
             validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, -1), moveIterToKillMoves))
+                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
             validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, -1), moveIterToKillMoves))
+                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
         return validMoves

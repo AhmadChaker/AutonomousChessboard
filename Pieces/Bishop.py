@@ -31,10 +31,8 @@ class Bishop(IBasePiece):
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, 1), Bishop.MoveIterations))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, -1), Bishop.MoveIterations))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, 1), Bishop.MoveIterations))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, -1), Bishop.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 1), Bishop.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, -1), Bishop.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 1), Bishop.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, -1), Bishop.MoveIterations, enforceKingUnderAttackCheck))
         return validMoves
-
-

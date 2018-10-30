@@ -2,6 +2,7 @@ import sys
 import Utilities.Points
 import Board.Constants
 import Pieces.Constants
+from Utilities.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
@@ -29,10 +30,72 @@ class Rook(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Rook
 
+    def CanCastle(self, board, enforceKingUnderAttackCheck):
+        logger.debug("Entered")
+
+        # TODO: Insert check to see if team has already castled!
+        # Also short circuit so that we don't need to calculate quantites again if castling is no longer possible
+
+        if len(self.GetHistory()) > 1:
+            logger.debug("Rook has moved, returning False")
+            return False
+
+        arrayKing = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.King, self.GetTeam())
+        if len(arrayKing) == 0:
+            return False
+
+        king = arrayKing[0]
+        if len(king.GetHistory()) > 1:
+            logger.debug("King has moved, returning False")
+            return False
+
+        xCoordKing = king.GetCoordinates().GetX()
+        yCoordKing = king.GetCoordinates().GetY()
+        xCoordRook = self.GetCoordinates().GetX()
+        yCoordRook = self.GetCoordinates().GetY()
+
+        isLeftRook = True if xCoordRook == 0 else False
+
+        xRangeToConsider = None
+        xKingDirectionVector = None
+        if isLeftRook:
+            xRangeToConsider = range(xCoordRook + 1, xCoordKing)
+            xKingDirectionVector = -1
+        else:
+            xRangeToConsider = range(xCoordKing + 1, xCoordRook)
+            xKingDirectionVector = +1
+
+        # Check that distance
+        for xCoord in xRangeToConsider:
+            if board[xCoord][yCoordRook].GetPieceEnum() != Pieces.Constants.PieceEnums.Empty:
+                return False
+
+        validMoves = BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(xKingDirectionVector, yCoordKing),
+                                   Board.Constants.KING_CASTLE_SQUARE_MOVES, enforceKingUnderAttackCheck)
+
+        if len(validMoves) == 0:
+            return False
+
+        return True
+
+    def GetCastleMoves(self, board, enforceKingIsInCheck):
+        if not self.CanCastle(board, enforceKingIsInCheck):
+            return []
+
+        xCoordRook = self.GetCoordinates().GetX()
+        yCoordRook = self.GetCoordinates().GetY()
+
+        isRookOnLeftOfBoard = True if xCoordRook == 0 else False
+        if isRookOnLeftOfBoard:
+            return Points(xCoordRook + Board.Constants.BISHOP_CASTLE_LEFT_TO_RIGHT_MOVES, yCoordRook)
+        else:
+            return Points(xCoordRook - Board.Constants.BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES, yCoordRook)
+
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(1, 0), Rook.MoveIterations))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(0, 1), Rook.MoveIterations))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(-1, 0), Rook.MoveIterations))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, enforceKingUnderAttackCheck, Utilities.Points.Points(0, -1), Rook.MoveIterations))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(1, 0), Rook.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(0, 1), Rook.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(-1, 0), Rook.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(0, -1), Rook.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(self.GetCastleMoves(board, enforceKingUnderAttackCheck))
         return validMoves

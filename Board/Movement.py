@@ -33,5 +33,8 @@ class Movement:
     def GetFromCoord(self):
         return self.__fromCoord
 
+    def GetTeamMoved(self):
+        return self.__teamMoved
+
     def GetToCoord(self):
         return self.__toCoord
