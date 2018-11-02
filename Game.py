@@ -226,4 +226,4 @@ class Game:
         logger.info("Printing all valid white moves")
 
         BoardHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
-        #self.GetValidMovesForTeam(self.GetBoard(), Utilities.Constants.TeamEnum.Black)
+        BoardHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.Black)

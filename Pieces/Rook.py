@@ -65,7 +65,7 @@ class Rook(IBasePiece):
 
         isLeftRook = True if xCoordRook == 0 else False
         xRangeToConsider = range(xCoordRook + 1, xCoordKing) if isLeftRook else range(xCoordKing + 1, xCoordRook)
-        xKingDirectionVector = -1 if isLeftRook else 1
+        kingDirectionVector = Points(-1,0) if isLeftRook else Points(1,0)
 
         # Ensure all spaces are empty
         for xCoord in xRangeToConsider:
@@ -73,7 +73,7 @@ class Rook(IBasePiece):
                 return False
 
         # Need check to see if King is in check as part of any movement
-        kingValidMoves = BoardHelpers.GetValidMoves(king, board, Points(xKingDirectionVector,yCoordKing),
+        kingValidMoves = BoardHelpers.GetValidMoves(king, board, kingDirectionVector,
                                                     Board.Constants.KING_CASTLE_SQUARE_MOVES,
                                                     enforceKingUnderAttackCheck)
         if len(kingValidMoves) != Board.Constants.KING_CASTLE_SQUARE_MOVES:
