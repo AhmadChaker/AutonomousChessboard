@@ -1,11 +1,12 @@
 from Pieces.Constants import PieceEnums
 from Pieces.IBasePiece import IBasePiece
+from Board.Constants import TeamEnum
 
 
 class EmptyPiece(IBasePiece):
 
-    def __init__(self, team, coords):
-        IBasePiece.__init__( self, team, coords)
+    def __init__(self, coords):
+        IBasePiece.__init__( self, TeamEnum.NoTeam, coords)
 
     def GetPieceStr(self):
         return '-'
@@ -13,5 +14,5 @@ class EmptyPiece(IBasePiece):
     def GetPieceEnum(self):
         return PieceEnums.Empty
 
-    def GetValidMoves(self, board):
+    def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         return []

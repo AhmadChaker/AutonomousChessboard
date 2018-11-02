@@ -49,7 +49,7 @@ class Game:
 
         for yIndex in yIndexEmptyPieces:
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                self.__board[xIndex][yIndex] = EmptyPiece(TeamEnum.NoTeam, Points(xIndex, yIndex))
+                self.__board[xIndex][yIndex] = EmptyPiece(Points(xIndex, yIndex))
 
         yIndexWhitePawns = 1
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):

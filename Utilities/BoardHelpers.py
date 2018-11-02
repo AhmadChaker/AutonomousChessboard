@@ -181,7 +181,7 @@ class BoardHelpers:
                 if len(validPieceMoves) == 0:
                     continue
 
-                logger.info("Printing valid moves (" + str(len(validPieceMoves)) + ") " + "for: " + piece.GetPieceStr()
+                logger.error("Printing valid moves (" + str(len(validPieceMoves)) + ") " + "for: " + piece.GetPieceStr()
                             + ", at: " + piece.GetCoordinates().ToString())
                 for validMove in validPieceMoves:
                     logger.info(validMove.ToString())
@@ -209,6 +209,7 @@ class BoardHelpers:
     def IsInCheckMate(board, team: TeamEnum):
 
         logger.debug("Entered")
+
         # Check if King is in check and that there are NO valid moves
         validMoves = BoardHelpers.GetValidMovesForTeam(board, team)
         if len(validMoves) == 0:

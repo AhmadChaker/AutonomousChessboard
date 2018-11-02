@@ -16,7 +16,8 @@ class Rook(IBasePiece):
     MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
-        IBasePiece.__init__( self, team, coords)
+        IBasePiece.__init__(self, team, coords)
+        self.__isCastlingPossibleForPiece = True
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -33,19 +34,27 @@ class Rook(IBasePiece):
     def CanCastle(self, board, enforceKingUnderAttackCheck):
         logger.debug("Entered")
 
-        # TODO: Insert check to see if team has already castled!
-        # Also short circuit so that we don't need to calculate quantites again if castling is no longer possible
+        # Leverage dependency on King moving in castle to determine if castling is possible and short circuit
+        if not self.__isCastlingPossibleForPiece:
+            return False
 
         if len(self.GetHistory()) > 1:
+            self.__isCastlingPossibleForPiece = False
             logger.debug("Rook has moved, returning False")
             return False
+
+        if enforceKingUnderAttackCheck:
+            if BoardHelpers.IsInCheck(board, self.GetTeam()):
+                return False
 
         arrayKing = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.King, self.GetTeam())
         if len(arrayKing) == 0:
             return False
 
         king = arrayKing[0]
+
         if len(king.GetHistory()) > 1:
+            self.__isCastlingPossibleForPiece = False
             logger.debug("King has moved, returning False")
             return False
 
@@ -55,25 +64,19 @@ class Rook(IBasePiece):
         yCoordRook = self.GetCoordinates().GetY()
 
         isLeftRook = True if xCoordRook == 0 else False
+        xRangeToConsider = range(xCoordRook + 1, xCoordKing) if isLeftRook else range(xCoordKing + 1, xCoordRook)
+        xKingDirectionVector = -1 if isLeftRook else 1
 
-        xRangeToConsider = None
-        xKingDirectionVector = None
-        if isLeftRook:
-            xRangeToConsider = range(xCoordRook + 1, xCoordKing)
-            xKingDirectionVector = -1
-        else:
-            xRangeToConsider = range(xCoordKing + 1, xCoordRook)
-            xKingDirectionVector = +1
-
-        # Check that distance
+        # Ensure all spaces are empty
         for xCoord in xRangeToConsider:
             if board[xCoord][yCoordRook].GetPieceEnum() != Pieces.Constants.PieceEnums.Empty:
                 return False
 
-        validMoves = BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(xKingDirectionVector, yCoordKing),
-                                   Board.Constants.KING_CASTLE_SQUARE_MOVES, enforceKingUnderAttackCheck)
-
-        if len(validMoves) == 0:
+        # Need check to see if King is in check as part of any movement
+        kingValidMoves = BoardHelpers.GetValidMoves(king, board, Points(xKingDirectionVector,yCoordKing),
+                                                    Board.Constants.KING_CASTLE_SQUARE_MOVES,
+                                                    enforceKingUnderAttackCheck)
+        if len(kingValidMoves) != Board.Constants.KING_CASTLE_SQUARE_MOVES:
             return False
 
         return True
@@ -87,9 +90,9 @@ class Rook(IBasePiece):
 
         isRookOnLeftOfBoard = True if xCoordRook == 0 else False
         if isRookOnLeftOfBoard:
-            return Points(xCoordRook + Board.Constants.BISHOP_CASTLE_LEFT_TO_RIGHT_MOVES, yCoordRook)
+            return [Points(xCoordRook + Board.Constants.BISHOP_CASTLE_LEFT_TO_RIGHT_MOVES, yCoordRook)]
         else:
-            return Points(xCoordRook - Board.Constants.BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES, yCoordRook)
+            return [Points(xCoordRook - Board.Constants.BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES, yCoordRook)]
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []

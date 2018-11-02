@@ -17,6 +17,7 @@ class King(IBasePiece):
 
     def __init__(self, team, coords):
         IBasePiece.__init__( self, team, coords)
+        self.__isCastlingPossibleForPiece = True
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -33,7 +34,12 @@ class King(IBasePiece):
     def CanCastle(self, board, enforceKingIsInCheck):
         logger.debug("Entered")
 
+        # Short circuit check
+        if not self.__isCastlingPossibleForPiece:
+            return False
+
         if len(self.GetHistory()) > 1:
+            self.__isCastlingPossibleForPiece = False
             logger.debug("King has moved, returning False")
             return False
 
@@ -42,9 +48,16 @@ class King(IBasePiece):
             return False
 
         rooksThatCanCastle = []
+        hasAnyRookRemainedStationary = False
         for rook in arrayRooks:
+            if len(rook.GetHistory()) <= 1:
+                hasAnyRookRemainedStationary = True
             if rook.CanCastle(board, enforceKingIsInCheck):
                 rooksThatCanCastle.append(rook)
+
+        if not hasAnyRookRemainedStationary:
+            self.__isCastlingPossibleForPiece = False
+            return False
 
         if len(rooksThatCanCastle) == 0:
             return False
