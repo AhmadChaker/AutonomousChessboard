@@ -1,10 +1,10 @@
+- Castling can only be triggered by the King, can't be triggered by the rooks as they can normally 
+move to this positions without issue.
+
 To do:
-1) Castling
-2) en-passant
+1) en-passant
 
 
 Chess specific things coding challenges
 1) Starting off at a certain configuration on the chess board
-
-- Each team needs to determine if it has Castled once already
 

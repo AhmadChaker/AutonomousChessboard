@@ -41,11 +41,15 @@ class IBasePiece(ABC):
             return False
 
         self.SetCoordinates(toMovePoint)
-        self.GetHistory().append(toMovePoint)
         return True
 
-    # Don't go through the normal mechanisms, set everything itself
+    # Force move with no check on if we CanMove
     def ForceMove(self, toMovePoint:Utilities.Points.Points):
+        self.SetCoordinates(toMovePoint)
+        return True
+
+    # Force move with no CanMove check and no addition to history
+    def ForceMoveNoHistory(self, toMovePoint:Utilities.Points.Points):
         self.__coordinates = toMovePoint
         return True
 

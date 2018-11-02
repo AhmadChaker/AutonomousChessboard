@@ -76,7 +76,7 @@ class BoardHelpers:
             preMovePieceCoords = piece.GetCoordinates()
             pieceAtMoveCoordinateBeforeMove = copyBoard[potentialMove.GetX()][potentialMove.GetY()]
 
-            piece.ForceMove(potentialMove)
+            piece.ForceMoveNoHistory(potentialMove)
             copyBoard[potentialMove.GetX()][potentialMove.GetY()] = piece
 
             # Moved, now check if King if own team is in check
@@ -86,7 +86,7 @@ class BoardHelpers:
                 validMoves.append(potentialMove)
 
             # Undo the previous moves
-            piece.ForceMove(preMovePieceCoords)
+            piece.ForceMoveNoHistory(preMovePieceCoords)
             copyBoard[preMovePieceCoords.GetX()][preMovePieceCoords.GetY()] = piece
             copyBoard[potentialMove.GetX()][potentialMove.GetY()] = pieceAtMoveCoordinateBeforeMove
 
@@ -162,6 +162,7 @@ class BoardHelpers:
 
         copyBoard = deepcopy(board)
         return BoardHelpers.FilterMovesThatPutKingInCheck(copyBoard, piece, potentialMoves)
+
 
     # Gets all valid moves for the team, this takes into account moves which result in the player being in check
     @staticmethod
@@ -315,3 +316,7 @@ class BoardHelpers:
 
         logger.debug("No Draw, returning False")
         return False
+
+    @staticmethod
+    def IsCastleMove(pce: Pieces.IBasePiece.IBasePiece, frmOrd: Points, toOrd:Points):
+        return pce.GetPieceEnum() == PieceEnums.King and abs(frmOrd.GetX() - toOrd.GetX()) == Board.Constants.KING_CASTLE_SQUARE_MOVES

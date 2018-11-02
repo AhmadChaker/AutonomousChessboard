@@ -154,25 +154,45 @@ class Game:
                 if piece.GetPieceEnum() == PieceEnums.Pawn:
                     self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), Points(xIndex, yIndex))
 
-    def PerformPostMoveProcessing(self, fromCoord: Points, toCoord: Points):
+    def PerformPostMoveProcessing(self, pieceBeingMoved, fromCoord: Points, toCoord: Points):
 
         logger.debug("Entered method")
 
+        # Very basic validation just in case
         if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
             logger.error("Points are not in range, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
             return
 
-        # Update history, check if this was a capture and if so what piece!
+        # Update history
         self.GetHistory().AppendMovement(Movement(self.__board[fromCoord.GetX()][fromCoord.GetY()],
                                          self.__board[toCoord.GetX()][toCoord.GetY()],
                                          fromCoord, toCoord))
 
         # Update board
-        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
         self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
-        self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(TeamEnum.NoTeam, fromCoord)
+        self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(fromCoord)
+        isCastleMove = BoardHelpers.IsCastleMove(pieceBeingMoved, fromCoord, toCoord)
 
-        # Need provision for castling!
+        if isCastleMove:
+            # It's a castle move so we need to move the corresponding rook as well.
+            commonYCoord = fromCoord.GetY()
+            isCastleToTheLeft = True if fromCoord.GetX() - toCoord.GetX() > 0 else False
+            oldRookXCoord = 0 if isCastleToTheLeft > 0 else Board.Constants.MAXIMUM_X_SQUARES-1
+            newRookXCoord = toCoord.GetX()+1 if isCastleToTheLeft else toCoord.GetX() - 1
+
+            oldRookCoords = Points(oldRookXCoord, commonYCoord)
+            newRookCoords = Points(newRookXCoord, commonYCoord)
+
+            # Update history
+            self.GetHistory().AppendMovement(Movement(self.__board[oldRookCoords.GetX()][oldRookCoords.GetY()],
+                                                      self.__board[newRookCoords.GetX()][newRookCoords.GetY()],
+                                                      oldRookCoords,
+                                                      newRookCoords))
+
+            rook = self.__board[oldRookCoords.GetX()][oldRookCoords.GetY()]
+            rook.ForceMove(newRookCoords)
+            self.__board[newRookCoords.GetX()][newRookCoords.GetY()] = rook
+            self.__board[oldRookCoords.GetX()][oldRookCoords.GetY()] = EmptyPiece(oldRookCoords)
 
         # Check if pawn is being promoted
         self.PerformPawnPromotionCheck()
@@ -204,6 +224,11 @@ class Game:
 
         # Check persons turn!
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
+
+        if pieceBeingMoved.GetTeam() == TeamEnum.NoTeam:
+            logger.error("Can't move empty piece! Go again")
+            return False
+
         if pieceBeingMoved.GetTeam() != self.__playersTurn:
             logger.error("Not this players turn, not moving!")
             return False
@@ -217,7 +242,7 @@ class Game:
         hasMoved = pieceBeingMoved.Move(toCoord, self.__board)
 
         if hasMoved:
-            self.PerformPostMoveProcessing(fromCoord, toCoord)
+            self.PerformPostMoveProcessing(pieceBeingMoved, fromCoord, toCoord)
 
         logger.debug("Exiting with argument: " + str(hasMoved))
         return hasMoved
