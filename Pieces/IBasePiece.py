@@ -1,5 +1,5 @@
 import Utilities.Points
-from copy import deepcopy
+from Board.Movement import Movement
 from abc import ABC, abstractmethod
 
 
@@ -22,7 +22,7 @@ class IBasePiece(ABC):
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         pass
 
-    def CanMove(self, board, toMovePoint:Utilities.Points.Points):
+    def CanMove(self, board, toMovePoint:Utilities.Points.Points, lastMove:Movement):
 
         if toMovePoint == Utilities.Points.POINTS_UNDEFINED:
             return False
@@ -35,15 +35,15 @@ class IBasePiece(ABC):
         canMove = any(move == toMovePoint for move in validMoves)
         return canMove
 
-    def Move(self, toMovePoint:Utilities.Points.Points, board):
+    def Move(self, board, toMovePoint:Utilities.Points.Points, lastMove:Movement):
 
-        if not self.CanMove(toMovePoint, board):
+        if not self.CanMove(board, toMovePoint, lastMove):
             return False
 
         self.SetCoordinates(toMovePoint)
         return True
 
-    # Force move with no check on if we CanMove
+    # Force move with no CanMove check
     def ForceMove(self, toMovePoint:Utilities.Points.Points):
         self.SetCoordinates(toMovePoint)
         return True

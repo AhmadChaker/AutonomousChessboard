@@ -1,11 +1,10 @@
 from Utilities.Points import Points
 from Pieces.Constants import PieceEnums
-from Pieces.IBasePiece import IBasePiece
 
 
 class Movement:
 
-    def __init__(self, pieceAtFromCoord: IBasePiece, pieceAtToCoord: IBasePiece, fromCoord: Points, toCoord: Points):
+    def __init__(self, pieceAtFromCoord, pieceAtToCoord, fromCoord: Points, toCoord: Points):
         self.__pieceEnumFromCoord = pieceAtFromCoord.GetPieceEnum()
         self.__pieceEnumToCoord = pieceAtToCoord.GetPieceEnum()
         self.__teamMoved = pieceAtFromCoord.GetTeam()

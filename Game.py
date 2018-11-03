@@ -239,7 +239,7 @@ class Game:
             return False
 
         # Move piece! Now update the board
-        hasMoved = pieceBeingMoved.Move(toCoord, self.__board, self.GetHistory().GetLastMove())
+        hasMoved = pieceBeingMoved.Move(self.__board, toCoord, self.GetHistory().GetLastMove())
 
         if hasMoved:
             self.PerformPostMoveProcessing(pieceBeingMoved, fromCoord, toCoord)
