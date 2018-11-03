@@ -12,7 +12,7 @@ class Movement:
         self.__fromCoord = fromCoord
         self.__toCoord = toCoord
 
-        self.__isCaptureMove = False if self.__pieceEnumToCoord == PieceEnums.Empty else True
+        self.__isCaptureMove = True if self.__pieceEnumToCoord != PieceEnums.Empty else False
 
     def __eq__(self, other):
         return self.__pieceEnumFromCoord == other.__pieceEnumFromCoord and \

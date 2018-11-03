@@ -137,7 +137,16 @@ class Game:
 
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
 
-        isValidPieceMove = pieceBeingMoved.CanMove(toCoord, self.__board)
+        # Check persons turn!
+        if pieceBeingMoved.GetTeam() == TeamEnum.NoTeam:
+            logger.error("Can't move empty piece! Go again")
+            return False
+
+        if pieceBeingMoved.GetTeam() != self.__playersTurn:
+            logger.error("Not this players turn, not moving!")
+            return False
+
+        isValidPieceMove = pieceBeingMoved.CanMove(self.__board, toCoord, self.GetHistory().GetLastMove())
         if not isValidPieceMove:
             logger.debug("Not a valid piece move, returning false")
             return False
@@ -222,16 +231,7 @@ class Game:
             logger.error("Exiting prematurely, fromCoord or toCoord are not in range, exiting prematurely, FromCoord: "
                          + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
 
-        # Check persons turn!
         pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
-
-        if pieceBeingMoved.GetTeam() == TeamEnum.NoTeam:
-            logger.error("Can't move empty piece! Go again")
-            return False
-
-        if pieceBeingMoved.GetTeam() != self.__playersTurn:
-            logger.error("Not this players turn, not moving!")
-            return False
 
         if not self.CanMove(fromCoord, toCoord):
             logger.error("Can't move piece to requested coordinated, FromCoord: " + fromCoord.ToString() +
@@ -239,7 +239,7 @@ class Game:
             return False
 
         # Move piece! Now update the board
-        hasMoved = pieceBeingMoved.Move(toCoord, self.__board)
+        hasMoved = pieceBeingMoved.Move(toCoord, self.__board, self.GetHistory().GetLastMove())
 
         if hasMoved:
             self.PerformPostMoveProcessing(pieceBeingMoved, fromCoord, toCoord)

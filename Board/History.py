@@ -11,3 +11,8 @@ class History:
 
     def GetHistoricalMoves(self):
         return self.__historicalMoves
+
+    def GetLastMove(self):
+        if len(self.__historicalMoves) != 0:
+            return self.__historicalMoves[-1]
+        return None

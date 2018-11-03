@@ -22,7 +22,7 @@ class IBasePiece(ABC):
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         pass
 
-    def CanMove(self, toMovePoint:Utilities.Points.Points, board):
+    def CanMove(self, board, toMovePoint:Utilities.Points.Points):
 
         if toMovePoint == Utilities.Points.POINTS_UNDEFINED:
             return False

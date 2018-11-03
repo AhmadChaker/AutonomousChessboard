@@ -68,7 +68,7 @@ class BoardHelpers:
         return False
 
     @staticmethod
-    def FilterMovesThatPutKingInCheck(copyBoard, piece: Pieces.IBasePiece, potentialMoves):
+    def FilterMovesThatPutPlayerInCheck(copyBoard, piece: Pieces.IBasePiece, potentialMoves):
         # Check each potential move and see if that move puts the King in check!
         validMoves = []
 
@@ -161,8 +161,7 @@ class BoardHelpers:
             return potentialMoves
 
         copyBoard = deepcopy(board)
-        return BoardHelpers.FilterMovesThatPutKingInCheck(copyBoard, piece, potentialMoves)
-
+        return BoardHelpers.FilterMovesThatPutPlayerInCheck(copyBoard, piece, potentialMoves)
 
     # Gets all valid moves for the team, this takes into account moves which result in the player being in check
     @staticmethod
