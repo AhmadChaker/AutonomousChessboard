@@ -1,4 +1,4 @@
-from Utilities.Points import Points
+from Miscellaneous.Points import Points
 from Pieces.Constants import PieceEnums
 
 

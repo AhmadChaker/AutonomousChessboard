@@ -3,10 +3,10 @@ import Pieces.IBasePiece
 import Pieces.Constants
 import Board.Constants
 import Utilities.CoordinateConverters
-import Utilities.Points
+import Miscellaneous.Points
 import Board.Constants
 import logging
-from Utilities.Points import Points
+from Miscellaneous.Points import Points
 from Board.Constants import TeamEnum
 from Board.History import History
 from Pieces.Constants import PieceEnums
@@ -121,8 +121,8 @@ class BoardHelpers:
 
         # Validate parameters
         if moveIterations <= 0 or \
-                directionVector == Utilities.Points.POINTS_UNDEFINED or \
-                pieceToMoveCoords == Utilities.Points.POINTS_UNDEFINED:
+                directionVector == Miscellaneous.Points.POINTS_UNDEFINED or \
+                pieceToMoveCoords == Miscellaneous.Points.POINTS_UNDEFINED:
             logger.error("Problems with input variables, radius of movement: " + str(moveIterations) +
                          ", Piece Coords: " + str(pieceToMoveCoords.GetX()) + "," + str(pieceToMoveCoords.GetY()) +
                          ", Vector Coords:" + str(directionVector.GetX()) + "," + str(directionVector.GetY()))

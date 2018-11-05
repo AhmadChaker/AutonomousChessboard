@@ -1,11 +1,11 @@
-import Utilities.Points
+import Miscellaneous.Points
 from Board.Movement import Movement
 from abc import ABC, abstractmethod
 
 
 class IBasePiece(ABC):
 
-    def __init__(self, team, coordinates:Utilities.Points.Points):
+    def __init__(self, team, coordinates: Miscellaneous.Points.Points):
         self.__team = team
         self.__coordinates = coordinates
         self.__history = [coordinates]
@@ -22,9 +22,9 @@ class IBasePiece(ABC):
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         pass
 
-    def CanMove(self, board, toMovePoint:Utilities.Points.Points, lastMove:Movement):
+    def CanMove(self, board, toMovePoint: Miscellaneous.Points.Points, lastMove:Movement):
 
-        if toMovePoint == Utilities.Points.POINTS_UNDEFINED:
+        if toMovePoint == Miscellaneous.Points.POINTS_UNDEFINED:
             return False
 
         enforceKingUnderAttackCheck = True
@@ -35,7 +35,7 @@ class IBasePiece(ABC):
         canMove = any(move == toMovePoint for move in validMoves)
         return canMove
 
-    def Move(self, board, toMovePoint:Utilities.Points.Points, lastMove:Movement):
+    def Move(self, board, toMovePoint: Miscellaneous.Points.Points, lastMove:Movement):
 
         if not self.CanMove(board, toMovePoint, lastMove):
             return False
@@ -44,12 +44,12 @@ class IBasePiece(ABC):
         return True
 
     # Force move with no CanMove check
-    def ForceMove(self, toMovePoint:Utilities.Points.Points):
+    def ForceMove(self, toMovePoint: Miscellaneous.Points.Points):
         self.SetCoordinates(toMovePoint)
         return True
 
     # Force move with no CanMove check and no addition to history
-    def ForceMoveNoHistory(self, toMovePoint:Utilities.Points.Points):
+    def ForceMoveNoHistory(self, toMovePoint: Miscellaneous.Points.Points):
         self.__coordinates = toMovePoint
         return True
 

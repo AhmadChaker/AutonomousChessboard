@@ -1,4 +1,3 @@
-import Utilities.Points
 import Utilities.CoordinateConverters
 import Board.Constants
 from Utilities.BoardHelpers import BoardHelpers
@@ -11,7 +10,7 @@ from Pieces.Queen import Queen
 from Pieces.King import King
 from Board.Constants import TeamEnum
 from Pieces.Constants import PieceEnums
-from Utilities.Points import Points
+from Miscellaneous.Points import Points
 from Board.Movement import Movement
 from Board.History import History
 import logging
@@ -132,7 +131,7 @@ class Game:
 
         if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not \
                 Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
-            logger.error("Exiting CanMove prematurely, FromCoord: " + fromCoord.ToString() +
+            logger.error("Exiting CanMove prematurely, not in range, FromCoord: " + fromCoord.ToString() +
                          ", ToCoord: " + toCoord.ToString())
             return False
 
@@ -234,17 +233,12 @@ class Game:
 
         logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
 
-        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not \
-                Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
-            logger.error("Exiting prematurely, fromCoord or toCoord are not in range, exiting prematurely, FromCoord: "
-                         + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
-
-        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
-
         if not self.CanMove(fromCoord, toCoord):
             logger.error("Can't move piece to requested coordinated, FromCoord: " + fromCoord.ToString() +
                          ", ToCoord: " + toCoord.ToString())
             return False
+
+        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
 
         # Move piece! Now update the board
         hasMoved = pieceBeingMoved.Move(self.__board, toCoord, self.GetHistory().GetLastMove())

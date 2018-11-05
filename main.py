@@ -1,7 +1,7 @@
 import logging
 import Game
 import Utilities.CoordinateConverters
-import Utilities.Points
+import Miscellaneous.Points
 from Utilities.BoardHelpers import BoardHelpers
 from guizero import App, Text, TextBox, PushButton
 
@@ -22,12 +22,12 @@ def ClickedButton():
     toCoordValue = ToCoordinateTextBox.value
 
     fromArrayCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(fromCoordValue)
-    if fromArrayCoords == Utilities.Points.POINTS_UNDEFINED:
+    if fromArrayCoords == Miscellaneous.Points.POINTS_UNDEFINED:
         logging.error("Invalid FromCoord: " + str(fromCoordValue))
         return
 
     toArrayCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(toCoordValue)
-    if fromArrayCoords == Utilities.Points.POINTS_UNDEFINED:
+    if toArrayCoords == Miscellaneous.Points.POINTS_UNDEFINED:
         logging.error("Invalid ToCoord: " + str(toCoordValue))
         return
 

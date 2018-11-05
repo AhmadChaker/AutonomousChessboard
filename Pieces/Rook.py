@@ -1,8 +1,7 @@
 import sys
-import Utilities.Points
 import Board.Constants
 import Pieces.Constants
-from Utilities.Points import Points
+from Miscellaneous.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
