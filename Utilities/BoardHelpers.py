@@ -8,6 +8,7 @@ import Board.Constants
 import logging
 from Utilities.Points import Points
 from Board.Constants import TeamEnum
+from Board.History import History
 from Pieces.Constants import PieceEnums
 
 
@@ -15,6 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 class BoardHelpers:
+
+    @classmethod
+    def UpdateVariables(cls, history: History):
+        cls.History = history
 
     # Due to three part nature of the TeamEnum, this functions gets black team when white is fed, otherwise white
     @staticmethod
@@ -93,9 +98,21 @@ class BoardHelpers:
         return validMoves
 
     @staticmethod
+    def IsEnPassant(pieceMovingEnum, oldPieceCoords, newPotentialCoords, lastMove):
+        if lastMove is not None and pieceMovingEnum == PieceEnums.Pawn and \
+                lastMove.GetPieceEnumFrom() == PieceEnums.Pawn and \
+                lastMove.GetYMovement() == Board.Constants.MAXIMUM_PAWN_FORWARD_MOVEMENT:
+            # if previous to moving the y coords match and then this move causes the x coordinates to match
+            # then it corresponds to an en-passant move
+            if lastMove.GetToCoord().GetY() == oldPieceCoords.GetY() and \
+                    lastMove.GetToCoord().GetX() == newPotentialCoords.GetX():
+                return True
+        return False
+
+    @classmethod
     # Direction vector is the direction with which to move.
     # moveIterations variable corresponds to iterations of the direction vector.
-    def GetValidMoves(piece: Pieces.IBasePiece, board, directionVector: Points, moveIterations: int,
+    def GetValidMoves(cls, piece: Pieces.IBasePiece, board, directionVector: Points, moveIterations: int,
                       enforceKingUnderAttackCheck):
 
         pieceToMoveTeam = piece.GetTeam()
@@ -124,8 +141,9 @@ class BoardHelpers:
         for step in range(moveIterations):
             xPotentialCoord += directionVector.GetX()
             yPotentialCoord += directionVector.GetY()
+            potentialPoint = Points(xPotentialCoord, yPotentialCoord)
 
-            if not Utilities.CoordinateConverters.ValidatePointIsInRange(Points(xPotentialCoord, yPotentialCoord)):
+            if not Utilities.CoordinateConverters.ValidatePointIsInRange(potentialPoint):
                 # Not in range
                 break
 
@@ -138,19 +156,24 @@ class BoardHelpers:
             # 1) Can only kill diagonally of the opposite team (NOT vertically)
             # 2) They can only move forward in empty spaces of 1 (and 2 at the beginning)
             if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
-                hasNoTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Board.Constants.TeamEnum.NoTeam)
+                hasTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Board.Constants.TeamEnum.White or
+                                               pieceAtCalculatedPosition.GetTeam() == Board.Constants.TeamEnum.Black)
 
                 if abs(directionVector.GetX()) == abs(directionVector.GetY()):
                     # Diagonal move, check that the opposite team is at this position (due to earlier if statement
                     # this is equivalent to checking the above boolean
-                    if not hasNoTeamAtCalculatedPosition:
-                        potentialMoves.append(Points(xPotentialCoord, yPotentialCoord))
+                    if hasTeamAtCalculatedPosition:
+                        potentialMoves.append(potentialPoint)
+                    else:
+                        # no team at calculated position, check for en-passant
+                        if BoardHelpers.IsEnPassant(piece.GetPieceEnum(), piece.GetCoordinates(), potentialPoint, cls.History.GetLastMove()):
+                            potentialMoves.append(potentialPoint)
                 else:
                     # Straight move, check if no team occupies the space
-                    if hasNoTeamAtCalculatedPosition:
-                        potentialMoves.append(Points(xPotentialCoord, yPotentialCoord))
+                    if not hasTeamAtCalculatedPosition:
+                        potentialMoves.append(potentialPoint)
             else:
-                potentialMoves.append(Points(xPotentialCoord, yPotentialCoord))
+                potentialMoves.append(potentialPoint)
                 if pieceAtCalculatedPosition.GetTeam() != Board.Constants.TeamEnum.NoTeam:
                     break
 
@@ -181,7 +204,7 @@ class BoardHelpers:
                 if len(validPieceMoves) == 0:
                     continue
 
-                logger.error("Printing valid moves (" + str(len(validPieceMoves)) + ") " + "for: " + piece.GetPieceStr()
+                logger.info("Printing valid moves (" + str(len(validPieceMoves)) + ") " + "for: " + piece.GetPieceStr()
                             + ", at: " + piece.GetCoordinates().ToString())
                 for validMove in validPieceMoves:
                     logger.info(validMove.ToString())

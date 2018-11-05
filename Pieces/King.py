@@ -32,8 +32,6 @@ class King(IBasePiece):
         return Pieces.Constants.PieceEnums.King
 
     def CanCastle(self, board, enforceKingIsInCheck):
-        logger.debug("Entered")
-
         # Short circuit check
         if not self.__isCastlingPossibleForPiece:
             return False

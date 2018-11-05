@@ -2,7 +2,7 @@ import logging
 import Game
 import Utilities.CoordinateConverters
 import Utilities.Points
-
+from Utilities.BoardHelpers import BoardHelpers
 from guizero import App, Text, TextBox, PushButton
 
 # setup logger
@@ -12,6 +12,8 @@ logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
                     level=logging.DEBUG)
 
 t1 = Game.Game()
+BoardHelpers.UpdateVariables(t1.GetHistory())
+
 t1.PrintBoard()
 
 

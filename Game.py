@@ -114,6 +114,7 @@ class Game:
         logger.error(boardReferenceAlphabeticalDigits)
 
         self.PrintAllValidMoves()
+        self.PrintPieceProperties()
 
     def PrintHistory(self):
         logger.error("Printing history")
@@ -172,14 +173,21 @@ class Game:
             logger.error("Points are not in range, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
             return
 
+        # Check for en-passant before history check
+        isEnPassant = BoardHelpers.IsEnPassant(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord, self.GetHistory().GetLastMove())
+        if isEnPassant:
+            # Piece at new x coordinate and old y coordinate should now be empty as its captured
+            self.__board[toCoord.GetX()][fromCoord.GetY()] = EmptyPiece(Points(toCoord.GetX(), fromCoord.GetY()))
+
         # Update history
         self.GetHistory().AppendMovement(Movement(self.__board[fromCoord.GetX()][fromCoord.GetY()],
                                          self.__board[toCoord.GetX()][toCoord.GetY()],
-                                         fromCoord, toCoord))
+                                         fromCoord, toCoord, isEnPassant))
 
         # Update board
         self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
         self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(fromCoord)
+
         isCastleMove = BoardHelpers.IsCastleMove(pieceBeingMoved, fromCoord, toCoord)
 
         if isCastleMove:
@@ -252,3 +260,18 @@ class Game:
 
         BoardHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
         BoardHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.Black)
+
+    def PrintPieceProperties(self):
+        for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
+            # cycle over y coordinates
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
+                piece = self.__board[xCoord][yCoord]
+                if piece.GetPieceEnum() == PieceEnums.Empty:
+                    continue
+                logger.info("Start printing properties for: " + piece.GetPieceStr())
+                logger.info("Board coordinates: " + Points(xCoord, yCoord).ToString())
+                logger.info("Self reported coordinates: " + piece.GetCoordinates().ToString())
+                logger.info("History: ")
+                for historicalMove in piece.GetHistory():
+                    logger.info(historicalMove.ToString())
+                logger.info("End printing properties for: " + piece.GetPieceStr())

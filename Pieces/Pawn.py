@@ -33,17 +33,11 @@ class Pawn(IBasePiece):
         moveIterToKillMoves = 1
         validMoves = []
         if isPieceMovingUpwards:
-            validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, 1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, 1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
         else:
-            validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, -1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(
-                BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(0, -1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(-1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Utilities.Points.Points(1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
         return validMoves

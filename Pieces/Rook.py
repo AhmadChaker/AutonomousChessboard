@@ -32,8 +32,6 @@ class Rook(IBasePiece):
         return Pieces.Constants.PieceEnums.Rook
 
     def CanCastle(self, board, enforceKingUnderAttackCheck):
-        logger.debug("Entered")
-
         # Leverage dependency on King moving in castle to determine if castling is possible and short circuit
         if not self.__isCastlingPossibleForPiece:
             return False

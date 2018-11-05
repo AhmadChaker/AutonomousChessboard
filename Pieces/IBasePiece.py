@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class IBasePiece(ABC):
 
-    def __init__(self, team, coordinates):
+    def __init__(self, team, coordinates:Utilities.Points.Points):
         self.__team = team
         self.__coordinates = coordinates
         self.__history = [coordinates]
