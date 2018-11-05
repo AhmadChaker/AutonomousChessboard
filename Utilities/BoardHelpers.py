@@ -235,11 +235,9 @@ class BoardHelpers:
 
         # Check if King is in check and that there are NO valid moves
         validMoves = BoardHelpers.GetValidMovesForTeam(board, team)
-        if len(validMoves) == 0:
-            return False
-
-        isInCheck = BoardHelpers.IsInCheck(board, team)
-        return isInCheck
+        if len(validMoves) == 0 and BoardHelpers.IsInCheck(board, team):
+            return True
+        return False
 
     # Checkmate will not be possible for certain piece configurations, they are:
     # a) King vs King
