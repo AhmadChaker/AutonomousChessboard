@@ -1,9 +1,8 @@
 import logging
 import Game
-import Utilities.CoordinateConverters
-import Miscellaneous.Points
+from Miscellaneous.Messages import Status
 from Utilities.BoardHelpers import BoardHelpers
-from guizero import App, Text, TextBox, PushButton
+from guizero import App, Text, TextBox, PushButton, info
 
 # setup logger
 logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
@@ -18,20 +17,18 @@ t1.PrintBoard()
 
 
 def ClickedButton():
-    fromCoordValue = FromCoordinateTextBox.value
-    toCoordValue = ToCoordinateTextBox.value
+    fromBoardCoordValue = FromCoordinateTextBox.value
+    toBoardCoordValue = ToCoordinateTextBox.value
 
-    fromArrayCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(fromCoordValue)
-    if fromArrayCoords == Miscellaneous.Points.POINTS_UNDEFINED:
-        logging.error("Invalid FromCoord: " + str(fromCoordValue))
+    canMoveResult = t1.CanMove(fromBoardCoordValue, toBoardCoordValue)
+    if canMoveResult.GetStatus() == Status.Report:
+        info("Alert", canMoveResult.GetMessage())
         return
 
-    toArrayCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(toCoordValue)
-    if toArrayCoords == Miscellaneous.Points.POINTS_UNDEFINED:
-        logging.error("Invalid ToCoord: " + str(toCoordValue))
+    moveResult = t1.Move(fromBoardCoordValue, toBoardCoordValue)
+    if moveResult.GetStatus() == Status.Report:
+        info("Alert", moveResult.GetMessage())
         return
-
-    t1.Move(fromArrayCoords, toArrayCoords)
 
 
 app = App(title="Sheena", width=600, height=600, layout="grid")

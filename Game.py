@@ -1,3 +1,4 @@
+import logging
 import Utilities.CoordinateConverters
 import Board.Constants
 from Utilities.BoardHelpers import BoardHelpers
@@ -13,7 +14,8 @@ from Pieces.Constants import PieceEnums
 from Miscellaneous.Points import Points
 from Board.Movement import Movement
 from Board.History import History
-import logging
+from Miscellaneous.Result import Result
+from Miscellaneous.Messages import Status, CanMoveEnum, MoveEnum, CanMoveMessageDictionary, MoveMessageDictionary
 
 
 logger = logging.getLogger(__name__)
@@ -125,34 +127,38 @@ class Game:
                          str(historicalMove.IsCaptureMove())
             logger.error(strToPrint)
 
-    def CanMove(self, fromCoord: Points, toCoord: Points):
+    def CanMove(self, fromBoardCoords: str, toBoardCoords: str):
 
-        logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
+        logger.debug("Entered, FromBoardCoords: " + fromBoardCoords + ", ToBoardCoords: " + toBoardCoords)
 
-        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not \
-                Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
-            logger.error("Exiting CanMove prematurely, not in range, FromCoord: " + fromCoord.ToString() +
-                         ", ToCoord: " + toCoord.ToString())
-            return False
+        fromCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(fromBoardCoords)
+        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoords):
+            logger.error("Exiting CanMove prematurely, not in range, FromCoord: " + fromCoords.ToString())
+            return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.FromCoordOutOfRange])
 
-        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
+        toCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(toBoardCoords)
+        if not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoords):
+            logger.error("Exiting CanMove prematurely, not in range, ToCoord: " + toCoords.ToString())
+            return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.ToCoordOutOfRange])
+
+        pieceBeingMoved = self.__board[fromCoords.GetX()][fromCoords.GetY()]
 
         # Check persons turn!
         if pieceBeingMoved.GetTeam() == TeamEnum.NoTeam:
-            logger.error("Can't move empty piece! Go again")
-            return False
+            logger.error("Can't move empty piece, Go again")
+            return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.SlotHasNoTeam])
 
         if pieceBeingMoved.GetTeam() != self.__playersTurn:
             logger.error("Not this players turn, not moving!")
-            return False
+            return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.WrongTeam])
 
-        isValidPieceMove = pieceBeingMoved.CanMove(self.__board, toCoord, self.GetHistory().GetLastMove())
+        isValidPieceMove = pieceBeingMoved.CanMove(self.__board, toCoords, self.GetHistory().GetLastMove())
         if not isValidPieceMove:
-            logger.debug("Not a valid piece move, returning false")
-            return False
+            logger.error("Not a valid piece move, returning false")
+            return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.InvalidPieceCentricMove])
 
-        logger.debug("Exiting method with value True")
-        return True
+        logger.debug("Exiting method with success")
+        return Result(Status.NoReport, CanMoveMessageDictionary[CanMoveEnum.Success])
 
     def PerformPawnPromotionCheck(self):
         # Use the fact that a pawn promotion only occurs for one pawn at a time and on the top or bottom squares
@@ -163,7 +169,7 @@ class Game:
                 if piece.GetPieceEnum() == PieceEnums.Pawn:
                     self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), Points(xIndex, yIndex))
 
-    def PerformPostMoveProcessing(self, pieceBeingMoved, fromCoord: Points, toCoord: Points):
+    def PerformMoveProcessing(self, pieceBeingMoved, fromCoord: Points, toCoord: Points):
 
         logger.debug("Entered method")
 
@@ -213,41 +219,53 @@ class Game:
         # Check if pawn is being promoted
         self.PerformPawnPromotionCheck()
 
-        # Check if player whose turn it's about to be is checkmated
-        opposingTeam = BoardHelpers.GetOpposingTeam(self.__playersTurn)
-        isCheckMated = BoardHelpers.IsInCheckMate(self.GetBoard(), opposingTeam)
+    def Move(self, fromBoardCoords: str, toBoardCoords: str):
 
-        # Check draw conditions
-        isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetHistory().GetHistoricalMoves(), self.__playersTurn)
+        logger.debug("Entered, fromBoardCoords: " + fromBoardCoords + ", toBoardCoords: " + toBoardCoords)
 
-        # Change players turn
-        logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
-        self.__playersTurn = BoardHelpers.GetOpposingTeam(self.__playersTurn)
-        logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
+        fromCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(fromBoardCoords)
+        toCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(toBoardCoords)
 
-        self.PrintBoard()
+        canMoveResult = self.CanMove(fromBoardCoords, toBoardCoords)
+        if canMoveResult.GetStatus() == Status.Report:
+            logger.error("Can't move piece to requested coordinated, FromCoord: " + fromCoords.ToString() +
+                         ", ToCoord: " + toCoords.ToString())
+            return Result(Status.Report, MoveMessageDictionary[MoveEnum.GeneralFailure])
 
-        self.PrintHistory()
-
-    def Move(self, fromCoord: Points, toCoord: Points):
-
-        logger.debug("Entered, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
-
-        if not self.CanMove(fromCoord, toCoord):
-            logger.error("Can't move piece to requested coordinated, FromCoord: " + fromCoord.ToString() +
-                         ", ToCoord: " + toCoord.ToString())
-            return False
-
-        pieceBeingMoved = self.__board[fromCoord.GetX()][fromCoord.GetY()]
+        pieceBeingMoved = self.__board[fromCoords.GetX()][fromCoords.GetY()]
 
         # Move piece! Now update the board
-        hasMoved = pieceBeingMoved.Move(self.__board, toCoord, self.GetHistory().GetLastMove())
+        hasMoved = pieceBeingMoved.Move(self.__board, toCoords, self.GetHistory().GetLastMove())
 
         if hasMoved:
-            self.PerformPostMoveProcessing(pieceBeingMoved, fromCoord, toCoord)
+            self.PerformMoveProcessing(pieceBeingMoved, fromCoords, toCoords)
+            self.PrintBoard()
+            self.PrintHistory()
 
-        logger.debug("Exiting with argument: " + str(hasMoved))
-        return hasMoved
+            # Perform post moving processing
+            opposingTeam = BoardHelpers.GetOpposingTeam(self.__playersTurn)
+            isCheckMated = BoardHelpers.IsInCheckMate(self.GetBoard(), opposingTeam)
+            if isCheckMated:
+                logger.error("Checkmate!")
+                return Result(Status.Report, MoveMessageDictionary[MoveEnum.CheckMate])
+
+            # Check draw conditions
+            isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetHistory().GetHistoricalMoves(), self.__playersTurn)
+            if isDraw:
+                logger.error("Draw declared")
+                return Result(Status.Report, MoveMessageDictionary[MoveEnum.Draw])
+
+            # Change players turn
+            logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
+            self.__playersTurn = BoardHelpers.GetOpposingTeam(self.__playersTurn)
+            logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
+
+            isInCheck = BoardHelpers.IsInCheck(self.GetBoard(), self.__playersTurn)
+            if isInCheck:
+                logger.error("Check")
+                return Result(Status.Report, MoveMessageDictionary[MoveEnum.Check])
+
+        return Result(Status.NoReport, MoveMessageDictionary[MoveEnum.Success])
 
     def PrintAllValidMoves(self):
         logger.info("Printing all valid white moves")

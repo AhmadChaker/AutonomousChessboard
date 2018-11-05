@@ -19,6 +19,7 @@ BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES = 2
 # Pawn constants
 MAXIMUM_PAWN_FORWARD_MOVEMENT = 2
 
+
 class TeamEnum(Enum):
     NoTeam = 1
     White = 2
