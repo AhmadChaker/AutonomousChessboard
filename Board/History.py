@@ -6,6 +6,18 @@ class History:
     def __init__(self):
         self.__historicalMoves = []
 
+    def __eq__(self, other):
+        firstHistMoves = self.GetHistoricalMoves()
+        otherHistMoves = other.GetHistoricalMoves()
+        if len(firstHistMoves) != len(otherHistMoves):
+            return False
+
+        for index in range(len(firstHistMoves)):
+            if firstHistMoves[index] != otherHistMoves[index]:
+                return False
+
+        return True
+
     def AppendMovement(self, move: Movement):
         self.__historicalMoves.append(move)
 

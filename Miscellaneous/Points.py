@@ -25,5 +25,11 @@ class Points:
     def GetY(self):
         return self.__yArray
 
+    def GetXBoard(self):
+        return self.__xBoard
+
+    def GetYBoard(self):
+        return self.__yBoard
+
 
 POINTS_UNDEFINED = Points(-sys.maxsize, -sys.maxsize)

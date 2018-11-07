@@ -15,9 +15,10 @@ class Movement:
     def __eq__(self, other):
         return self.__pieceEnumFromCoord == other.__pieceEnumFromCoord and \
                self.__pieceEnumToCoord == other.__pieceEnumToCoord and \
-               self.__fromCoord == other.__pieceFromCoord and \
+               self.__fromCoord == other.__fromCoord and \
                self.__toCoord == other.__toCoord and \
-               self.__teamMoved == other.__teamMoved
+               self.__teamMoved == other.__teamMoved and \
+               self.__isCaptureMove == other.__isCaptureMove
 
     def IsCaptureMove(self):
         return self.__isCaptureMove
