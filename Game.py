@@ -11,7 +11,7 @@ from Pieces.Queen import Queen
 from Pieces.King import King
 from Board.Constants import TeamEnum
 from Pieces.Constants import PieceEnums
-from Miscellaneous.Points import Points
+from Miscellaneous.BoardPoints import BoardPoints
 from Board.Movement import Movement
 from Board.History import History
 from Miscellaneous.Result import Result
@@ -50,41 +50,41 @@ class Game:
 
         for yIndex in yIndexEmptyPieces:
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                self.__board[xIndex][yIndex] = EmptyPiece(Points(xIndex, yIndex))
+                self.__board[xIndex][yIndex] = EmptyPiece(BoardPoints(xIndex, yIndex))
 
         yIndexWhitePawns = 1
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            self.__board[xIndex][yIndexWhitePawns] = Pawn(TeamEnum.White, Points(xIndex, yIndexWhitePawns))
+            self.__board[xIndex][yIndexWhitePawns] = Pawn(TeamEnum.White, BoardPoints(xIndex, yIndexWhitePawns))
 
         yIndexBlackPawns = 6
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            self.__board[xIndex][yIndexBlackPawns] = Pawn(TeamEnum.Black, Points(xIndex, yIndexBlackPawns))
+            self.__board[xIndex][yIndexBlackPawns] = Pawn(TeamEnum.Black, BoardPoints(xIndex, yIndexBlackPawns))
 
         # White major pieces
-        self.__board[0][0] = Rook(TeamEnum.White, Points(0, 0))
-        self.__board[7][0] = Rook(TeamEnum.White, Points(7, 0))
+        self.__board[0][0] = Rook(TeamEnum.White, BoardPoints(0, 0))
+        self.__board[7][0] = Rook(TeamEnum.White, BoardPoints(7, 0))
 
-        self.__board[1][0] = Knight(TeamEnum.White, Points(1, 0))
-        self.__board[6][0] = Knight(TeamEnum.White, Points(6, 0))
+        self.__board[1][0] = Knight(TeamEnum.White, BoardPoints(1, 0))
+        self.__board[6][0] = Knight(TeamEnum.White, BoardPoints(6, 0))
 
-        self.__board[2][0] = Bishop(TeamEnum.White, Points(2, 0))
-        self.__board[5][0] = Bishop(TeamEnum.White, Points(5, 0))
+        self.__board[2][0] = Bishop(TeamEnum.White, BoardPoints(2, 0))
+        self.__board[5][0] = Bishop(TeamEnum.White, BoardPoints(5, 0))
 
-        self.__board[3][0] = Queen(TeamEnum.White, Points(3, 0))
-        self.__board[4][0] = King(TeamEnum.White, Points(4, 0))
+        self.__board[3][0] = Queen(TeamEnum.White, BoardPoints(3, 0))
+        self.__board[4][0] = King(TeamEnum.White, BoardPoints(4, 0))
 
         # Black Major pieces
-        self.__board[0][7] = Rook(TeamEnum.Black, Points(0, 7))
-        self.__board[7][7] = Rook(TeamEnum.Black, Points(7, 7))
+        self.__board[0][7] = Rook(TeamEnum.Black, BoardPoints(0, 7))
+        self.__board[7][7] = Rook(TeamEnum.Black, BoardPoints(7, 7))
 
-        self.__board[1][7] = Knight(TeamEnum.Black, Points(1, 7))
-        self.__board[6][7] = Knight(TeamEnum.Black, Points(6, 7))
+        self.__board[1][7] = Knight(TeamEnum.Black, BoardPoints(1, 7))
+        self.__board[6][7] = Knight(TeamEnum.Black, BoardPoints(6, 7))
 
-        self.__board[2][7] = Bishop(TeamEnum.Black, Points(2, 7))
-        self.__board[5][7] = Bishop(TeamEnum.Black, Points(5, 7))
+        self.__board[2][7] = Bishop(TeamEnum.Black, BoardPoints(2, 7))
+        self.__board[5][7] = Bishop(TeamEnum.Black, BoardPoints(5, 7))
 
-        self.__board[3][7] = Queen(TeamEnum.Black, Points(3, 7))
-        self.__board[4][7] = King(TeamEnum.Black, Points(4, 7))
+        self.__board[3][7] = Queen(TeamEnum.Black, BoardPoints(3, 7))
+        self.__board[4][7] = King(TeamEnum.Black, BoardPoints(4, 7))
 
         logger.debug("End ResetBoard")
 
@@ -167,9 +167,9 @@ class Game:
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = self.__board[xIndex][yIndex]
                 if piece.GetPieceEnum() == PieceEnums.Pawn:
-                    self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), Points(xIndex, yIndex))
+                    self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), BoardPoints(xIndex, yIndex))
 
-    def PerformMoveProcessing(self, pieceBeingMoved, fromCoord: Points, toCoord: Points):
+    def PerformMoveProcessing(self, pieceBeingMoved, fromCoord: BoardPoints, toCoord: BoardPoints):
 
         logger.debug("Entered method")
 
@@ -281,7 +281,7 @@ class Game:
                 if piece.GetPieceEnum() == PieceEnums.Empty:
                     continue
                 logger.info("Start printing properties for: " + piece.GetPieceStr())
-                logger.info("Board coordinates: " + Points(xCoord, yCoord).ToString())
+                logger.info("Board coordinates: " + BoardPoints(xCoord, yCoord).ToString())
                 logger.info("Self reported coordinates: " + piece.GetCoordinates().ToString())
                 logger.info("History: ")
                 for historicalMove in piece.GetHistory():

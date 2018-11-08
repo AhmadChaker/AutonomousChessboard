@@ -1,10 +1,10 @@
-from Miscellaneous.Points import Points
+from Miscellaneous.BoardPoints import BoardPoints
 from Pieces.Constants import PieceEnums
 
 
 class Movement:
 
-    def __init__(self, pieceAtFromCoord, pieceAtToCoord, fromCoord: Points, toCoord: Points, isEnPassantMove):
+    def __init__(self, pieceAtFromCoord, pieceAtToCoord, fromCoord: BoardPoints, toCoord: BoardPoints, isEnPassantMove):
         self.__pieceEnumFromCoord = pieceAtFromCoord.GetPieceEnum()
         self.__pieceEnumToCoord = pieceAtToCoord.GetPieceEnum()
         self.__teamMoved = pieceAtFromCoord.GetTeam()

@@ -1,6 +1,7 @@
 import sys
 import Board.Constants
 import Pieces.Constants
+from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
@@ -87,9 +88,9 @@ class Rook(IBasePiece):
 
         isRookOnLeftOfBoard = True if xCoordRook == 0 else False
         if isRookOnLeftOfBoard:
-            return [Points(xCoordRook + Board.Constants.BISHOP_CASTLE_LEFT_TO_RIGHT_MOVES, yCoordRook)]
+            return [BoardPoints(xCoordRook + Board.Constants.BISHOP_CASTLE_LEFT_TO_RIGHT_MOVES, yCoordRook)]
         else:
-            return [Points(xCoordRook - Board.Constants.BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES, yCoordRook)]
+            return [BoardPoints(xCoordRook - Board.Constants.BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES, yCoordRook)]
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []

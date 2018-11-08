@@ -1,6 +1,6 @@
 import Pieces.Constants
-import Miscellaneous.Points
 import Board.Constants
+from Miscellaneous.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
@@ -33,11 +33,11 @@ class Pawn(IBasePiece):
         moveIterToKillMoves = 1
         validMoves = []
         if isPieceMovingUpwards:
-            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(0, 1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(-1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(0, 1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(-1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(1, 1), moveIterToKillMoves, enforceKingUnderAttackCheck))
         else:
-            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(0, -1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(-1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
-            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(0, -1), moveIterNonKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(-1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
+            validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(1, -1), moveIterToKillMoves, enforceKingUnderAttackCheck))
         return validMoves

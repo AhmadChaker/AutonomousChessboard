@@ -9,7 +9,7 @@ class EmptyPiece(IBasePiece):
         IBasePiece.__init__( self, TeamEnum.NoTeam, coords)
 
     def GetPieceStr(self):
-        return '-'
+        return '\u2015'
 
     def GetPieceEnum(self):
         return PieceEnums.Empty

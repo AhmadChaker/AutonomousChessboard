@@ -3,7 +3,7 @@ from Board.Movement import Movement
 from Pieces.Pawn import Pawn
 from Pieces.EmptyPiece import EmptyPiece
 from Board.Constants import TeamEnum
-from Miscellaneous.Points import Points
+from Miscellaneous.BoardPoints import Points
 
 
 class TestMovement(unittest.TestCase):
@@ -62,3 +62,23 @@ class TestMovement(unittest.TestCase):
                          move1IsEnPassant)
 
         self.assertTrue(move1.IsCaptureMove())
+
+    def test_GetXMovement(self):
+        move1PawnA = Pawn(TeamEnum.White, Points(4, 4))
+        move1PawnB = Pawn(TeamEnum.Black, Points(3, 5))
+        move1IsEnPassant = False
+        move1 = Movement(move1PawnA, move1PawnB, move1PawnA.GetCoordinates(), move1PawnB.GetCoordinates(),
+                         move1IsEnPassant)
+
+        expectedXMovement = 1
+        self.assertEqual(move1.GetXMovement(), expectedXMovement)
+
+    def test_GetYMovement(self):
+        move1PawnA = Pawn(TeamEnum.White, Points(4, 4))
+        move1PawnB = Pawn(TeamEnum.Black, Points(3, 7))
+        move1IsEnPassant = False
+        move1 = Movement(move1PawnA, move1PawnB, move1PawnA.GetCoordinates(), move1PawnB.GetCoordinates(),
+                         move1IsEnPassant)
+
+        expectedYMovement = 3
+        self.assertEqual(move1.GetYMovement(), expectedYMovement)

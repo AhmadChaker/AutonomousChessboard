@@ -3,9 +3,10 @@ import Pieces.IBasePiece
 import Pieces.Constants
 import Board.Constants
 import Utilities.CoordinateConverters
-import Miscellaneous.Points
+import Miscellaneous.BoardPoints
 import Board.Constants
 import logging
+from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
 from Board.Constants import TeamEnum
 from Board.History import History
@@ -120,9 +121,7 @@ class BoardHelpers:
         pieceToMoveCoords = piece.GetCoordinates()
 
         # Validate parameters
-        if moveIterations <= 0 or \
-                directionVector == Miscellaneous.Points.POINTS_UNDEFINED or \
-                pieceToMoveCoords == Miscellaneous.Points.POINTS_UNDEFINED:
+        if moveIterations <= 0 or pieceToMoveCoords == Miscellaneous.BoardPoints.BOARD_POINTS_UNDEFINED:
             logger.error("Problems with input variables, radius of movement: " + str(moveIterations) +
                          ", Piece Coords: " + str(pieceToMoveCoords.GetX()) + "," + str(pieceToMoveCoords.GetY()) +
                          ", Vector Coords:" + str(directionVector.GetX()) + "," + str(directionVector.GetY()))
@@ -141,7 +140,7 @@ class BoardHelpers:
         for step in range(moveIterations):
             xPotentialCoord += directionVector.GetX()
             yPotentialCoord += directionVector.GetY()
-            potentialPoint = Points(xPotentialCoord, yPotentialCoord)
+            potentialPoint = BoardPoints(xPotentialCoord, yPotentialCoord)
 
             if not Utilities.CoordinateConverters.ValidatePointIsInRange(potentialPoint):
                 # Not in range
@@ -338,5 +337,5 @@ class BoardHelpers:
         return False
 
     @staticmethod
-    def IsCastleMove(pce: Pieces.IBasePiece.IBasePiece, frmOrd: Points, toOrd:Points):
+    def IsCastleMove(pce: Pieces.IBasePiece.IBasePiece, frmOrd: BoardPoints, toOrd:BoardPoints):
         return pce.GetPieceEnum() == PieceEnums.King and abs(frmOrd.GetX() - toOrd.GetX()) == Board.Constants.KING_CASTLE_SQUARE_MOVES

@@ -1,7 +1,7 @@
 import sys
-import Miscellaneous.Points
 import Board.Constants
 import Pieces.Constants
+from Miscellaneous.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
@@ -31,12 +31,12 @@ class Queen(IBasePiece):
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(1, 1), Queen.MoveIterations, enforceKingUnderAttackCheck))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(1, 0), Queen.MoveIterations, enforceKingUnderAttackCheck))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(1, -1), Queen.MoveIterations, enforceKingUnderAttackCheck))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(0, -1), Queen.MoveIterations, enforceKingUnderAttackCheck))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(-1, -1), Queen.MoveIterations, enforceKingUnderAttackCheck))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(-1, 0), Queen.MoveIterations, enforceKingUnderAttackCheck))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(-1, 1), Queen.MoveIterations, enforceKingUnderAttackCheck))
-        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Miscellaneous.Points.Points(0, 1), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(1, 1), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(1, 0), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(1, -1), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(0, -1), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(-1, -1), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(-1, 0), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(-1, 1), Queen.MoveIterations, enforceKingUnderAttackCheck))
+        validMoves.extend(BoardHelpers.GetValidMoves(self, board, Points(0, 1), Queen.MoveIterations, enforceKingUnderAttackCheck))
         return validMoves

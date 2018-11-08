@@ -4,7 +4,7 @@ from Board.History import History
 from Pieces.Rook import Rook
 from Pieces.Pawn import Pawn
 from Board.Constants import TeamEnum
-from Miscellaneous.Points import Points
+from Miscellaneous.BoardPoints import Points
 
 
 class TestHistory(unittest.TestCase):
