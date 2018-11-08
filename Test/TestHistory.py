@@ -4,7 +4,7 @@ from Board.History import History
 from Pieces.Rook import Rook
 from Pieces.Pawn import Pawn
 from Board.Constants import TeamEnum
-from Miscellaneous.BoardPoints import Points
+from Miscellaneous.BoardPoints import BoardPoints
 
 
 class TestHistory(unittest.TestCase):
@@ -17,10 +17,10 @@ class TestHistory(unittest.TestCase):
 
         # Initialise variables
         hist = History()
-        move1Rook = Rook(TeamEnum.White, Points(5,5))
-        move1Pawn = Pawn(TeamEnum.Black, Points(4,4))
-        move2Rook = Rook(TeamEnum.Black, Points(2,2))
-        move2Pawn = Pawn(TeamEnum.White, Points(3,3))
+        move1Rook = Rook(TeamEnum.White, BoardPoints(5,5))
+        move1Pawn = Pawn(TeamEnum.Black, BoardPoints(4,4))
+        move2Rook = Rook(TeamEnum.Black, BoardPoints(2,2))
+        move2Pawn = Pawn(TeamEnum.White, BoardPoints(3,3))
         moveIsEnPassant = False
 
         # Start methods
@@ -35,10 +35,10 @@ class TestHistory(unittest.TestCase):
     def test_GetHistoricalMoves_HistoryAppendedSuccessfully(self):
         # Initialise variables
         hist = History()
-        move1Rook = Rook(TeamEnum.White, Points(5,5))
-        move1Pawn = Pawn(TeamEnum.Black, Points(4,4))
-        move2Rook = Rook(TeamEnum.Black, Points(2,2))
-        move2Pawn = Pawn(TeamEnum.White, Points(3,3))
+        move1Rook = Rook(TeamEnum.White, BoardPoints(5,5))
+        move1Pawn = Pawn(TeamEnum.Black, BoardPoints(4,4))
+        move2Rook = Rook(TeamEnum.Black, BoardPoints(2,2))
+        move2Pawn = Pawn(TeamEnum.White, BoardPoints(3,3))
         moveIsEnPassant = False
 
         # Start methods
