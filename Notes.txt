@@ -1,8 +1,16 @@
-- Castling can only be triggered by the King, can't be triggered by the rooks as they can normally 
-move to this positions without issue.
+Notes:
+- Castling can only be triggered by the King, can't be triggered by the rooks as they can normally move to their post castling position without issue
 
-To do:
-1) en-passant
+Basics ToDo:
+1) Hook up electromagnet
+	A) See it's strength through a wooden surface
+2) Get a pressure distribution array sensor
+	A) API?
+	B) Source vendor
+	C) electrical input?
+3) X-Y table
+	A) Electrical input?
+
 
 
 Chess specific things coding challenges

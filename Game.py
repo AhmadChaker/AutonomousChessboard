@@ -130,14 +130,13 @@ class Game:
     def CanMove(self, fromBoardCoords: str, toBoardCoords: str):
 
         logger.debug("Entered, FromBoardCoords: " + fromBoardCoords + ", ToBoardCoords: " + toBoardCoords)
-
-        fromCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(fromBoardCoords)
-        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoords):
+        fromCoords = Utilities.CoordinateConverters.ConvertInputToPointCoordinates(fromBoardCoords)
+        if not Utilities.CoordinateConverters.IsPointInRange(fromCoords):
             logger.error("Exiting CanMove prematurely, not in range, FromCoord: " + fromCoords.ToString())
             return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.FromCoordOutOfRange])
 
-        toCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(toBoardCoords)
-        if not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoords):
+        toCoords = Utilities.CoordinateConverters.ConvertInputToPointCoordinates(toBoardCoords)
+        if not Utilities.CoordinateConverters.IsPointInRange(toCoords):
             logger.error("Exiting CanMove prematurely, not in range, ToCoord: " + toCoords.ToString())
             return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.ToCoordOutOfRange])
 
@@ -174,7 +173,7 @@ class Game:
         logger.debug("Entered method")
 
         # Very basic validation just in case
-        if not Utilities.CoordinateConverters.ValidatePointIsInRange(fromCoord) or not Utilities.CoordinateConverters.ValidatePointIsInRange(toCoord):
+        if not Utilities.CoordinateConverters.IsPointInRange(fromCoord) or not Utilities.CoordinateConverters.IsPointInRange(toCoord):
             logger.error("Points are not in range, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
             return
 
@@ -223,8 +222,8 @@ class Game:
 
         logger.debug("Entered, fromBoardCoords: " + fromBoardCoords + ", toBoardCoords: " + toBoardCoords)
 
-        fromCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(fromBoardCoords)
-        toCoords = Utilities.CoordinateConverters.ConvertChessToArrayCoordinates(toBoardCoords)
+        fromCoords = Utilities.CoordinateConverters.ConvertInputToPointCoordinates(fromBoardCoords)
+        toCoords = Utilities.CoordinateConverters.ConvertInputToPointCoordinates(toBoardCoords)
 
         canMoveResult = self.CanMove(fromBoardCoords, toBoardCoords)
         if canMoveResult.GetStatus() == Status.Report:

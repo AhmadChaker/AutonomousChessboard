@@ -142,7 +142,7 @@ class BoardHelpers:
             yPotentialCoord += directionVector.GetY()
             potentialPoint = BoardPoints(xPotentialCoord, yPotentialCoord)
 
-            if not Utilities.CoordinateConverters.ValidatePointIsInRange(potentialPoint):
+            if not Utilities.CoordinateConverters.IsPointInRange(potentialPoint):
                 # Not in range
                 break
 
