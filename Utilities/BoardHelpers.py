@@ -25,6 +25,8 @@ class BoardHelpers:
     # Due to three part nature of the TeamEnum, this functions gets black team when white is fed, otherwise white
     @staticmethod
     def GetOpposingTeam(team: TeamEnum):
+        if team == TeamEnum.NoTeam:
+            return TeamEnum.NoTeam
         return TeamEnum.Black if team == TeamEnum.White else TeamEnum.White
 
     # This method gets all legal moves from the piece's perspective, this does not take into account board
