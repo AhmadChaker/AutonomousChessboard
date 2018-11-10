@@ -23,7 +23,7 @@ class IBasePiece(ABC):
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         pass
 
-    def CanMove(self, board, toMovePoint: BoardPoints, lastMove:Movement):
+    def CanMove(self, board, toMovePoint: BoardPoints):
 
         if toMovePoint == Miscellaneous.BoardPoints.BOARD_POINTS_UNDEFINED:
             return False
@@ -36,9 +36,9 @@ class IBasePiece(ABC):
         canMove = any(move == toMovePoint for move in validMoves)
         return canMove
 
-    def Move(self, board, toMovePoint: BoardPoints, lastMove:Movement):
+    def Move(self, board, toMovePoint: BoardPoints):
 
-        if not self.CanMove(board, toMovePoint, lastMove):
+        if not self.CanMove(board, toMovePoint):
             return False
 
         self.SetCoordinates(toMovePoint)

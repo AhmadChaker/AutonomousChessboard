@@ -2,6 +2,7 @@ import logging
 import Utilities.CoordinateConverters
 import Board.Constants
 from Utilities.BoardHelpers import BoardHelpers
+from Pieces.IBasePiece import IBasePiece
 from Pieces.EmptyPiece import EmptyPiece
 from Pieces.Pawn import Pawn
 from Pieces.Rook import Rook
@@ -41,6 +42,21 @@ class Game:
     def GetHistory(self):
         return self.__history
 
+    def UpdatePieceOnBoard(self, piece: IBasePiece):
+        pieceCoords = piece.GetCoordinates()
+
+        if not Utilities.CoordinateConverters.IsPointInRange(pieceCoords):
+            logger.error("Not in range, pieceCoords: " + pieceCoords.ToString())
+
+        self.GetBoard()[pieceCoords.GetX()][pieceCoords.GetY()] = piece
+
+    def GetPieceAtCoordinate(self, pieceCoords:BoardPoints):
+        if not Utilities.CoordinateConverters.IsPointInRange(pieceCoords):
+            logger.error("Not in range, pieceCoords: " + pieceCoords.ToString())
+            return None
+
+        return self.GetBoard()[pieceCoords.GetX()][pieceCoords.GetY()]
+
     def ResetBoard(self):
 
         logger.debug("Entered ResetBoard")
@@ -50,41 +66,41 @@ class Game:
 
         for yIndex in yIndexEmptyPieces:
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                self.__board[xIndex][yIndex] = EmptyPiece(BoardPoints(xIndex, yIndex))
+                self.UpdatePieceOnBoard(EmptyPiece(BoardPoints(xIndex, yIndex)))
 
         yIndexWhitePawns = 1
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            self.__board[xIndex][yIndexWhitePawns] = Pawn(TeamEnum.White, BoardPoints(xIndex, yIndexWhitePawns))
+            self.UpdatePieceOnBoard(Pawn(TeamEnum.White, BoardPoints(xIndex, yIndexWhitePawns)))
 
         yIndexBlackPawns = 6
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            self.__board[xIndex][yIndexBlackPawns] = Pawn(TeamEnum.Black, BoardPoints(xIndex, yIndexBlackPawns))
+            self.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(xIndex, yIndexBlackPawns)))
 
         # White major pieces
-        self.__board[0][0] = Rook(TeamEnum.White, BoardPoints(0, 0))
-        self.__board[7][0] = Rook(TeamEnum.White, BoardPoints(7, 0))
+        self.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(0, 0)))
+        self.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(7, 0)))
 
-        self.__board[1][0] = Knight(TeamEnum.White, BoardPoints(1, 0))
-        self.__board[6][0] = Knight(TeamEnum.White, BoardPoints(6, 0))
+        self.UpdatePieceOnBoard(Knight(TeamEnum.White, BoardPoints(1, 0)))
+        self.UpdatePieceOnBoard(Knight(TeamEnum.White, BoardPoints(6, 0)))
 
-        self.__board[2][0] = Bishop(TeamEnum.White, BoardPoints(2, 0))
-        self.__board[5][0] = Bishop(TeamEnum.White, BoardPoints(5, 0))
+        self.UpdatePieceOnBoard(Bishop(TeamEnum.White, BoardPoints(2, 0)))
+        self.UpdatePieceOnBoard(Bishop(TeamEnum.White, BoardPoints(5, 0)))
 
-        self.__board[3][0] = Queen(TeamEnum.White, BoardPoints(3, 0))
-        self.__board[4][0] = King(TeamEnum.White, BoardPoints(4, 0))
+        self.UpdatePieceOnBoard(Queen(TeamEnum.White, BoardPoints(3, 0)))
+        self.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(4, 0)))
 
         # Black Major pieces
-        self.__board[0][7] = Rook(TeamEnum.Black, BoardPoints(0, 7))
-        self.__board[7][7] = Rook(TeamEnum.Black, BoardPoints(7, 7))
+        self.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(0, 7)))
+        self.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(7, 7)))
 
-        self.__board[1][7] = Knight(TeamEnum.Black, BoardPoints(1, 7))
-        self.__board[6][7] = Knight(TeamEnum.Black, BoardPoints(6, 7))
+        self.UpdatePieceOnBoard(Knight(TeamEnum.Black, BoardPoints(1, 7)))
+        self.UpdatePieceOnBoard(Knight(TeamEnum.Black, BoardPoints(6, 7)))
 
-        self.__board[2][7] = Bishop(TeamEnum.Black, BoardPoints(2, 7))
-        self.__board[5][7] = Bishop(TeamEnum.Black, BoardPoints(5, 7))
+        self.UpdatePieceOnBoard(Bishop(TeamEnum.Black, BoardPoints(2, 7)))
+        self.UpdatePieceOnBoard(Bishop(TeamEnum.Black, BoardPoints(5, 7)))
 
-        self.__board[3][7] = Queen(TeamEnum.Black, BoardPoints(3, 7))
-        self.__board[4][7] = King(TeamEnum.Black, BoardPoints(4, 7))
+        self.UpdatePieceOnBoard(Queen(TeamEnum.Black, BoardPoints(3, 7)))
+        self.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(4, 7)))
 
         logger.debug("End ResetBoard")
 
@@ -106,7 +122,7 @@ class Game:
             boardReferenceNumericalDigits = str(yCoord+1) + "|" + str(yCoord) + "\t"
             lineToPrint = boardReferenceNumericalDigits
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                lineToPrint += self.__board[xCoord][yCoord].GetPieceStr() + "\t"
+                lineToPrint += self.GetPieceAtCoordinate(BoardPoints(xCoord, yCoord)).GetPieceStr() + "\t"
             lineToPrint += "  " + boardReferenceNumericalDigits
             logger.error(lineToPrint)
 
@@ -140,7 +156,7 @@ class Game:
             logger.error("Exiting CanMove prematurely, not in range, ToCoord: " + toCoords.ToString())
             return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.ToCoordOutOfRange])
 
-        pieceBeingMoved = self.__board[fromCoords.GetX()][fromCoords.GetY()]
+        pieceBeingMoved = self.GetPieceAtCoordinate(fromCoords)
 
         # Check persons turn!
         if pieceBeingMoved.GetTeam() == TeamEnum.NoTeam:
@@ -151,7 +167,7 @@ class Game:
             logger.error("Not this players turn, not moving!")
             return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.WrongTeam])
 
-        isValidPieceMove = pieceBeingMoved.CanMove(self.__board, toCoords, self.GetHistory().GetLastMove())
+        isValidPieceMove = pieceBeingMoved.CanMove(self.GetBoard(), toCoords)
         if not isValidPieceMove:
             logger.error("Not a valid piece move, returning false")
             return Result(Status.Report, CanMoveMessageDictionary[CanMoveEnum.InvalidPieceCentricMove])
@@ -164,9 +180,9 @@ class Game:
         yIndexPawnPromotions = [0, Board.Constants.MAXIMUM_Y_SQUARES - 1]
         for yIndex in yIndexPawnPromotions:
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = self.__board[xIndex][yIndex]
+                piece = self.GetPieceAtCoordinate(BoardPoints(xIndex, yIndex))
                 if piece.GetPieceEnum() == PieceEnums.Pawn:
-                    self.__board[xIndex][yIndex] = Queen(piece.GetTeam(), BoardPoints(xIndex, yIndex))
+                    self.UpdatePieceOnBoard(Queen(piece.GetTeam(), BoardPoints(xIndex, yIndex)))
 
     def PerformMoveProcessing(self, pieceBeingMoved, fromCoord: BoardPoints, toCoord: BoardPoints):
 
@@ -181,16 +197,16 @@ class Game:
         isEnPassant = BoardHelpers.IsEnPassant(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord, self.GetHistory().GetLastMove())
         if isEnPassant:
             # Piece at new x coordinate and old y coordinate should now be empty as its captured
-            self.__board[toCoord.GetX()][fromCoord.GetY()] = EmptyPiece(Points(toCoord.GetX(), fromCoord.GetY()))
+            self.UpdatePieceOnBoard(EmptyPiece(BoardPoints(toCoord.GetX(), fromCoord.GetY())))
 
         # Update history
-        self.GetHistory().AppendMovement(Movement(self.__board[fromCoord.GetX()][fromCoord.GetY()],
-                                         self.__board[toCoord.GetX()][toCoord.GetY()],
+        self.GetHistory().AppendMovement(Movement(self.GetPieceAtCoordinate(fromCoord),
+                                         self.GetPieceAtCoordinate(toCoord),
                                          fromCoord, toCoord, isEnPassant))
 
         # Update board
-        self.__board[toCoord.GetX()][toCoord.GetY()] = pieceBeingMoved
-        self.__board[fromCoord.GetX()][fromCoord.GetY()] = EmptyPiece(fromCoord)
+        self.UpdatePieceOnBoard(pieceBeingMoved)
+        self.UpdatePieceOnBoard(EmptyPiece(fromCoord))
 
         isCastleMove = BoardHelpers.IsCastleMove(pieceBeingMoved, fromCoord, toCoord)
 
@@ -201,19 +217,19 @@ class Game:
             oldRookXCoord = 0 if isCastleToTheLeft > 0 else Board.Constants.MAXIMUM_X_SQUARES-1
             newRookXCoord = toCoord.GetX()+1 if isCastleToTheLeft else toCoord.GetX() - 1
 
-            oldRookCoords = Points(oldRookXCoord, commonYCoord)
-            newRookCoords = Points(newRookXCoord, commonYCoord)
+            oldRookCoords = BoardPoints(oldRookXCoord, commonYCoord)
+            newRookCoords = BoardPoints(newRookXCoord, commonYCoord)
 
             # Update history
-            self.GetHistory().AppendMovement(Movement(self.__board[oldRookCoords.GetX()][oldRookCoords.GetY()],
-                                                      self.__board[newRookCoords.GetX()][newRookCoords.GetY()],
+            self.GetHistory().AppendMovement(Movement(self.GetPieceAtCoordinate(oldRookCoords),
+                                                      self.GetPieceAtCoordinate(newRookCoords),
                                                       oldRookCoords,
                                                       newRookCoords))
 
-            rook = self.__board[oldRookCoords.GetX()][oldRookCoords.GetY()]
+            rook = self.GetPieceAtCoordinate(oldRookCoords)
             rook.ForceMove(newRookCoords)
-            self.__board[newRookCoords.GetX()][newRookCoords.GetY()] = rook
-            self.__board[oldRookCoords.GetX()][oldRookCoords.GetY()] = EmptyPiece(oldRookCoords)
+            self.UpdatePieceOnBoard(rook)
+            self.UpdatePieceOnBoard(EmptyPiece(oldRookCoords))
 
         # Check if pawn is being promoted
         self.PerformPawnPromotionCheck()
@@ -231,10 +247,10 @@ class Game:
                          ", ToCoord: " + toCoords.ToString())
             return Result(Status.Report, MoveMessageDictionary[MoveEnum.GeneralFailure])
 
-        pieceBeingMoved = self.__board[fromCoords.GetX()][fromCoords.GetY()]
+        pieceBeingMoved = self.GetPieceAtCoordinate(fromCoords)
 
         # Move piece! Now update the board
-        hasMoved = pieceBeingMoved.Move(self.__board, toCoords, self.GetHistory().GetLastMove())
+        hasMoved = pieceBeingMoved.Move(self.GetBoard(), toCoords)
 
         if hasMoved:
             self.PerformMoveProcessing(pieceBeingMoved, fromCoords, toCoords)
@@ -276,7 +292,7 @@ class Game:
         for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
             # cycle over y coordinates
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = self.__board[xCoord][yCoord]
+                piece = self.GetPieceAtCoordinate(BoardPoints(xCoord, yCoord))
                 if piece.GetPieceEnum() == PieceEnums.Empty:
                     continue
                 logger.info("Start printing properties for: " + piece.GetPieceStr())
