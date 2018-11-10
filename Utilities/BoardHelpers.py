@@ -38,7 +38,7 @@ class BoardHelpers:
             # cycle over y coordinates
 
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = board[xCoord][yCoord]
+                piece = board.GetPieceAtCoordinate(BoardPoints(xCoord, yCoord))
                 if piece.GetTeam() != teamToGet:
                     continue
 
@@ -53,7 +53,7 @@ class BoardHelpers:
         pieces = []
         for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = board[xCoord][yCoord]
+                piece = board.GetPieceAtCoordinate(BoardPoints(xCoord,yCoord))
                 if piece.GetTeam() == team and piece.GetPieceEnum() == pieceType:
                     pieces.append(piece)
         return pieces
@@ -82,10 +82,10 @@ class BoardHelpers:
 
         for potentialMove in potentialMoves:
             preMovePieceCoords = piece.GetCoordinates()
-            pieceAtMoveCoordinateBeforeMove = copyBoard[potentialMove.GetX()][potentialMove.GetY()]
+            pieceAtMoveCoordinateBeforeMove = copyBoard.GetPieceAtCoordinate(potentialMove)
 
             piece.ForceMoveNoHistory(potentialMove)
-            copyBoard[potentialMove.GetX()][potentialMove.GetY()] = piece
+            copyBoard.UpdatePieceOnBoard(piece)
 
             # Moved, now check if King if own team is in check
             isInCheck = BoardHelpers.IsInCheck(copyBoard, piece.GetTeam())
@@ -95,8 +95,8 @@ class BoardHelpers:
 
             # Undo the previous moves
             piece.ForceMoveNoHistory(preMovePieceCoords)
-            copyBoard[preMovePieceCoords.GetX()][preMovePieceCoords.GetY()] = piece
-            copyBoard[potentialMove.GetX()][potentialMove.GetY()] = pieceAtMoveCoordinateBeforeMove
+            copyBoard.UpdatePieceOnBoard(piece)
+            copyBoard.UpdatePieceOnBoard(pieceAtMoveCoordinateBeforeMove)
 
         return validMoves
 
@@ -148,7 +148,7 @@ class BoardHelpers:
                 # Not in range
                 break
 
-            pieceAtCalculatedPosition = board[xPotentialCoord][yPotentialCoord]
+            pieceAtCalculatedPosition = board.GetPieceAtCoordinate(BoardPoints(xPotentialCoord, yPotentialCoord))
             if pieceAtCalculatedPosition.GetTeam() == pieceToMoveTeam:
                 # Can't move to this position as it's occupied by the same team
                 break
@@ -196,7 +196,7 @@ class BoardHelpers:
             # cycle over y coordinates
 
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = board[xCoord][yCoord]
+                piece = board.GetPieceAtCoordinate(BoardPoints(xCoord,yCoord))
                 if piece.GetTeam() != teamToPrint:
                     continue
 
@@ -222,7 +222,7 @@ class BoardHelpers:
         otherTeam = BoardHelpers.GetOpposingTeam(currentTeam)
         for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = board[xIndex][yIndex]
+                piece = board.GetPieceAtCoordinate(BoardPoints(xIndex, yIndex))
                 if piece.GetTeam() == currentTeam:
                     piecesCurrentTeam.append(piece)
                 if piece.GetTeam() == otherTeam:

@@ -67,7 +67,7 @@ class Rook(IBasePiece):
 
         # Ensure all spaces are empty
         for xCoord in xRangeToConsider:
-            if board[xCoord][yCoordRook].GetPieceEnum() != Pieces.Constants.PieceEnums.Empty:
+            if board.GetPieceAtCoordinate(BoardPoints(xCoord, yCoordRook)).GetPieceEnum() != Pieces.Constants.PieceEnums.Empty:
                 return False
 
         # Need check to see if King is in check as part of any movement

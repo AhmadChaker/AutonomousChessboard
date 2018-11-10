@@ -13,7 +13,7 @@ logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
 t1 = Game.Game()
 BoardHelpers.UpdateVariables(t1.GetHistory())
 
-t1.PrintBoard()
+t1.PrintProperties()
 
 
 def ClickedButton():
