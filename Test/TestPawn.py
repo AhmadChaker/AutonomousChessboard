@@ -1,8 +1,10 @@
 import unittest
-import Board.Constants
+import Miscellaneous.BoardPoints
 from Pieces.EmptyPiece import EmptyPiece
 from Pieces.Pawn import Pawn
 from Board.Constants import TeamEnum
+from Board.ChessBoard import ChessBoard
+from Board.Movement import Movement
 from Miscellaneous.BoardPoints import BoardPoints
 from Utilities.BoardHelpers import BoardHelpers
 from Board.History import History
@@ -12,91 +14,226 @@ class TestPawn(unittest.TestCase):
 
     def setUp(self):
         # Initialise chess board 2D structure
-        self.__board = [None] * Board.Constants.MAXIMUM_X_SQUARES
-        for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            # for each y line
-            self.__board[xIndex] = [None] * Board.Constants.MAXIMUM_Y_SQUARES
-
-        for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                self.__board[xIndex][yIndex] = EmptyPiece(BoardPoints(xIndex, yIndex))
-
-        BoardHelpers.UpdateVariables(History())
+        self.chessBoard = ChessBoard()
+        self.history = History()
+        BoardHelpers.UpdateVariables(self.history)
 
     def tearDown(self):
         # get rid of persisted variables
         BoardHelpers.History = None
 
+    # region Tests of IBase methods
+    # Testing IBasePiece methods here (as they require implementations of abstract methods)
+
+    def test_IBasePiece_Constructor_HistorySetToInitialCoordinate(self):
+        pawnCoordinate = BoardPoints(2,2)
+        pawn = Pawn(TeamEnum.White, pawnCoordinate)
+
+        expectedHistoryLength = 1
+        self.assertEqual(len(pawn.GetHistory()), expectedHistoryLength)
+        self.assertEqual(pawn.GetHistory()[0], pawnCoordinate)
+
+    def test_IBasePiece_CanMove_ToMovePointUndefined_ReturnsFalse(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        toMoveCoordinate = Miscellaneous.BoardPoints.BOARD_POINTS_UNDEFINED
+
+    # end region
+
     # Due to unidirectional nature of Pawns, test white and then black Pawns for each case
 
-    #  TODO: Test all of the IBasePiece methods here (the ones that require implementations of abstract methods
+    # region White Pawn specific
     def test_GetValidMoves_WhitePawn_NoHistory_ReturnsTwoMoves(self):
-        whitePawn = Pawn(TeamEnum.White, BoardPoints(3, 3))
-        self.__board[3][3] = whitePawn
-
-        actualValidMoves = whitePawn.GetValidMoves(self.__board, False)
+        whitePawnCoord = BoardPoints(1,1)
+        whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
+        actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
 
         expectedValidMoves = []
-        expectedValidMoves.append(BoardPoints(3,4))
-        expectedValidMoves.append(BoardPoints(3,5))
+        expectedValidMoves.append(BoardPoints(1,2))
+        expectedValidMoves.append(BoardPoints(1,3))
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
     def test_GetValidMoves_WhitePawn_HasHistory_ReturnsOneMove(self):
-        whitePawn = Pawn(TeamEnum.White, BoardPoints(3, 3))
-        self.__board[3][3] = whitePawn
+        whitePawnCoord = BoardPoints(1,1)
+        whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
 
         # add some nonsense history
         whitePawn.GetHistory().append(BoardPoints(2,3))
         whitePawn.GetHistory().append(BoardPoints(1,3))
 
-        actualValidMoves = whitePawn.GetValidMoves(self.__board, False)
+        actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
 
         expectedValidMoves = []
-        expectedValidMoves.append(BoardPoints(3, 4))
+        expectedValidMoves.append(BoardPoints(1, 2))
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_WhitePawn_HasHistory_AttackingLeft_ReturnsTwoMoves(self):
+    def test_GetValidMoves_WhitePawn_NoHistory_AttackingLeft_ReturnsThreeMoves(self):
 
-        whitePawn = Pawn(TeamEnum.White, BoardPoints(3, 3))
-        self.__board[3][3] = whitePawn
+        whitePawnCoord = BoardPoints(1,1)
+        whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
 
-        # add some nonsense history to the Pawn!
-        whitePawn.GetHistory().append(BoardPoints(2,3))
-        whitePawn.GetHistory().append(BoardPoints(1,3))
+        blackPiece = Pawn(TeamEnum.Black, BoardPoints(0,2))
+        self.chessBoard.UpdatePieceOnBoard(blackPiece)
 
-        blackPiece = Pawn(TeamEnum.Black, BoardPoints(2,4))
-        self.__board[2][4] = blackPiece
-
-        actualValidMoves = whitePawn.GetValidMoves(self.__board, False)
+        actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
 
         expectedValidMoves = []
         # Directly ahead
-        expectedValidMoves.append(BoardPoints(3, 4))
+        expectedValidMoves.append(BoardPoints(1, 2))
+        expectedValidMoves.append(BoardPoints(1, 3))
         # Attack move
-        expectedValidMoves.append(BoardPoints(2,4))
+        expectedValidMoves.append(BoardPoints(0,2))
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_WhitePawn_HasHistory_AttackingRight_ReturnsTwoMoves(self):
+    def test_GetValidMoves_WhitePawn_NoHistory_AttackingRight_ReturnsThreeMoves(self):
 
-        whitePawn = Pawn(TeamEnum.White, BoardPoints(3, 3))
-        self.__board[3][3] = whitePawn
+        whitePawnCoord = BoardPoints(1,1)
+        whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
 
-        # add some nonsense history to the Pawn!
-        whitePawn.GetHistory().append(BoardPoints(2, 3))
-        whitePawn.GetHistory().append(BoardPoints(1, 3))
+        blackPiece = Pawn(TeamEnum.Black, BoardPoints(2,2))
+        self.chessBoard.UpdatePieceOnBoard(blackPiece)
 
-        blackPiece = Pawn(TeamEnum.Black, BoardPoints(4, 4))
-        self.__board[4][4] = blackPiece
-
-        actualValidMoves = whitePawn.GetValidMoves(self.__board, False)
+        actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
 
         expectedValidMoves = []
         # Directly ahead
-        expectedValidMoves.append(BoardPoints(3, 4))
+        expectedValidMoves.append(BoardPoints(1, 2))
+        expectedValidMoves.append(BoardPoints(1, 3))
         # Attack move
-        expectedValidMoves.append(BoardPoints(4, 4))
+        expectedValidMoves.append(BoardPoints(2,2))
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_WhitePawn_EnPassantAttack_Success(self):
+
+        whitePawnCoord = BoardPoints(2, 4)
+        whitePawn = Pawn(TeamEnum.White, whitePawnCoord)
+        self.chessBoard.UpdatePieceOnBoard(whitePawn)
+
+        # Need this to be a double step move
+        # Previous
+        blackPawnCoordBeforeMove = BoardPoints(1, 6)
+        blackPawnBeforeMove = Pawn(TeamEnum.Black, blackPawnCoordBeforeMove)
+
+        # After
+        coordAfterMove = BoardPoints(1, 4)
+        blackPawnAfterMove = Pawn(TeamEnum.Black, coordAfterMove)
+        self.chessBoard.UpdatePieceOnBoard(blackPawnAfterMove)
+
+        # Last move needs to have been a double step from black
+
+        movement = Movement(blackPawnBeforeMove, EmptyPiece(coordAfterMove), blackPawnCoordBeforeMove, coordAfterMove, False)
+        self.history.AppendMovement(movement)
+
+        actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
+
+        expectedValidMoves = []
+        # Directly ahead
+        expectedValidMoves.append(BoardPoints(2, 5))
+        # En-passant attack move
+        expectedValidMoves.append(BoardPoints(1, 5))
+
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+    # end region
+
+    # region Black Pawn
+
+    def test_GetValidMoves_BlackPawn_NoHistory_ReturnsTwoMoves(self):
+        blackPawnCoord = BoardPoints(1,6)
+        blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
+        actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
+
+        expectedValidMoves = []
+        expectedValidMoves.append(BoardPoints(1,5))
+        expectedValidMoves.append(BoardPoints(1,4))
+
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_BlackPawn_HasHistory_ReturnsOneMove(self):
+        blackPawnCoord = BoardPoints(1,6)
+        blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
+
+        # add some nonsense history
+        blackPawn.GetHistory().append(BoardPoints(2,3))
+        blackPawn.GetHistory().append(BoardPoints(1,3))
+
+        actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
+
+        expectedValidMoves = []
+        expectedValidMoves.append(BoardPoints(1, 5))
+
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_BlackPawn_NoHistory_AttackingLeft_ReturnsThreeMoves(self):
+
+        blackPawnCoord = BoardPoints(1,6)
+        blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
+
+        whitePiece = Pawn(TeamEnum.White, BoardPoints(0,5))
+        self.chessBoard.UpdatePieceOnBoard(whitePiece)
+
+        actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
+
+        expectedValidMoves = []
+        # Directly ahead
+        expectedValidMoves.append(BoardPoints(1, 5))
+        expectedValidMoves.append(BoardPoints(1, 4))
+        # Attack move
+        expectedValidMoves.append(BoardPoints(0,5))
+
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_BlackPawn_NoHistory_AttackingRight_ReturnsThreeMoves(self):
+
+        blackPawnCoord = BoardPoints(1,6)
+        blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
+
+        whitePiece = Pawn(TeamEnum.White, BoardPoints(2,5))
+        self.chessBoard.UpdatePieceOnBoard(whitePiece)
+
+        actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
+
+        expectedValidMoves = []
+        # Directly ahead
+        expectedValidMoves.append(BoardPoints(1, 5))
+        expectedValidMoves.append(BoardPoints(1, 4))
+        # Attack move
+        expectedValidMoves.append(BoardPoints(2,5))
+
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_BlackPawn_EnPassantAttack_Success(self):
+
+        blackPawnCoord = BoardPoints(1, 3)
+        blackPawn = Pawn(TeamEnum.Black, blackPawnCoord)
+        self.chessBoard.UpdatePieceOnBoard(blackPawn)
+
+        # Need this to be a double step move
+        # Previous
+        whitePawnCoordBeforeMove = BoardPoints(2, 1)
+        whitePawnBeforeMove = Pawn(TeamEnum.White, whitePawnCoordBeforeMove)
+
+        # After
+        coordAfterMove = BoardPoints(2, 3)
+        whitePawnAfterMove = Pawn(TeamEnum.White, coordAfterMove)
+        self.chessBoard.UpdatePieceOnBoard(whitePawnAfterMove)
+
+        # Last move needs to have been a double step from white
+        movement = Movement(whitePawnBeforeMove, EmptyPiece(coordAfterMove), whitePawnCoordBeforeMove, coordAfterMove, False)
+        self.history.AppendMovement(movement)
+
+        actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
+
+        expectedValidMoves = []
+        # Directly ahead
+        expectedValidMoves.append(BoardPoints(1, 2))
+        # En-passant attack move
+        expectedValidMoves.append(BoardPoints(2, 2))
+
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    # end region

@@ -133,8 +133,6 @@ class BoardHelpers:
                 pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Empty:
             return []
 
-        # killing pieces logic
-
         xPotentialCoord = pieceToMoveCoords.GetX()
         yPotentialCoord = pieceToMoveCoords.GetY()
 
