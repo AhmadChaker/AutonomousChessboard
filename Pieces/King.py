@@ -18,7 +18,7 @@ class King(IBasePiece):
 
     def __init__(self, team, coords):
         IBasePiece.__init__( self, team, coords)
-        self.__isCastlingPossibleForPiece = True
+        self.__canNeverCastleThisPiece = False
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -32,30 +32,38 @@ class King(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.King
 
+    def SetCanNeverCastleThisPiece(self, canNeverCastleThisPiece):
+        self.__canNeverCastleThisPiece = canNeverCastleThisPiece
+
+    def GetCanNeverCastleThisPiece(self):
+        return self.__canNeverCastleThisPiece
+
     def CanCastle(self, board, enforceKingIsInCheck):
+
         # Short circuit check
-        if not self.__isCastlingPossibleForPiece:
+        if self.__canNeverCastleThisPiece:
             return False
 
         if len(self.GetHistory()) > 1:
-            self.__isCastlingPossibleForPiece = False
+            self.__canNeverCastleThisPiece = True
             logger.debug("King has moved, returning False")
             return False
 
         arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
         if len(arrayRooks) == 0:
+            self.__canNeverCastleThisPiece = True
             return False
 
         rooksThatCanCastle = []
-        hasAnyRookRemainedStationary = False
+        canPotentiallyCastleARookInFuture = False
         for rook in arrayRooks:
-            if len(rook.GetHistory()) <= 1:
-                hasAnyRookRemainedStationary = True
+            if not rook.GetCanNeverCastleThisPiece():
+                canPotentiallyCastleARookInFuture = True
             if rook.CanCastle(board, enforceKingIsInCheck):
                 rooksThatCanCastle.append(rook)
 
-        if not hasAnyRookRemainedStationary:
-            self.__isCastlingPossibleForPiece = False
+        if not canPotentiallyCastleARookInFuture:
+            self.__canNeverCastleThisPiece = True
             return False
 
         if len(rooksThatCanCastle) == 0:

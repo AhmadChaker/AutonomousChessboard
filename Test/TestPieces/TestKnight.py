@@ -11,7 +11,7 @@ class TestKnight(unittest.TestCase):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
 
-    def test_GetValidMoves_BishopInMiddle_ReturnsValidMoves(self):
+    def test_GetValidMoves_ReturnsValidMoves(self):
 
         self.chessBoard.RemoveAllPieces()
 
