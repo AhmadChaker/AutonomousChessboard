@@ -23,7 +23,7 @@ class TestPawn(unittest.TestCase):
         BoardHelpers.History = None
 
     # region Tests of IBase methods
-    # Testing IBasePiece methods here (as they require implementations of abstract methods)
+    # IBasePiece methods tested only in this class as they require implementations of abstract methods
 
     def test_IBasePiece_Constructor_HistorySetToInitialCoordinate(self):
         pawnCoordinate = BoardPoints(2,2)
@@ -38,6 +38,98 @@ class TestPawn(unittest.TestCase):
         pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
 
         toMoveCoordinate = Miscellaneous.BoardPoints.BOARD_POINTS_UNDEFINED
+        canMove = pawn.CanMove(self.chessBoard, toMoveCoordinate)
+
+        self.assertFalse(canMove)
+
+    def test_IBasePiece_CanMove_NoValidMoves_ReturnsFalse(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        toMoveCoordinate = BoardPoints(2, 2)
+
+        # Put a black piece right in front of the primary pawn so that it can't move anywhere.
+        pawnBlack = Pawn(TeamEnum.Black, toMoveCoordinate)
+        self.chessBoard.UpdatePieceOnBoard(pawnBlack)
+
+        canMove = pawn.CanMove(self.chessBoard, toMoveCoordinate)
+
+        self.assertFalse(canMove)
+
+    def test_IBasePiece_CanMove_CanMoveCoordinateNotInValidMoveList_ReturnsFalse(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        # To move coordinate is not in the validMoves list
+        toMoveCoordinate = BoardPoints(7, 7)
+
+        canMove = pawn.CanMove(self.chessBoard, toMoveCoordinate)
+
+        self.assertFalse(canMove)
+
+    def test_IBasePiece_CanMove_ValidMove_ReturnsTrue(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        # To move coordinate is not in the validMoves list
+        toMoveCoordinate = BoardPoints(2, 2)
+
+        canMove = pawn.CanMove(self.chessBoard, toMoveCoordinate)
+
+        self.assertTrue(canMove)
+
+    def test_IBasePiece_Move_CantMove_ReturnsFalse(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        # To move coordinate is not in the validMoves list
+        toMoveCoordinate = BoardPoints(2, 7)
+
+        coordinatePrevMove = BoardPoints(2,1)   # Duplicate of previous
+        hasMoved = pawn.Move(self.chessBoard, toMoveCoordinate)
+
+        self.assertFalse(hasMoved)
+        # Verify History is still unmodified and that coordinate is still unmoved
+        self.assertEqual(coordinatePrevMove, pawn.GetCoordinates())
+        self.assertEqual(1, len(pawn.GetHistory()))
+
+    def test_IBasePiece_Move_ValidMove_ReturnsTrue(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        toMoveCoordinate = BoardPoints(2, 2)
+
+        hasMoved = pawn.Move(self.chessBoard, toMoveCoordinate)
+
+        self.assertTrue(hasMoved)
+        self.assertEqual(toMoveCoordinate, pawn.GetCoordinates())
+        self.assertEqual(2, len(pawn.GetHistory()))
+
+    def test_IBasePiece_ForceMove_ReturnsTrue(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        # For tests case, set to an invalid coordinate
+        toMoveCoordinate = BoardPoints(2, 7)
+
+        hasMoved = pawn.ForceMove(toMoveCoordinate)
+
+        self.assertTrue(hasMoved)
+        self.assertEqual(toMoveCoordinate, pawn.GetCoordinates())
+        self.assertEqual(2, len(pawn.GetHistory()))
+
+    def test_IBasePiece_ForceMoveNoHistory_ReturnsTrue(self):
+        pawnCoordinate = BoardPoints(2, 1)
+        pawn = self.chessBoard.GetPieceAtCoordinate(pawnCoordinate)
+
+        # For tests case, set to an invalid coordinate
+        toMoveCoordinate = BoardPoints(2, 7)
+
+        hasMoved = pawn.ForceMoveNoHistory(toMoveCoordinate)
+
+        self.assertTrue(hasMoved)
+        self.assertEqual(toMoveCoordinate, pawn.GetCoordinates())
+        self.assertEqual(1, len(pawn.GetHistory()))
 
     # end region
 

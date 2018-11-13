@@ -1,6 +1,6 @@
 import unittest
 import Board.Constants
-from Pieces.EmptyPiece import EmptyPiece
+from Board.ChessBoard import ChessBoard
 from Pieces.Bishop import Bishop
 from Board.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
@@ -10,19 +10,15 @@ class TestBishop(unittest.TestCase):
 
     def setUp(self):
         # Initialise chess board 2D structure
-        self.__board = [None] * Board.Constants.MAXIMUM_X_SQUARES
-        for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            # for each y line
-            self.__board[xIndex] = [None] * Board.Constants.MAXIMUM_Y_SQUARES
-
-        for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                self.__board[xIndex][yIndex] = EmptyPiece(BoardPoints(xIndex, yIndex))
+        self.chessBoard = ChessBoard()
 
     def test_GetValidMoves_BishopInMiddle_ReturnsValidMoves(self):
 
+        self.chessBoard.RemoveAllPieces()
+
+        # Put a new bishop in middle
         bishop = Bishop(TeamEnum.White, BoardPoints(3, 3))
-        self.__board[3][3] = bishop
+        self.chessBoard.UpdatePieceOnBoard(bishop)
 
         expectedValidMoves = []
 
@@ -49,6 +45,6 @@ class TestBishop(unittest.TestCase):
 
         expectedValidMoves.sort()
 
-        validMoves = bishop.GetValidMoves(self.__board, False)
+        validMoves = bishop.GetValidMoves(self.chessBoard, False)
         validMoves.sort()
         self.assertEqual(validMoves, expectedValidMoves)

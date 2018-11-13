@@ -168,9 +168,10 @@ class BoardHelpers:
                         if BoardHelpers.IsEnPassant(piece.GetPieceEnum(), piece.GetCoordinates(), potentialPoint, cls.History.GetLastMove()):
                             potentialMoves.append(potentialPoint)
                 else:
-                    # Straight move, check if no team occupies the space
-                    if not hasTeamAtCalculatedPosition:
-                        potentialMoves.append(potentialPoint)
+                    # Straight move
+                    if hasTeamAtCalculatedPosition:
+                        break
+                    potentialMoves.append(potentialPoint)
             else:
                 potentialMoves.append(potentialPoint)
                 if pieceAtCalculatedPosition.GetTeam() != Board.Constants.TeamEnum.NoTeam:

@@ -28,7 +28,7 @@ class ChessBoard:
             self.__board[xIndex] = [None] * Board.Constants.MAXIMUM_Y_SQUARES
 
         # Set board to initial positions
-        self.ResetBoard()
+        self.ResetToDefault()
 
     def UpdatePieceOnBoard(self, piece: IBasePiece):
         pieceCoords = piece.GetCoordinates()
@@ -45,7 +45,7 @@ class ChessBoard:
 
         return self.__board[pieceCoords.GetX()][pieceCoords.GetY()]
 
-    def ResetBoard(self):
+    def ResetToDefault(self):
 
         logger.debug("Entered ResetBoard")
         # Set empty pieces first
@@ -91,6 +91,12 @@ class ChessBoard:
         self.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(4, 7)))
 
         logger.debug("End ResetBoard")
+
+    def RemoveAllPieces(self):
+        for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
+            # cycle over y coordinates
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
+                self.UpdatePieceOnBoard(EmptyPiece(BoardPoints(xCoord, yCoord)))
 
     def PrintBoard(self):
 
