@@ -57,7 +57,6 @@ class Rook(IBasePiece):
             return False
 
         xCoordKing = king.GetCoordinates().GetX()
-        yCoordKing = king.GetCoordinates().GetY()
         xCoordRook = self.GetCoordinates().GetX()
         yCoordRook = self.GetCoordinates().GetY()
 
