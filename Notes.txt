@@ -4,5 +4,6 @@ Notes:
 Enhancements:
 1) Starting off at a certain configuration on the chess board
 
+Detecting pieces - Mesh?
 
 

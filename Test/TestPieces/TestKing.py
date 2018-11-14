@@ -88,7 +88,7 @@ class TestKing(unittest.TestCase):
 
     # region CanCastle tests
 
-    def test_CanCastle_CanNeverCastleSetTrue_RetursnFalse(self):
+    def test_CanCastle_CanNeverCastleSetTrue_ReturnsFalse(self):
 
         # Get King
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4,0))
@@ -100,7 +100,7 @@ class TestKing(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
         self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
 
-        king.SetCanNeverCastleThisPiece(True)
+        king.SetCanCastleInTheFuture(False)
 
         canCastle = king.CanCastle(self.chessBoard, False)
 
@@ -124,7 +124,7 @@ class TestKing(unittest.TestCase):
 
         canCastle = king.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
-        self.assertTrue(king.GetCanNeverCastleThisPiece())
+        self.assertFalse(king.CanCastleInTheFuture())
 
     def test_CanCastle_NoRooks_ReturnsFalse(self):
         # Get King
@@ -143,6 +143,110 @@ class TestKing(unittest.TestCase):
 
         canCastle = king.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
-        self.assertTrue(king.GetCanNeverCastleThisPiece())
+        self.assertFalse(king.CanCastleInTheFuture())
 
+    def test_CanCastle_NoRookCanCastleAndCannotCastleInFuture_ReturnsFalse(self):
+        # Get King
+        king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
+
+        # Remove major pieces around King to allow castling
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+
+        leftRook = self.chessBoard.GetPieceAtCoordinate((BoardPoints(0, 0)))
+        leftRook.Move(self.chessBoard, BoardPoints(1, 0))
+        leftRook.Move(self.chessBoard, BoardPoints(0, 0))
+
+        rightRook = self.chessBoard.GetPieceAtCoordinate((BoardPoints(7, 0)))
+        rightRook.Move(self.chessBoard, BoardPoints(6, 0))
+        rightRook.Move(self.chessBoard, BoardPoints(7, 0))
+
+        canCastle = king.CanCastle(self.chessBoard, False)
+        self.assertFalse(canCastle)
+        self.assertFalse(king.CanCastleInTheFuture())
+
+    def test_CanCastle_BothRooksCanCastle_ReturnsTrue(self):
+
+        # Get King
+        king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
+
+        # Remove major pieces around King to allow castling
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+
+        canCastle = king.CanCastle(self.chessBoard, False)
+        self.assertTrue(canCastle)
+        self.assertTrue(king.CanCastleInTheFuture())
+
+    def test_CanCastle_OnlyLeftRookCanCastle_ReturnsTrue(self):
+
+        # Get King
+        king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
+
+        # Remove major pieces around King to allow castling
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
+
+        # comment out below so that only left rook can castle
+        # self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+
+        canCastle = king.CanCastle(self.chessBoard, False)
+        self.assertTrue(canCastle)
+        self.assertTrue(king.CanCastleInTheFuture())
+
+    # endregion
+
+    # region GetCastleMoves tests
+
+    def test_GetCastleMoves_CantCastle_ReturnsEmpty(self):
+
+        # Get King
+        king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
+
+        # Don't remove any pieces between king and rooks
+        castleMoves = king.GetCastleMoves(self.chessBoard, False)
+        self.assertEqual(castleMoves, [])
+
+    def test_GetCastleMoves_LeftAndRightCastlePossible_ReturnsMoves(self):
+        # Get King
+        king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
+
+        # Remove pieces between king and rooks
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+
+        castleMoves = king.GetCastleMoves(self.chessBoard, False)
+        castleMoves.sort()
+
+        expectedMoves = [BoardPoints(2, 0), BoardPoints(6, 0)]
+        expectedMoves.sort()
+
+        self.assertEqual(castleMoves, expectedMoves)
+
+    def test_GetCastleMoves_OnlyRightCastlePossible_ReturnsMoves(self):
+        # Get King
+        king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
+
+        # Remove pieces between king and rooks
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+
+        castleMoves = king.GetCastleMoves(self.chessBoard, False)
+        castleMoves.sort()
+
+        expectedMoves = [BoardPoints(6, 0)]
+        expectedMoves.sort()
+
+        self.assertEqual(castleMoves, expectedMoves)
     # endregion

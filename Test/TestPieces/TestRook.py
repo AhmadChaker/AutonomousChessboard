@@ -145,7 +145,7 @@ class TestRook(unittest.TestCase):
 
     # region CanCastle tests
 
-    def test_CanCastle_CanNeverCastlePieceSetToTrue_ReturnsFalse(self):
+    def test_CanCastle_CanCastleInFutureSetToFalse_ReturnsFalse(self):
 
         rightRookCoordinates = BoardPoints(0, 0)
         rook = self.chessBoard.GetPieceAtCoordinate(rightRookCoordinates)
@@ -155,7 +155,7 @@ class TestRook(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
         self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
 
-        rook.SetCanNeverCastleThisPiece(True)
+        rook.SetCanCastleInTheFuture(False)
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
 
@@ -173,7 +173,7 @@ class TestRook(unittest.TestCase):
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
-        self.assertTrue(rook.GetCanNeverCastleThisPiece())
+        self.assertFalse(rook.CanCastleInTheFuture())
 
     def test_CanCastle_KingIsInCheck_ReturnsFalse(self):
         leftRookCoordinates = BoardPoints(7, 0)
@@ -189,7 +189,7 @@ class TestRook(unittest.TestCase):
 
         canCastle = rook.CanCastle(self.chessBoard, True)
         self.assertFalse(canCastle)
-        self.assertFalse(rook.GetCanNeverCastleThisPiece())
+        self.assertTrue(rook.CanCastleInTheFuture())
 
     def test_CanCastle_KingHasMoved_ReturnsFalse(self):
         leftRookCoordinates = BoardPoints(0, 0)
@@ -206,7 +206,7 @@ class TestRook(unittest.TestCase):
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
-        self.assertTrue(rook.GetCanNeverCastleThisPiece())
+        self.assertFalse(rook.CanCastleInTheFuture())
 
     def test_CanCastle_PieceBetweenRookAndKingNonEmpty_ReturnsFalse(self):
         leftRookCoordinates = BoardPoints(0, 0)
@@ -217,7 +217,7 @@ class TestRook(unittest.TestCase):
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
-        self.assertFalse(rook.GetCanNeverCastleThisPiece())
+        self.assertTrue(rook.CanCastleInTheFuture())
 
     def test_CanCastle_KingInCheckInTheMiddleOfCastle_ReturnsFalse(self):
         leftRookCoordinates = BoardPoints(0, 0)
@@ -233,7 +233,7 @@ class TestRook(unittest.TestCase):
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
-        self.assertFalse(rook.GetCanNeverCastleThisPiece())
+        self.assertTrue(rook.CanCastleInTheFuture())
 
     def test_CanCastle_LeftRook_CastlingConditionsSatisfied_ReturnsTrue(self):
         leftRookCoordinates = BoardPoints(0, 0)

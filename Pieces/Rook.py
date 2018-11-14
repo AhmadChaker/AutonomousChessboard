@@ -17,7 +17,7 @@ class Rook(IBasePiece):
 
     def __init__(self, team, coords):
         IBasePiece.__init__(self, team, coords)
-        self.__canNeverCastleThisPiece = False
+        self.__canCastleInTheFuture = True
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -31,20 +31,20 @@ class Rook(IBasePiece):
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Rook
 
-    def SetCanNeverCastleThisPiece(self, canNeverCastleThisPiece):
-        self.__canNeverCastleThisPiece = canNeverCastleThisPiece
+    def SetCanCastleInTheFuture(self, canCastleInTheFuture):
+        self.__canCastleInTheFuture = canCastleInTheFuture
 
-    def GetCanNeverCastleThisPiece(self):
-        return self.__canNeverCastleThisPiece
+    def CanCastleInTheFuture(self):
+        return self.__canCastleInTheFuture
 
     def CanCastle(self, board, enforceKingUnderAttackCheck):
 
         # Short circuit where possible
-        if self.__canNeverCastleThisPiece:
+        if not self.__canCastleInTheFuture:
             return False
 
         if len(self.GetHistory()) > 1:
-            self.__canNeverCastleThisPiece = True
+            self.__canCastleInTheFuture = False
             logger.debug("Rook has moved, returning False")
             return False
 
@@ -59,7 +59,7 @@ class Rook(IBasePiece):
         king = arrayKing[0]
 
         if len(king.GetHistory()) > 1:
-            self.__canNeverCastleThisPiece = True
+            self.__canCastleInTheFuture = False
             logger.debug("King has moved, returning False")
             return False
 
