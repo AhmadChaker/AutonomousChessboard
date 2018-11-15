@@ -214,19 +214,14 @@ class BoardHelpers:
         return moves
 
     @staticmethod
-    def GetPieces(board, currentTeam:Board.Constants.TeamEnum):
-        piecesCurrentTeam = []
-        piecesOtherTeam = []
-
-        otherTeam = BoardHelpers.GetOpposingTeam(currentTeam)
+    def GetTeamPieceCounts(board, currentTeam:Board.Constants.TeamEnum):
+        count = 0
         for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = board.GetPieceAtCoordinate(BoardPoints(xIndex, yIndex))
                 if piece.GetTeam() == currentTeam:
-                    piecesCurrentTeam.append(piece)
-                if piece.GetTeam() == otherTeam:
-                    piecesOtherTeam.append(piece)
-        return piecesCurrentTeam, piecesOtherTeam
+                    count = count + 1
+        return count
 
     @staticmethod
     def IsInCheckMate(board, team: TeamEnum):
@@ -248,69 +243,56 @@ class BoardHelpers:
     def IsDrawByInsufficientPieces(board, currentTeam):
 
         logger.debug("Entered")
-        teamAPieces, teamBPieces = BoardHelpers.GetPieces(board, currentTeam)
+        opposingTeam = BoardHelpers.GetOpposingTeam(currentTeam)
 
-        numberOfPiecesTeamA = len(teamAPieces)
-        numberOfPiecesTeamB = len(teamBPieces)
+        pieceCountCurrentTeam = BoardHelpers.GetTeamPieceCounts(board, currentTeam)
+        pieceCountOtherTeam = BoardHelpers.GetTeamPieceCounts(board, opposingTeam)
 
-        if numberOfPiecesTeamA > 2 and numberOfPiecesTeamB > 2:
+        # Short circuit
+        if pieceCountCurrentTeam > 2 or pieceCountOtherTeam > 2:
             return False
 
         # King vs King
-        if numberOfPiecesTeamA == 1 and numberOfPiecesTeamB == 1:
+        if pieceCountCurrentTeam == 1 and pieceCountOtherTeam == 1:
             return True
 
-        # King and Bishop vs King and King and Knight vs King
-        if numberOfPiecesTeamA == 1 and numberOfPiecesTeamB == 2:
-            for piece in teamBPieces:
-                if piece.GetPieceEnum() == Pieces.Constants.PieceEnums.Bishop or piece.GetPieceEnum() == Pieces.Constants.PieceEnums.Knight:
-                    return True
+        # Remaining cases:  2-2, 2-1, 1-2
 
-        if numberOfPiecesTeamB == 1 and numberOfPiecesTeamA == 2:
-            for piece in teamAPieces:
-                if piece.GetPieceEnum() == Pieces.Constants.PieceEnums.Bishop or piece.GetPieceEnum() == Pieces.Constants.PieceEnums.Knight:
-                    return True
+        knightsCurrentTeam = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Knight, currentTeam)
+        bishopsCurrentTeam = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Bishop, currentTeam)
+        knightsOtherTeam = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Knight, opposingTeam)
+        bishopsOtherTeam = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Bishop, opposingTeam)
+
+        # 1) King and Bishop vs King is a draw
+        # 2) King and Knight vs King is a draw
+        if pieceCountCurrentTeam == 1:
+            # current team only has king, the other team has knight or a bishop
+            if len(knightsOtherTeam) == 1 or len(bishopsOtherTeam) == 1:
+                return True
+
+        if pieceCountOtherTeam == 1:
+            if len(knightsCurrentTeam) == 1 or len(bishopsCurrentTeam) == 1:
+                return True
 
         # King and Bishop versus King and Bishop with Bishops on same color
-        if numberOfPiecesTeamA == 2 and numberOfPiecesTeamB == 2:
-            teamABishop = None
-            teamBBishop = None
-            for pieceForTeamA in teamAPieces:
-                if pieceForTeamA.GetPieceEnum() == Pieces.Constants.PieceEnums.Bishop:
-                    teamABishop = pieceForTeamA
-            for pieceForTeamB in teamBPieces:
-                if pieceForTeamB.GetPieceEnum() == Pieces.Constants.PieceEnums.Bishop:
-                    teamBBishop = pieceForTeamB
+        if len(bishopsCurrentTeam) == 1 and len(bishopsOtherTeam) == 1:
+            currentTeamBishopCoords = bishopsCurrentTeam[0].GetCoordinates()
+            otherTeamBishopCoords = bishopsOtherTeam[0].GetCoordinates()
 
-            if teamABishop is not None and teamBBishop is not None:
-                # Two bishops remaining, test to see if they are on the same color
-                teamABishopCoords = teamABishop.GetCoordinates()
-                teamBBishopCoords = teamBBishop.GetCoordinates()
-
-                # Check that both are on light squares
-                if (teamABishopCoords.GetX() % 2) == (teamABishopCoords.GetY() % 2) and \
-                        (teamBBishopCoords.GetX() % 2) == (teamBBishopCoords.GetY() % 2):
-                    return True
-                elif (teamABishopCoords.GetX() % 2) != (teamABishopCoords.GetY() % 2) and \
-                        (teamBBishopCoords.GetX() % 2) != (teamBBishopCoords.GetY() % 2):
-                    return True
+            # Check that both are on same square squares
+            if (currentTeamBishopCoords.GetX() % 2) == (currentTeamBishopCoords.GetY() % 2) and \
+                    (otherTeamBishopCoords.GetX() % 2) == (otherTeamBishopCoords.GetY() % 2):
+                return True
+            elif (currentTeamBishopCoords.GetX() % 2) != (currentTeamBishopCoords.GetY() % 2) and \
+                    (otherTeamBishopCoords.GetX() % 2) != (otherTeamBishopCoords.GetY() % 2):
+                return True
 
         return False
 
+    # If in the previous 75 moves by EACH side, no pawn has moved and no capture has been made
     @staticmethod
-    def IsDraw(board, history, currentTeam: TeamEnum):
-        logger.debug("Entered")
-
-        opposingTeam = BoardHelpers.GetOpposingTeam(currentTeam)
-        # If player whose turn it will now be has no legal move but is not in check
-        validMovesOpposingTeam = BoardHelpers.GetValidMovesForTeam(board, opposingTeam)
-        if len(validMovesOpposingTeam) == 0 and not BoardHelpers.IsKingInCheck(board, opposingTeam):
-            logger.error("Player whose turn it is has no legal move and is now in check, returning False")
-            return False
-
-        # Fifty move rule: If previous 50 moves by EACH side, no pawn has moved and no capture has been made
+    def IsDrawBySeventyFiveMoves(history):
         if len(history) > Board.Constants.DRAW_CONDITION_TOTAL_MOVES:
-
             # Get last x moves
             pertinentMoves = history[-Board.Constants.DRAW_CONDITION_TOTAL_MOVES:]
 
@@ -329,6 +311,22 @@ class BoardHelpers:
             if not hasPawnMoved and not hasCaptureBeenMade:
                 logger.error("No capture or pawn move in last n moves, draw declared, returning True")
                 return True
+        return False
+
+    @staticmethod
+    def IsDraw(board, history, currentTeam: TeamEnum):
+        logger.debug("Entered")
+
+        opposingTeam = BoardHelpers.GetOpposingTeam(currentTeam)
+        # If player whose turn it will now be has no legal move but is not in check
+        validMovesOpposingTeam = BoardHelpers.GetValidMovesForTeam(board, opposingTeam)
+        if len(validMovesOpposingTeam) == 0 and not BoardHelpers.IsKingInCheck(board, opposingTeam):
+            logger.error("Player whose turn it is has no legal move and is now in check, returning False")
+            return False
+
+        if BoardHelpers.IsDrawBySeventyFiveMoves(history):
+            logger.error("Draw by 75 moves rule, returning True")
+            return True
 
         if BoardHelpers.IsDrawByInsufficientPieces(board, currentTeam):
             logger.error("Draw by insufficient pieces is declared, returning True")
