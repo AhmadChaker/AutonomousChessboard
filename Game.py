@@ -122,7 +122,7 @@ class Game:
         self.UpdatePieceOnBoard(pieceBeingMoved)
         self.UpdatePieceOnBoard(NoPiece(fromCoord))
 
-        isCastleMove = BoardHelpers.IsCastleMove(pieceBeingMoved, fromCoord, toCoord)
+        isCastleMove = BoardHelpers.IsCastleMove(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord)
 
         if isCastleMove:
             # It's a castle move so we need to move the corresponding rook as well.

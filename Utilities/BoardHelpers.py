@@ -104,7 +104,8 @@ class BoardHelpers:
 
     @staticmethod
     def IsEnPassant(pieceMovingEnum, oldPieceCoords, newPotentialCoords, lastMove):
-        if lastMove is not None and pieceMovingEnum == PieceEnums.Pawn and \
+        if lastMove is not None and \
+                pieceMovingEnum == PieceEnums.Pawn and \
                 lastMove.GetPieceEnumFrom() == PieceEnums.Pawn and \
                 lastMove.GetYMovement() == Board.Constants.MAXIMUM_PAWN_FORWARD_MOVEMENT:
             # if previous to moving the y coords match and then this move causes the x coordinates to match
@@ -227,12 +228,11 @@ class BoardHelpers:
 
     @staticmethod
     def IsInCheckMate(board, team: TeamEnum):
-
         logger.debug("Entered")
-
         # Check if King is in check and that there are NO valid moves
         validMoves = BoardHelpers.GetValidMovesForTeam(board, team)
-        if len(validMoves) == 0 and BoardHelpers.IsInCheck(board, team):
+        isInCheck = BoardHelpers.IsInCheck(board, team)
+        if len(validMoves) == 0 and isInCheck:
             return True
         return False
 
@@ -341,6 +341,6 @@ class BoardHelpers:
         return False
 
     @staticmethod
-    def IsCastleMove(pce: Pieces.IBasePiece.IBasePiece, frmOrd: BoardPoints, toOrd:BoardPoints):
-        return pce.GetPieceEnum() == PieceEnums.King and \
+    def IsCastleMove(pieceEnum, frmOrd: BoardPoints, toOrd:BoardPoints):
+        return pieceEnum == PieceEnums.King and \
                abs(frmOrd.GetX() - toOrd.GetX()) == Board.Constants.KING_CASTLE_SQUARE_MOVES
