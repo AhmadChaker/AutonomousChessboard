@@ -1,11 +1,10 @@
 import unittest
 from Board.ChessBoard import ChessBoard
-from Pieces.EmptyPiece import EmptyPiece
-from Board.Constants import TeamEnum
+from Pieces.NoPiece import NoPiece
 from Miscellaneous.BoardPoints import BoardPoints
 
 
-class TestEmptyPiece(unittest.TestCase):
+class TestNoPiece(unittest.TestCase):
 
     def setUp(self):
         # Initialise chess board 2D structure
@@ -16,10 +15,10 @@ class TestEmptyPiece(unittest.TestCase):
         self.chessBoard.RemoveAllPieces()
 
         # Put an empty piece in middle
-        emptpyPiece = EmptyPiece(BoardPoints(3, 3))
-        self.chessBoard.UpdatePieceOnBoard(emptpyPiece)
+        noPiece = NoPiece(BoardPoints(3, 3))
+        self.chessBoard.UpdatePieceOnBoard(noPiece)
 
         expectedValidMoves = []
 
-        validMoves = emptpyPiece.GetValidMoves(self.chessBoard, False)
+        validMoves = noPiece.GetValidMoves(self.chessBoard, False)
         self.assertEqual(validMoves, expectedValidMoves)

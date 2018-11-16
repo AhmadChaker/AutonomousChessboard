@@ -2,7 +2,7 @@ import logging
 import Utilities.CoordinateConverters
 import Board.Constants
 from Pieces.IBasePiece import IBasePiece
-from Pieces.EmptyPiece import EmptyPiece
+from Pieces.NoPiece import NoPiece
 from Pieces.Pawn import Pawn
 from Pieces.Rook import Rook
 from Pieces.Knight import Knight
@@ -50,11 +50,11 @@ class ChessBoard:
         logger.debug("Entered ResetBoard")
         # Set empty pieces first
 
-        yIndexEmptyPieces = [2, 3, 4, 5]
+        yIndexNoPieces = [2, 3, 4, 5]
 
-        for yIndex in yIndexEmptyPieces:
+        for yIndex in yIndexNoPieces:
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                self.UpdatePieceOnBoard(EmptyPiece(BoardPoints(xIndex, yIndex)))
+                self.UpdatePieceOnBoard(NoPiece(BoardPoints(xIndex, yIndex)))
 
         yIndexWhitePawns = 1
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
@@ -96,7 +96,7 @@ class ChessBoard:
         for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
             # cycle over y coordinates
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                self.UpdatePieceOnBoard(EmptyPiece(BoardPoints(xCoord, yCoord)))
+                self.UpdatePieceOnBoard(NoPiece(BoardPoints(xCoord, yCoord)))
 
     def PrintBoard(self):
 

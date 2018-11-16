@@ -4,13 +4,13 @@ from Pieces.Constants import PieceEnums
 
 class Movement:
 
-    def __init__(self, pieceAtFromCoord, pieceAtToCoord, fromCoord: BoardPoints, toCoord: BoardPoints, isEnPassantMove):
-        self.__pieceEnumFromCoord = pieceAtFromCoord.GetPieceEnum()
-        self.__pieceEnumToCoord = pieceAtToCoord.GetPieceEnum()
-        self.__teamMoved = pieceAtFromCoord.GetTeam()
+    def __init__(self, teamMoving, pieceAtFromCoord, pieceAtToCoord, fromCoord: BoardPoints, toCoord: BoardPoints, isEnPassantMove):
+        self.__pieceEnumFromCoord = pieceAtFromCoord
+        self.__pieceEnumToCoord = pieceAtToCoord
+        self.__teamMoved = teamMoving
         self.__fromCoord = fromCoord
         self.__toCoord = toCoord
-        self.__isCaptureMove = True if (self.__pieceEnumToCoord != PieceEnums.Empty or isEnPassantMove) else False
+        self.__isCaptureMove = True if (self.__pieceEnumToCoord != PieceEnums.NoPiece or isEnPassantMove) else False
 
     def __eq__(self, other):
         return self.__pieceEnumFromCoord == other.__pieceEnumFromCoord and \

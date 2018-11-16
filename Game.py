@@ -3,13 +3,8 @@ import Utilities.CoordinateConverters
 import Board.Constants
 from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
-from Pieces.EmptyPiece import EmptyPiece
-from Pieces.Pawn import Pawn
-from Pieces.Rook import Rook
-from Pieces.Knight import Knight
-from Pieces.Bishop import Bishop
 from Pieces.Queen import Queen
-from Pieces.King import King
+from Pieces.NoPiece import NoPiece
 from Board.Constants import TeamEnum
 from Pieces.Constants import PieceEnums
 from Miscellaneous.BoardPoints import BoardPoints
@@ -113,16 +108,19 @@ class Game:
         isEnPassant = BoardHelpers.IsEnPassant(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord, self.GetHistory().GetLastMove())
         if isEnPassant:
             # Piece at new x coordinate and old y coordinate should now be empty as its captured
-            self.UpdatePieceOnBoard(EmptyPiece(BoardPoints(toCoord.GetX(), fromCoord.GetY())))
+            self.UpdatePieceOnBoard(NoPiece(BoardPoints(toCoord.GetX(), fromCoord.GetY())))
 
         # Update history
-        self.GetHistory().AppendMovement(Movement(self.GetPieceAtCoordinate(fromCoord),
-                                         self.GetPieceAtCoordinate(toCoord),
-                                         fromCoord, toCoord, isEnPassant))
+        self.GetHistory().AppendMovement(Movement(pieceBeingMoved.GetTeam(),
+                                                  pieceBeingMoved.GetPieceEnum(),
+                                                  self.GetPieceAtCoordinate(toCoord).GetPieceEnum(),
+                                                  fromCoord,
+                                                  toCoord,
+                                                  isEnPassant))
 
         # Update board
         self.UpdatePieceOnBoard(pieceBeingMoved)
-        self.UpdatePieceOnBoard(EmptyPiece(fromCoord))
+        self.UpdatePieceOnBoard(NoPiece(fromCoord))
 
         isCastleMove = BoardHelpers.IsCastleMove(pieceBeingMoved, fromCoord, toCoord)
 
@@ -145,7 +143,7 @@ class Game:
             rook = self.GetPieceAtCoordinate(oldRookCoords)
             rook.ForceMove(newRookCoords)
             self.UpdatePieceOnBoard(rook)
-            self.UpdatePieceOnBoard(EmptyPiece(oldRookCoords))
+            self.UpdatePieceOnBoard(NoPiece(oldRookCoords))
 
         # Check if pawn is being promoted
         self.PerformPawnPromotionCheck()
@@ -209,7 +207,7 @@ class Game:
             # cycle over y coordinates
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
                 piece = self.GetPieceAtCoordinate(BoardPoints(xCoord, yCoord))
-                if piece.GetPieceEnum() == PieceEnums.Empty:
+                if piece.GetPieceEnum() == PieceEnums.NoPiece:
                     continue
                 logger.info("Start printing properties for: " + piece.GetPieceStr())
                 logger.info("Board coordinates: " + BoardPoints(xCoord, yCoord).ToString())

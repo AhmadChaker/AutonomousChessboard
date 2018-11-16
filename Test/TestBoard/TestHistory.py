@@ -24,8 +24,8 @@ class TestHistory(unittest.TestCase):
         moveIsEnPassant = False
 
         # Start methods
-        move1 = Movement(move1Rook, move1Pawn, move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), moveIsEnPassant)
-        move2 = Movement(move2Rook, move2Pawn, move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), moveIsEnPassant)
+        move1 = Movement(move1Rook.GetTeam(), move1Rook.GetPieceEnum(), move1Pawn.GetPieceEnum(), move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), moveIsEnPassant)
+        move2 = Movement(move2Rook.GetTeam(), move2Pawn.GetPieceEnum(), move2Rook.GetPieceEnum(),  move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), moveIsEnPassant)
         hist.AppendMovement(move1)
         hist.AppendMovement(move2)
 
@@ -42,8 +42,8 @@ class TestHistory(unittest.TestCase):
         moveIsEnPassant = False
 
         # Start methods
-        move1 = Movement(move1Rook, move1Pawn, move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), moveIsEnPassant)
-        move2 = Movement(move2Rook, move2Pawn, move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), moveIsEnPassant)
+        move1 = Movement(move1Rook.GetPieceEnum(), move1Rook.GetPieceEnum(), move1Pawn.GetPieceEnum(), move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), moveIsEnPassant)
+        move2 = Movement(move2Rook.GetPieceEnum(), move2Rook.GetPieceEnum(), move2Pawn.GetPieceEnum(), move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), moveIsEnPassant)
         hist.AppendMovement(move1)
         hist.AppendMovement(move2)
 

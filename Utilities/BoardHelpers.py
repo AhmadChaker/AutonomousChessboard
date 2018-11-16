@@ -11,6 +11,7 @@ from Miscellaneous.Points import Points
 from Board.Constants import TeamEnum
 from Board.History import History
 from Pieces.Constants import PieceEnums
+from Pieces.NoPiece import NoPiece
 
 
 logger = logging.getLogger(__name__)
@@ -86,8 +87,9 @@ class BoardHelpers:
 
             piece.ForceMoveNoHistory(potentialMove)
             copyBoard.UpdatePieceOnBoard(piece)
+            copyBoard.UpdatePieceOnBoard(NoPiece(preMovePieceCoords))
 
-            # Moved, now check if King if own team is in check
+            # Moved, now check if King on own team is in check
             isInCheck = BoardHelpers.IsInCheck(copyBoard, piece.GetTeam())
 
             if not isInCheck:
@@ -130,7 +132,7 @@ class BoardHelpers:
             return []
 
         if pieceToMoveTeam == Board.Constants.TeamEnum.NoTeam or \
-                pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Empty:
+                pieceToMovePieceEnum == Pieces.Constants.PieceEnums.NoPiece:
             return []
 
         xPotentialCoord = pieceToMoveCoords.GetX()
@@ -291,8 +293,8 @@ class BoardHelpers:
 
     # If in the previous 75 moves by EACH side, no pawn has moved and no capture has been made
     @staticmethod
-    def IsDrawBySeventyFiveMoves(history):
-        if len(history) > Board.Constants.DRAW_CONDITION_TOTAL_MOVES:
+    def IsDrawBySeventyFiveMovesEachRule(history):
+        if len(history) >= Board.Constants.DRAW_CONDITION_TOTAL_MOVES:
             # Get last x moves
             pertinentMoves = history[-Board.Constants.DRAW_CONDITION_TOTAL_MOVES:]
 
@@ -304,7 +306,7 @@ class BoardHelpers:
                     hasCaptureBeenMade = True
                     break
 
-                if move.GetPieceFrom() == Pieces.Constants.PieceEnums.Pawn:
+                if move.GetPieceEnumFrom() == Pieces.Constants.PieceEnums.Pawn:
                     hasPawnMoved = True
                     break
 
@@ -318,13 +320,16 @@ class BoardHelpers:
         logger.debug("Entered")
 
         opposingTeam = BoardHelpers.GetOpposingTeam(currentTeam)
-        # If player whose turn it will now be has no legal move but is not in check
-        validMovesOpposingTeam = BoardHelpers.GetValidMovesForTeam(board, opposingTeam)
-        if len(validMovesOpposingTeam) == 0 and not BoardHelpers.IsKingInCheck(board, opposingTeam):
-            logger.error("Player whose turn it is has no legal move and is now in check, returning False")
-            return False
 
-        if BoardHelpers.IsDrawBySeventyFiveMoves(history):
+        # Player whose turn it will now be has no legal moves but is not in check
+        validMovesOpposingTeam = BoardHelpers.GetValidMovesForTeam(board, opposingTeam)
+        isInCheck = BoardHelpers.IsInCheck(board, opposingTeam)
+
+        if len(validMovesOpposingTeam) == 0 and not isInCheck:
+            logger.error("Player whose turn it is has no legal move and is not in check, returning True")
+            return True
+
+        if BoardHelpers.IsDrawBySeventyFiveMovesEachRule(history):
             logger.error("Draw by 75 moves rule, returning True")
             return True
 
@@ -337,4 +342,5 @@ class BoardHelpers:
 
     @staticmethod
     def IsCastleMove(pce: Pieces.IBasePiece.IBasePiece, frmOrd: BoardPoints, toOrd:BoardPoints):
-        return pce.GetPieceEnum() == PieceEnums.King and abs(frmOrd.GetX() - toOrd.GetX()) == Board.Constants.KING_CASTLE_SQUARE_MOVES
+        return pce.GetPieceEnum() == PieceEnums.King and \
+               abs(frmOrd.GetX() - toOrd.GetX()) == Board.Constants.KING_CASTLE_SQUARE_MOVES

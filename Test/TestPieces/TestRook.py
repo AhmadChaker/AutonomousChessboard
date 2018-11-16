@@ -2,7 +2,7 @@ import unittest
 from Board.ChessBoard import ChessBoard
 from Pieces.Rook import Rook
 from Pieces.King import King
-from Pieces.EmptyPiece import EmptyPiece
+from Pieces.NoPiece import NoPiece
 from Board.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 from Utilities.BoardHelpers import BoardHelpers
@@ -120,9 +120,9 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Clear out the left pieces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         validMoves = rook.GetCastleMoves(self.chessBoard, False)
         expectedList = [BoardPoints(3, 0)]
@@ -134,8 +134,8 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(rightRookCoordinates)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         validMoves = rook.GetCastleMoves(self.chessBoard, False)
         expectedList = [BoardPoints(5, 0)]
@@ -151,9 +151,9 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(rightRookCoordinates)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         rook.SetCanCastleInTheFuture(False)
         canCastle = rook.CanCastle(self.chessBoard, False)
@@ -165,9 +165,9 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         rook.Move(self.chessBoard, BoardPoints(1,0))
 
@@ -180,9 +180,9 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         # Place another teams Rook right in front of the white king
         self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(4,1)))
@@ -196,9 +196,9 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4,0))
         king.Move(self.chessBoard, BoardPoints(3, 0))
@@ -213,7 +213,7 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Only clear out one space between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
@@ -224,9 +224,9 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         # put an opposing team rook so that the King is in check in the middle of the move
         self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(2,0)))
@@ -240,9 +240,9 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertTrue(canCastle)
@@ -252,8 +252,8 @@ class TestRook(unittest.TestCase):
         rook = self.chessBoard.GetPieceAtCoordinate(leftRookCoordinates)
 
         # Clear out the left spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertTrue(canCastle)

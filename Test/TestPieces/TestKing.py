@@ -2,7 +2,7 @@ import unittest
 from Board.ChessBoard import ChessBoard
 from Pieces.King import King
 from Pieces.Rook import Rook
-from Pieces.EmptyPiece import EmptyPiece
+from Pieces.NoPiece import NoPiece
 from Board.Constants import TeamEnum
 from Board.History import History
 from Miscellaneous.BoardPoints import BoardPoints
@@ -68,11 +68,11 @@ class TestKing(unittest.TestCase):
 
         # Remove major pieces around King to allow castling
 
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         expectedValidMoves = [BoardPoints(3, 0),
                               BoardPoints(2, 0),
@@ -94,11 +94,11 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4,0))
 
         # Remove major pieces around King to allow castling
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         king.SetCanCastleInTheFuture(False)
 
@@ -112,11 +112,11 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4,0))
 
         # Remove major pieces around King to allow castling
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         # Use ForceMove instead of Move so that short circuiting does not occur
         king.ForceMove(BoardPoints(3, 0))
@@ -131,15 +131,15 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
 
         # Remove major pieces around King to allow castling
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         # Remove rooks
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(0, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(7, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(7, 0)))
 
         canCastle = king.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)
@@ -150,11 +150,11 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
 
         # Remove major pieces around King to allow castling
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         leftRook = self.chessBoard.GetPieceAtCoordinate((BoardPoints(0, 0)))
         leftRook.Move(self.chessBoard, BoardPoints(1, 0))
@@ -174,11 +174,11 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
 
         # Remove major pieces around King to allow castling
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         canCastle = king.CanCastle(self.chessBoard, False)
         self.assertTrue(canCastle)
@@ -190,13 +190,13 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
 
         # Remove major pieces around King to allow castling
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
 
         # comment out below so that only left rook can castle
-        # self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        # self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         canCastle = king.CanCastle(self.chessBoard, False)
         self.assertTrue(canCastle)
@@ -220,11 +220,11 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
 
         # Remove pieces between king and rooks
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(1, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(3, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         castleMoves = king.GetCastleMoves(self.chessBoard, False)
         castleMoves.sort()
@@ -239,8 +239,8 @@ class TestKing(unittest.TestCase):
         king = self.chessBoard.GetPieceAtCoordinate(BoardPoints(4, 0))
 
         # Remove pieces between king and rooks
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(5, 0)))
-        self.chessBoard.UpdatePieceOnBoard(EmptyPiece(BoardPoints(6, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         castleMoves = king.GetCastleMoves(self.chessBoard, False)
         castleMoves.sort()

@@ -6,7 +6,7 @@ BOARD_ERROR_STRING = "Err"
 
 # Piece specific constants
 class PieceEnums(Enum):
-    Empty = 1
+    NoPiece = 1
     Pawn = 2
     Rook = 3
     Knight = 4

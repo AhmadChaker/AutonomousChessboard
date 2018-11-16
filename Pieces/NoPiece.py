@@ -3,7 +3,7 @@ from Pieces.IBasePiece import IBasePiece
 from Board.Constants import TeamEnum
 
 
-class EmptyPiece(IBasePiece):
+class NoPiece(IBasePiece):
 
     def __init__(self, coords):
         IBasePiece.__init__( self, TeamEnum.NoTeam, coords)
@@ -12,7 +12,7 @@ class EmptyPiece(IBasePiece):
         return '\u2015'
 
     def GetPieceEnum(self):
-        return PieceEnums.Empty
+        return PieceEnums.NoPiece
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         return []
