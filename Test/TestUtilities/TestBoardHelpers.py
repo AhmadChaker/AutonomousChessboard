@@ -15,8 +15,10 @@ from Board.ChessBoard import ChessBoard
 from Pieces.Constants import PieceEnums
 from Pieces.King import King
 from Pieces.Queen import Queen
+from Pieces.Rook import Rook
 from Pieces.Bishop import Bishop
 from Pieces.Pawn import Pawn
+from Test.Helpers.Helper import Helper
 
 
 
@@ -447,5 +449,94 @@ class TestBoardHelpers(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(Bishop(TeamEnum.Black, BoardPoints(1, 2)))
         isInCheckMate = BoardHelpers.IsInCheckMate(self.chessBoard, TeamEnum.White)
         self.assertTrue(isInCheckMate)
+
+    # endregion
+
+    # region GetPieceCentricMovesForTeam tests
+
+    # Tests here don't take into account moves where after the move is made, the king (of moving team) is in check
+    def test_GetPieceCentricMovesForTeam_GetsValidMoves(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        # Make sure its really only getting the piece centric moves and not taking into accout the king being in check
+        # after the move!
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        actualMoves = BoardHelpers.GetPieceCentricMovesForTeam(self.chessBoard, TeamEnum.Black)
+        uniqueActualMoves = Helper.GetUniqueElements(actualMoves)
+        uniqueActualMoves.sort()
+
+        expectedMoves = []
+
+        # Rook moves
+        expectedMoves.append(BoardPoints(6, 0))
+        expectedMoves.append(BoardPoints(4, 0))
+        expectedMoves.append(BoardPoints(3, 0))
+        expectedMoves.append(BoardPoints(2, 0))
+        expectedMoves.append(BoardPoints(1, 0))
+        expectedMoves.append(BoardPoints(5, 1))
+        expectedMoves.append(BoardPoints(5, 2))
+
+        # Pawn moves
+        expectedMoves.append(BoardPoints(5, 2))
+
+        # King moves
+        expectedMoves.append(BoardPoints(6, 0))
+        expectedMoves.append(BoardPoints(6, 1))
+        expectedMoves.append(BoardPoints(7, 1))
+
+        uniqueExpectedMoves = Helper.GetUniqueElements(expectedMoves)
+        uniqueExpectedMoves.sort()
+        self.assertEqual(uniqueActualMoves, uniqueExpectedMoves)
+
+    # endregion
+
+    # region GetValidMovesForTeam tests
+
+    # Tests here take into account the king of the team being in check as part of the move
+
+    def test_GetValidMovesForTeam_GetsValidMoves(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        # Make sure its really only getting the piece centric moves and not taking into accout the king being in check
+        # after the move!
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        actualMoves = BoardHelpers.GetValidMovesForTeam(self.chessBoard, TeamEnum.Black)
+        uniqueActualMoves = Helper.GetUniqueElements(actualMoves)
+        uniqueActualMoves.sort()
+
+        expectedMoves = []
+
+        # Rook moves
+        expectedMoves.append(BoardPoints(6, 0))
+        expectedMoves.append(BoardPoints(4, 0))
+        expectedMoves.append(BoardPoints(3, 0))
+        expectedMoves.append(BoardPoints(2, 0))
+        expectedMoves.append(BoardPoints(1, 0))
+
+        # can't move up due to being pinned down
+        #expectedMoves.append(BoardPoints(5, 1))
+        #expectedMoves.append(BoardPoints(5, 2))
+
+        # Pawn moves
+        expectedMoves.append(BoardPoints(5, 2))
+
+        # King moves
+        expectedMoves.append(BoardPoints(6, 0))
+        expectedMoves.append(BoardPoints(6, 1))
+        expectedMoves.append(BoardPoints(7, 1))
+
+        uniqueExpectedMoves = Helper.GetUniqueElements(expectedMoves)
+        uniqueExpectedMoves.sort()
+        self.assertEqual(uniqueActualMoves, uniqueExpectedMoves)
 
     # endregion
