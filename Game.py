@@ -39,21 +39,6 @@ class Game:
     def GetBoard(self):
         return self.__board
 
-    def PrintProperties(self):
-        self.GetBoard().PrintBoard()
-        self.PrintAllValidMoves()
-        self.PrintPieceProperties()
-
-    def PrintHistory(self):
-        logger.error("Printing history")
-
-        for historicalMove in self.GetHistory().GetHistoricalMoves():
-            strToPrint = PieceEnums(historicalMove.GetPieceEnumFrom()).name + " at [" + \
-                         historicalMove.GetFromCoord().ToString() + "] moved to [" + \
-                         historicalMove.GetToCoord().ToString() + "], IsCaptureMove: " + \
-                         str(historicalMove.IsCaptureMove())
-            logger.error(strToPrint)
-
     def CanMove(self, fromBoardCoords: str, toBoardCoords: str):
 
         logger.debug("Entered, FromBoardCoords: " + fromBoardCoords + ", ToBoardCoords: " + toBoardCoords)
@@ -216,3 +201,18 @@ class Game:
                 for historicalMove in piece.GetHistory():
                     logger.info(historicalMove.ToString())
                 logger.info("End printing properties for: " + piece.GetPieceStr())
+
+    def PrintProperties(self):
+        self.GetBoard().PrintBoard()
+        self.PrintAllValidMoves()
+        self.PrintPieceProperties()
+
+    def PrintHistory(self):
+        logger.error("Printing history")
+
+        for historicalMove in self.GetHistory().GetHistoricalMoves():
+            strToPrint = PieceEnums(historicalMove.GetPieceEnumFrom()).name + " at [" + \
+                         historicalMove.GetFromCoord().ToString() + "] moved to [" + \
+                         historicalMove.GetToCoord().ToString() + "], IsCaptureMove: " + \
+                         str(historicalMove.IsCaptureMove())
+            logger.error(strToPrint)
