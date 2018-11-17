@@ -29,7 +29,12 @@ class Pawn(IBasePiece):
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         isPieceMovingUpwards = (self.GetTeam() == Board.Constants.TeamEnum.White)
-        moveIterNonKillMoves = 2 if len(self.GetHistory()) == 1 else 1
+        # In case pawns are starting from a non standard position, need additional processing
+        moveIterNonKillMoves = 1
+        if (isPieceMovingUpwards and self.GetCoordinates().GetY() == Board.Constants.WHITE_PAWNS_Y_ARRAY_COORDINATE) or \
+                ((not isPieceMovingUpwards) and self.GetCoordinates().GetY() == Board.Constants.BLACK_PAWNS_Y_ARRAY_COORDINATE):
+            moveIterNonKillMoves = 2
+
         moveIterToKillMoves = 1
         validMoves = []
         if isPieceMovingUpwards:

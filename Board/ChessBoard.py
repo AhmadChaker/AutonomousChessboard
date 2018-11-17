@@ -56,13 +56,11 @@ class ChessBoard:
             for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
                 self.UpdatePieceOnBoard(NoPiece(BoardPoints(xIndex, yIndex)))
 
-        yIndexWhitePawns = 1
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            self.UpdatePieceOnBoard(Pawn(TeamEnum.White, BoardPoints(xIndex, yIndexWhitePawns)))
+            self.UpdatePieceOnBoard(Pawn(TeamEnum.White, BoardPoints(xIndex, Board.Constants.WHITE_PAWNS_Y_ARRAY_COORDINATE)))
 
-        yIndexBlackPawns = 6
         for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-            self.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(xIndex, yIndexBlackPawns)))
+            self.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(xIndex, Board.Constants.BLACK_PAWNS_Y_ARRAY_COORDINATE)))
 
         # White major pieces
         self.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(0, 0)))

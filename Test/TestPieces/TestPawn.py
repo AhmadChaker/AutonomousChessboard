@@ -136,7 +136,7 @@ class TestPawn(unittest.TestCase):
     # Due to unidirectional nature of Pawns, test white and then black Pawns for each case
 
     # region White Pawn specific
-    def test_GetValidMoves_WhitePawn_NoHistory_ReturnsTwoMoves(self):
+    def test_GetValidMoves_WhitePawn_OnStartingSquare_ReturnsTwoMoves(self):
         whitePawnCoord = BoardPoints(1,1)
         whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
         actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
@@ -147,22 +147,18 @@ class TestPawn(unittest.TestCase):
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_WhitePawn_HasHistory_ReturnsOneMove(self):
-        whitePawnCoord = BoardPoints(1,1)
-        whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
+    def test_GetValidMoves_WhitePawn_NotOnStartingSquare_ReturnsOneMove(self):
+        pawn = Pawn(TeamEnum.White, BoardPoints(2,2))
+        self.chessBoard.UpdatePieceOnBoard(pawn)
 
-        # add some nonsense history
-        whitePawn.GetHistory().append(BoardPoints(2,3))
-        whitePawn.GetHistory().append(BoardPoints(1,3))
-
-        actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
+        actualValidMoves = pawn.GetValidMoves(self.chessBoard, False)
 
         expectedValidMoves = []
-        expectedValidMoves.append(BoardPoints(1, 2))
+        expectedValidMoves.append(BoardPoints(2, 3))
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_WhitePawn_NoHistory_AttackingLeft_ReturnsThreeMoves(self):
+    def test_GetValidMoves_WhitePawn_OnStartingSquare_AttackingLeft_ReturnsThreeMoves(self):
 
         whitePawnCoord = BoardPoints(1,1)
         whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
@@ -181,7 +177,7 @@ class TestPawn(unittest.TestCase):
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_WhitePawn_NoHistory_AttackingRight_ReturnsThreeMoves(self):
+    def test_GetValidMoves_WhitePawn_OnStartingSquare_AttackingRight_ReturnsThreeMoves(self):
 
         whitePawnCoord = BoardPoints(1,1)
         whitePawn = self.chessBoard.GetPieceAtCoordinate(whitePawnCoord)
@@ -217,7 +213,6 @@ class TestPawn(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(blackPawnAfterMove)
 
         # Last move needs to have been a double step from black
-
         movement = Movement(blackPawnBeforeMove.GetTeam(), blackPawnBeforeMove.GetPieceEnum(), NoPiece(coordAfterMove).GetPieceEnum(), blackPawnCoordBeforeMove, coordAfterMove, False)
         self.history.AppendMovement(movement)
 
@@ -234,7 +229,7 @@ class TestPawn(unittest.TestCase):
 
     # region Black Pawn
 
-    def test_GetValidMoves_BlackPawn_NoHistory_ReturnsTwoMoves(self):
+    def test_GetValidMoves_BlackPawn_OnStartingSquare_ReturnsTwoMoves(self):
         blackPawnCoord = BoardPoints(1,6)
         blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
         actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
@@ -245,22 +240,18 @@ class TestPawn(unittest.TestCase):
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_BlackPawn_HasHistory_ReturnsOneMove(self):
-        blackPawnCoord = BoardPoints(1,6)
-        blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
-
-        # add some nonsense history
-        blackPawn.GetHistory().append(BoardPoints(2,3))
-        blackPawn.GetHistory().append(BoardPoints(1,3))
+    def test_GetValidMoves_BlackPawn_NotOnStartingSquare_ReturnsOneMove(self):
+        blackPawn = Pawn(TeamEnum.Black, BoardPoints(1,5))
+        self.chessBoard.UpdatePieceOnBoard(blackPawn)
 
         actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
 
         expectedValidMoves = []
-        expectedValidMoves.append(BoardPoints(1, 5))
+        expectedValidMoves.append(BoardPoints(1, 4))
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_BlackPawn_NoHistory_AttackingLeft_ReturnsThreeMoves(self):
+    def test_GetValidMoves_BlackPawn_OnStartingSquare_AttackingLeft_ReturnsThreeMoves(self):
 
         blackPawnCoord = BoardPoints(1,6)
         blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
@@ -279,7 +270,7 @@ class TestPawn(unittest.TestCase):
 
         self.assertEqual(actualValidMoves, expectedValidMoves)
 
-    def test_GetValidMoves_BlackPawn_NoHistory_AttackingRight_ReturnsThreeMoves(self):
+    def test_GetValidMoves_BlackPawn_OnStartingSquare_AttackingRight_ReturnsThreeMoves(self):
 
         blackPawnCoord = BoardPoints(1,6)
         blackPawn = self.chessBoard.GetPieceAtCoordinate(blackPawnCoord)
