@@ -1,7 +1,6 @@
 import unittest
 from Board.ChessBoard import ChessBoard
 from Pieces.King import King
-from Pieces.Rook import Rook
 from Pieces.NoPiece import NoPiece
 from Board.Constants import TeamEnum
 from Board.History import History

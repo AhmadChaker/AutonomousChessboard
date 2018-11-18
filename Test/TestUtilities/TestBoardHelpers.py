@@ -1,9 +1,4 @@
 import unittest
-import Pieces.IBasePiece
-import Pieces.Constants
-import Board.Constants
-import Utilities.CoordinateConverters
-import Miscellaneous.BoardPoints
 import Board.Constants
 from Utilities.BoardHelpers import BoardHelpers
 from Utilities.MoveHelpers import MoveHelpers
@@ -14,12 +9,8 @@ from Board.Movement import Movement
 from Board.ChessBoard import ChessBoard
 from Pieces.Constants import PieceEnums
 from Pieces.King import King
-from Pieces.Queen import Queen
-from Pieces.Rook import Rook
 from Pieces.Bishop import Bishop
 from Pieces.Pawn import Pawn
-from Pieces.NoPiece import NoPiece
-from Test.Helpers.Helper import Helper
 
 
 class TestBoardHelpers(unittest.TestCase):

@@ -1,5 +1,4 @@
 import unittest
-import Board.Constants
 from Board.ChessBoard import ChessBoard
 from Pieces.Bishop import Bishop
 from Board.Constants import TeamEnum

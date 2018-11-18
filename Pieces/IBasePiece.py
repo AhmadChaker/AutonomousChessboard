@@ -1,5 +1,4 @@
 import Miscellaneous.BoardPoints
-from Board.Movement import Movement
 from abc import ABC, abstractmethod
 from Miscellaneous.BoardPoints import BoardPoints
 

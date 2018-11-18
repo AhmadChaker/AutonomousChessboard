@@ -1,5 +1,4 @@
 import Pieces.Constants
-import Miscellaneous.BoardPoints
 import Board.Constants
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
