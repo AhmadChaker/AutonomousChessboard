@@ -9,6 +9,7 @@ class NoPiece(IBasePiece):
         IBasePiece.__init__( self, TeamEnum.NoTeam, coords)
 
     def GetPieceStr(self):
+        # Unicode dash character to match width of chess pieces in unicode
         return '\u2015'
 
     def GetPieceEnum(self):
