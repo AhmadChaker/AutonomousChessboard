@@ -9,3 +9,6 @@ class Points:
 
     def GetY(self):
         return self.__y
+
+    def ToString(self):
+        return "Raw :(" + str(self.GetX()) + "," + str(self.GetY()) + ")"

@@ -18,6 +18,7 @@ from Pieces.Queen import Queen
 from Pieces.Rook import Rook
 from Pieces.Bishop import Bishop
 from Pieces.Pawn import Pawn
+from Pieces.NoPiece import NoPiece
 from Test.Helpers.Helper import Helper
 
 
@@ -27,7 +28,8 @@ class TestBoardHelpers(unittest.TestCase):
     def setUp(self):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
-        BoardHelpers.UpdateVariables(History())
+        self.history = History()
+        BoardHelpers.UpdateVariables(self.history)
 
     def tearDown(self):
         BoardHelpers.UpdateVariables(None)
@@ -538,5 +540,340 @@ class TestBoardHelpers(unittest.TestCase):
         uniqueExpectedMoves = Helper.GetUniqueElements(expectedMoves)
         uniqueExpectedMoves.sort()
         self.assertEqual(uniqueActualMoves, uniqueExpectedMoves)
+
+    # endregion
+
+    # region FilterPieceMovesThatPutPlayerInCheck Tests
+
+    def test_FilterPieceMovesThatPutPlayerInCheck_FiltersMoves(self):
+
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        # Make sure its really only getting the piece centric moves and not taking into accout the king being in check
+        # after the move!
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        potentialRookMoves = []
+
+        # Sidewards rook moves, no change to king being in check
+        potentialRookMoves.append(BoardPoints(6, 0))
+        potentialRookMoves.append(BoardPoints(4, 0))
+        potentialRookMoves.append(BoardPoints(3, 0))
+        potentialRookMoves.append(BoardPoints(2, 0))
+        potentialRookMoves.append(BoardPoints(1, 0))
+
+        # These moves result in king being in check
+        potentialRookMoves.append(BoardPoints(5, 1))
+        potentialRookMoves.append(BoardPoints(5, 2))
+
+        actualFilteredMoves = BoardHelpers.FilterPieceMovesThatPutPlayerInCheck(self.chessBoard, rookUnderExamination, potentialRookMoves)
+        actualFilteredMoves.sort()
+
+        expectedFilteredRookMoves = []
+        expectedFilteredRookMoves.append(BoardPoints(6, 0))
+        expectedFilteredRookMoves.append(BoardPoints(4, 0))
+        expectedFilteredRookMoves.append(BoardPoints(3, 0))
+        expectedFilteredRookMoves.append(BoardPoints(2, 0))
+        expectedFilteredRookMoves.append(BoardPoints(1, 0))
+        expectedFilteredRookMoves.sort()
+
+        self.assertEqual(actualFilteredMoves, expectedFilteredRookMoves)
+
+    def test_FilterPieceMovesThatPutPlayerInCheck_NoMovesToFilter(self):
+
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        # Make sure its really only getting the piece centric moves and not taking into accout the king being in check
+        # after the move!
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+
+        # Move the king one space up so that rook movements up won't result in check
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 1)))
+
+        potentialRookMoves = []
+
+        # Sidewards rook moves, no change to king being in check
+        potentialRookMoves.append(BoardPoints(6, 0))
+        potentialRookMoves.append(BoardPoints(4, 0))
+        potentialRookMoves.append(BoardPoints(3, 0))
+        potentialRookMoves.append(BoardPoints(2, 0))
+        potentialRookMoves.append(BoardPoints(1, 0))
+
+        # Upwards moves
+        potentialRookMoves.append(BoardPoints(5, 1))
+        potentialRookMoves.append(BoardPoints(5, 2))
+
+        actualFilteredMoves = BoardHelpers.FilterPieceMovesThatPutPlayerInCheck(self.chessBoard, rookUnderExamination, potentialRookMoves)
+        actualFilteredMoves.sort()
+
+        expectedFilteredRookMoves = []
+        expectedFilteredRookMoves.append(BoardPoints(6, 0))
+        expectedFilteredRookMoves.append(BoardPoints(4, 0))
+        expectedFilteredRookMoves.append(BoardPoints(3, 0))
+        expectedFilteredRookMoves.append(BoardPoints(2, 0))
+        expectedFilteredRookMoves.append(BoardPoints(1, 0))
+        expectedFilteredRookMoves.append(BoardPoints(5, 1))
+        expectedFilteredRookMoves.append(BoardPoints(5, 2))
+        expectedFilteredRookMoves.sort()
+
+        self.assertEqual(actualFilteredMoves, expectedFilteredRookMoves)
+
+    # endregion
+
+    # region GetValidMoves tests
+
+    def test_GetValidMoves_MoveIterationsLessThanZero_ReturnsEmptyList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = -1
+        enforceKingUnderAttack = False
+        directionVector = Points(-1,0)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = []
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_PieceBeingMovedHasNoTeam_ReturnsEmptyList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        # Change team of rook to no team
+        rookUnderExamination = Rook(TeamEnum.NoTeam, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = 1
+        enforceKingUnderAttack = False
+        directionVector = Points(-1,0)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = []
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_PieceBeingMovedIsNoPiece_ReturnsEmptyList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        rookUnderExamination = NoPiece(BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = 1
+        enforceKingUnderAttack = False
+        directionVector = Points(-1,0)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = []
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_DirectionVectorResultsInPieceBeingOutOfRange_ReturnsValidList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 1)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(0, 2)))
+
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(1, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = 10
+        enforceKingUnderAttack = False
+        directionVector = Points(-1,0)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = [BoardPoints(0,0)]
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_PieceOfSameTeamIsInPath_ReturnsValidList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
+
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(2, 0)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = 10
+        enforceKingUnderAttack = False
+        directionVector = Points(-1,0)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        actualValidMoves.sort()
+        expectedValidMoves = [BoardPoints(3,0), BoardPoints(4,0)]
+        expectedValidMoves.sort()
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_NonPawn_AttackStopsAfterHittingOppositeTeamPiece_ReturnsValidList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(3, 0)))
+
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = 10
+        enforceKingUnderAttack = False
+        directionVector = Points(-1,0)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        actualValidMoves.sort()
+        expectedValidMoves = [BoardPoints(3,0), BoardPoints(4,0)]
+        expectedValidMoves.sort()
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_NonPawn_EnforceKingInCheckSetToFalse_KingInCheck_ReturnsValidList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(3, 0)))
+
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = 10
+        enforceKingUnderAttack = False
+        directionVector = Points(0,1)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = [BoardPoints(5,1), BoardPoints(5,2)]
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_NonPawn_EnforceKingInCheckSetToTrue_KingInCheck_ReturnsValidList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(3, 0)))
+
+        rookUnderExamination = Rook(TeamEnum.Black, BoardPoints(5, 0))
+        self.chessBoard.UpdatePieceOnBoard(Pawn(TeamEnum.Black, BoardPoints(5, 3)))
+        self.chessBoard.UpdatePieceOnBoard(rookUnderExamination)
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
+
+        moveIterations = 10
+        enforceKingUnderAttack = True
+        directionVector = Points(0,1)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(rookUnderExamination, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = []
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_Pawn_DiagonalMove_OpposingTeamAtToLocation_AddsMoveToList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 1)))
+
+        whitePawn = Pawn(TeamEnum.White, BoardPoints(3,3))
+        blackPawn = Pawn(TeamEnum.Black, BoardPoints(2,4))
+        self.chessBoard.UpdatePieceOnBoard(whitePawn)
+        self.chessBoard.UpdatePieceOnBoard(blackPawn)
+
+        moveIterations = 1
+        enforceKingUnderAttack = False
+        directionVector = Points(1,-1)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(blackPawn, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = [BoardPoints(3,3)]
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_Pawn_DiagonalMove_NoTeamAtToLocation_NoEnPassant_NoAdditionToList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 1)))
+
+        whitePawn = NoPiece(BoardPoints(3,3))
+        blackPawn = Pawn(TeamEnum.Black, BoardPoints(2,4))
+        self.chessBoard.UpdatePieceOnBoard(whitePawn)
+        self.chessBoard.UpdatePieceOnBoard(blackPawn)
+
+        moveIterations = 1
+        enforceKingUnderAttack = False
+        directionVector = Points(1,-1)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(blackPawn, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = []
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_Pawn_DiagonalMove_NoTeamAtToLocation_IsEnPassant_ReturnsValidList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 1)))
+
+        whitePawnCoords = BoardPoints(3,3)
+        whitePawn = Pawn(TeamEnum.White, whitePawnCoords)
+        blackPawn = Pawn(TeamEnum.Black, BoardPoints(2,3))
+        self.chessBoard.UpdatePieceOnBoard(whitePawn)
+        self.chessBoard.UpdatePieceOnBoard(blackPawn)
+
+        moveIterations = 1
+        enforceKingUnderAttack = False
+        directionVector = Points(1,-1)
+
+        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(3,1), BoardPoints(3,3), False)
+        self.history.AppendMovement(lastMove)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(blackPawn, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = [BoardPoints(3,2)]
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_Pawn_StraightMove_NoTeamAtToLocation_ReturnsValidList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 1)))
+
+        whitePawnCoords = BoardPoints(3,3)
+        whitePawn = Pawn(TeamEnum.White, whitePawnCoords)
+        blackPawn = Pawn(TeamEnum.Black, BoardPoints(2,3))
+        self.chessBoard.UpdatePieceOnBoard(whitePawn)
+        self.chessBoard.UpdatePieceOnBoard(blackPawn)
+
+        moveIterations = 1
+        enforceKingUnderAttack = False
+        directionVector = Points(0,-1)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(blackPawn, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = [BoardPoints(2,2)]
+        self.assertEqual(actualValidMoves, expectedValidMoves)
+
+    def test_GetValidMoves_Pawn_StraightMove_TeamAtToLocation_NoAdditionToList(self):
+        self.chessBoard.RemoveAllPieces()
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0, 0)))
+        self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 1)))
+
+        whitePawnCoords = BoardPoints(2,2)
+        whitePawn = Pawn(TeamEnum.White, whitePawnCoords)
+        blackPawn = Pawn(TeamEnum.Black, BoardPoints(2,3))
+        self.chessBoard.UpdatePieceOnBoard(whitePawn)
+        self.chessBoard.UpdatePieceOnBoard(blackPawn)
+
+        moveIterations = 1
+        enforceKingUnderAttack = False
+        directionVector = Points(0,-1)
+
+        actualValidMoves = BoardHelpers.GetValidMoves(blackPawn, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
+        expectedValidMoves = []
+        self.assertEqual(actualValidMoves, expectedValidMoves)
 
     # endregion
