@@ -129,9 +129,9 @@ class Game:
             rook.ForceMove(newRookCoords)
             self.UpdatePieceOnBoard(rook)
             self.UpdatePieceOnBoard(NoPiece(oldRookCoords))
-
-        # Check if pawn is being promoted
-        self.PerformPawnPromotionCheck()
+        else:
+            # Check if pawn is being promoted
+            self.PerformPawnPromotionCheck()
 
     def Move(self, fromBoardCoords: str, toBoardCoords: str):
 

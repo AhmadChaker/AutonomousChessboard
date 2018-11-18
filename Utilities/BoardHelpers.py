@@ -1,9 +1,7 @@
-from copy import deepcopy
 import Pieces.IBasePiece
 import Pieces.Constants
 import Board.Constants
 import Utilities.CoordinateConverters
-import Miscellaneous.BoardPoints
 import Board.Constants
 import logging
 from Miscellaneous.BoardPoints import BoardPoints
@@ -77,28 +75,28 @@ class BoardHelpers:
         return False
 
     @staticmethod
-    def FilterMovesThatPutPlayerInCheck(copyBoard, piece: Pieces.IBasePiece, potentialMoves):
+    def FilterPieceMovesThatPutPlayerInCheck(board, pieceBeingMoved: Pieces.IBasePiece, potentialMoves):
         # Check each potential move and see if that move puts the King in check!
         validMoves = []
 
         for potentialMove in potentialMoves:
-            preMovePieceCoords = piece.GetCoordinates()
-            pieceAtMoveCoordinateBeforeMove = copyBoard.GetPieceAtCoordinate(potentialMove)
+            preMovePieceCoords = pieceBeingMoved.GetCoordinates()
+            pieceAtMoveCoordinateBeforeMove = board.GetPieceAtCoordinate(potentialMove)
 
-            piece.ForceMoveNoHistory(potentialMove)
-            copyBoard.UpdatePieceOnBoard(piece)
-            copyBoard.UpdatePieceOnBoard(NoPiece(preMovePieceCoords))
+            pieceBeingMoved.ForceMoveNoHistory(potentialMove)
+            board.UpdatePieceOnBoard(pieceBeingMoved)
+            board.UpdatePieceOnBoard(NoPiece(preMovePieceCoords))
 
             # Moved, now check if King on own team is in check
-            isInCheck = BoardHelpers.IsInCheck(copyBoard, piece.GetTeam())
+            isInCheck = BoardHelpers.IsInCheck(board, pieceBeingMoved.GetTeam())
 
             if not isInCheck:
                 validMoves.append(potentialMove)
 
             # Undo the previous moves
-            piece.ForceMoveNoHistory(preMovePieceCoords)
-            copyBoard.UpdatePieceOnBoard(piece)
-            copyBoard.UpdatePieceOnBoard(pieceAtMoveCoordinateBeforeMove)
+            pieceBeingMoved.ForceMoveNoHistory(preMovePieceCoords)
+            board.UpdatePieceOnBoard(pieceBeingMoved)
+            board.UpdatePieceOnBoard(pieceAtMoveCoordinateBeforeMove)
 
         return validMoves
 
@@ -126,14 +124,14 @@ class BoardHelpers:
         pieceToMoveCoords = piece.GetCoordinates()
 
         # Validate parameters
-        if moveIterations <= 0 or pieceToMoveCoords == Miscellaneous.BoardPoints.BOARD_POINTS_UNDEFINED:
-            logger.error("Problems with input variables, radius of movement: " + str(moveIterations) +
-                         ", Piece Coords: " + str(pieceToMoveCoords.GetX()) + "," + str(pieceToMoveCoords.GetY()) +
-                         ", Vector Coords:" + str(directionVector.GetX()) + "," + str(directionVector.GetY()))
+        if moveIterations <= 0:
+            logger.error("Problems with input variables, move iterations: " + str(moveIterations) +
+                         ", Piece being moved coords: " + pieceToMoveCoords.ToString() +
+                         ", Direction vector: " + directionVector.ToString())
             return []
 
-        if pieceToMoveTeam == Board.Constants.TeamEnum.NoTeam or \
-                pieceToMovePieceEnum == Pieces.Constants.PieceEnums.NoPiece:
+        if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.NoPiece or pieceToMoveTeam == Board.Constants.TeamEnum.NoTeam:
+            logger.error("Trying to move empty piece or piece with no team, returning empty list")
             return []
 
         xPotentialCoord = pieceToMoveCoords.GetX()
@@ -158,8 +156,7 @@ class BoardHelpers:
             # 1) Can only kill diagonally of the opposite team (NOT vertically)
             # 2) They can only move forward in empty spaces of 1 (and 2 at the beginning)
             if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
-                hasTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() == Board.Constants.TeamEnum.White or
-                                               pieceAtCalculatedPosition.GetTeam() == Board.Constants.TeamEnum.Black)
+                hasTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() != Board.Constants.TeamEnum.NoTeam)
 
                 if abs(directionVector.GetX()) == abs(directionVector.GetY()):
                     # Diagonal move, check that the opposite team is at this position (due to earlier if statement
@@ -186,8 +183,7 @@ class BoardHelpers:
         if not enforceKingUnderAttackCheck:
             return potentialMoves
 
-        copyBoard = deepcopy(board)
-        return BoardHelpers.FilterMovesThatPutPlayerInCheck(copyBoard, piece, potentialMoves)
+        return BoardHelpers.FilterPieceMovesThatPutPlayerInCheck(board, piece, potentialMoves)
 
     # Gets all valid moves for the team, this takes into account moves which result in the player being in check
     @staticmethod
