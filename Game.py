@@ -2,6 +2,7 @@ import logging
 import Utilities.CoordinateConverters
 import Board.Constants
 from Utilities.BoardHelpers import BoardHelpers
+from Utilities.MoveHelpers import MoveHelpers
 from Pieces.IBasePiece import IBasePiece
 from Pieces.Queen import Queen
 from Pieces.NoPiece import NoPiece
@@ -90,7 +91,7 @@ class Game:
             return
 
         # Check for en-passant before history check
-        isEnPassant = BoardHelpers.IsEnPassant(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord, self.GetHistory().GetLastMove())
+        isEnPassant = MoveHelpers.IsEnPassantMove(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord, self.GetHistory().GetLastMove())
         if isEnPassant:
             # Piece at new x coordinate and old y coordinate should now be empty as its captured
             self.UpdatePieceOnBoard(NoPiece(BoardPoints(toCoord.GetX(), fromCoord.GetY())))
@@ -107,7 +108,7 @@ class Game:
         self.UpdatePieceOnBoard(pieceBeingMoved)
         self.UpdatePieceOnBoard(NoPiece(fromCoord))
 
-        isCastleMove = BoardHelpers.IsCastleMove(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord)
+        isCastleMove = MoveHelpers.IsCastleMove(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord)
 
         if isCastleMove:
             # It's a castle move so we need to move the corresponding rook as well.
@@ -184,8 +185,8 @@ class Game:
     def PrintAllValidMoves(self):
         logger.info("Printing all valid white moves")
 
-        BoardHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
-        BoardHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.Black)
+        MoveHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
+        MoveHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.Black)
 
     def PrintPieceProperties(self):
         for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):

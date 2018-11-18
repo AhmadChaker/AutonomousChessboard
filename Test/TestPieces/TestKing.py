@@ -6,7 +6,7 @@ from Pieces.NoPiece import NoPiece
 from Board.Constants import TeamEnum
 from Board.History import History
 from Miscellaneous.BoardPoints import BoardPoints
-from Utilities.BoardHelpers import BoardHelpers
+from Utilities.MoveHelpers import MoveHelpers
 
 
 class TestKing(unittest.TestCase):
@@ -14,10 +14,10 @@ class TestKing(unittest.TestCase):
     def setUp(self):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
-        BoardHelpers.UpdateVariables(History())
+        MoveHelpers.Update(History())
 
     def tearDown(self):
-        BoardHelpers.UpdateVariables(None)
+        MoveHelpers.Update(None)
 
     # region GetValidMoves
 

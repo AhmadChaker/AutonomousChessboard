@@ -5,7 +5,7 @@ from Pieces.King import King
 from Pieces.NoPiece import NoPiece
 from Board.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
-from Utilities.BoardHelpers import BoardHelpers
+from Utilities.MoveHelpers import MoveHelpers
 from Test.Helpers.Helper import Helper
 from Board.History import History
 
@@ -16,10 +16,10 @@ class TestRook(unittest.TestCase):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
 
-        BoardHelpers.UpdateVariables(History())
+        MoveHelpers.Update(History())
 
     def tearDown(self):
-        BoardHelpers.UpdateVariables(None)
+        MoveHelpers.Update(None)
 
     # region GetValidMoves tests
 

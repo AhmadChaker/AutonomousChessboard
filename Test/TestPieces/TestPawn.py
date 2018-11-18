@@ -6,7 +6,7 @@ from Board.Constants import TeamEnum
 from Board.ChessBoard import ChessBoard
 from Board.Movement import Movement
 from Miscellaneous.BoardPoints import BoardPoints
-from Utilities.BoardHelpers import BoardHelpers
+from Utilities.MoveHelpers import MoveHelpers
 from Board.History import History
 
 
@@ -16,11 +16,11 @@ class TestPawn(unittest.TestCase):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
         self.history = History()
-        BoardHelpers.UpdateVariables(self.history)
+        MoveHelpers.Update(self.history)
 
     def tearDown(self):
         # get rid of persisted variables
-        BoardHelpers.History = None
+        MoveHelpers.Update(None)
 
     # region Tests of IBase methods
     # IBasePiece methods tested only in this class as they require implementations of abstract methods

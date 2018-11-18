@@ -1,7 +1,7 @@
 import logging
 import Game
 from Miscellaneous.Messages import Status
-from Utilities.BoardHelpers import BoardHelpers
+from Utilities.MoveHelpers import MoveHelpers
 from guizero import App, Text, TextBox, PushButton, info
 
 # setup logger
@@ -11,7 +11,7 @@ logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
                     level=logging.DEBUG)
 
 t1 = Game.Game()
-BoardHelpers.UpdateVariables(t1.GetHistory())
+MoveHelpers.Update(t1.GetHistory())
 
 t1.PrintProperties()
 
