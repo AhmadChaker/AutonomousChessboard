@@ -60,7 +60,7 @@ class Game:
 
         if self.GetHasGameEnded():
             logger.error("Game has ended already")
-            return Result(canMove, MoveMessageDictionary[MoveEnum.MoveEnum.GameEnded])
+            return Result(canMove, MoveMessageDictionary[MoveEnum.GameEnded])
 
         fromCoords = Utilities.CoordinateConverters.ConvertInputToPointCoordinates(fromBoardCoords)
         if not Utilities.CoordinateConverters.IsPointInRange(fromCoords):
@@ -133,14 +133,12 @@ class Game:
 
         return Result(hasMoved, MoveMessageDictionary[MoveEnum.Success])
 
-    def PerformPawnPromotionCheck(self):
-        # Use the fact that a pawn promotion only occurs for one pawn at a time and on the top or bottom squares
-        yIndexPawnPromotions = [0, Board.Constants.MAXIMUM_Y_SQUARES - 1]
-        for yIndex in yIndexPawnPromotions:
-            for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = self.GetPieceAtCoordinate(BoardPoints(xIndex, yIndex))
-                if piece.GetPieceEnum() == PieceEnums.Pawn:
-                    self.UpdatePieceOnBoard(Queen(piece.GetTeam(), BoardPoints(xIndex, yIndex)))
+    def PerformPawnPromotionCheck(self, pieceBeingMoved):
+        if pieceBeingMoved.GetPieceEnum() == PieceEnums.Pawn:
+            xCoord = pieceBeingMoved.GetCoordinates().GetX()
+            yCoord = pieceBeingMoved.GetCoordinates().GetY()
+            if yCoord == 0 or yCoord == Board.Constants.MAXIMUM_Y_SQUARES - 1:
+                self.UpdatePieceOnBoard(Queen(pieceBeingMoved.GetTeam, BoardPoints(xCoord, yCoord)))
 
     def PerformMoveProcessing(self, pieceBeingMoved, fromCoord: BoardPoints, toCoord: BoardPoints):
 
@@ -192,7 +190,7 @@ class Game:
             self.UpdatePieceOnBoard(NoPiece(oldRookCoords))
             return
 
-        self.PerformPawnPromotionCheck()
+        self.PerformPawnPromotionCheck(pieceBeingMoved)
 
     def PrintAllValidMoves(self):
         logger.info("Printing all valid white moves")
