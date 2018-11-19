@@ -152,33 +152,35 @@ class Game:
         # Move piece! Now update the board
         hasMoved = pieceBeingMoved.Move(self.GetBoard(), toCoords)
 
-        if hasMoved:
-            self.PerformMoveProcessing(pieceBeingMoved, fromCoords, toCoords)
-            self.PrintProperties()
-            self.PrintHistory()
+        if not hasMoved:
+            return Result(Status.NoReport, MoveMessageDictionary[MoveEnum.Success])
 
-            # Perform post moving processing
-            opposingTeam = BoardHelpers.GetOpposingTeam(self.__playersTurn)
-            isCheckMated = BoardHelpers.IsInCheckMate(self.GetBoard(), opposingTeam)
-            if isCheckMated:
-                logger.error("Checkmate!")
-                return Result(Status.Report, MoveMessageDictionary[MoveEnum.CheckMate])
+        self.PerformMoveProcessing(pieceBeingMoved, fromCoords, toCoords)
+        self.PrintProperties()
+        self.PrintHistory()
 
-            # Check draw conditions
-            isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetHistory().GetHistoricalMoves(), self.__playersTurn)
-            if isDraw:
-                logger.error("Draw declared")
-                return Result(Status.Report, MoveMessageDictionary[MoveEnum.Draw])
+        # Perform post moving processing
+        opposingTeam = BoardHelpers.GetOpposingTeam(self.__playersTurn)
+        isCheckMated = BoardHelpers.IsInCheckMate(self.GetBoard(), opposingTeam)
+        if isCheckMated:
+            logger.error("Checkmate!")
+            return Result(Status.Report, MoveMessageDictionary[MoveEnum.CheckMate])
 
-            # Change players turn
-            logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
-            self.__playersTurn = BoardHelpers.GetOpposingTeam(self.__playersTurn)
-            logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
+        # Check draw conditions
+        isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetHistory().GetHistoricalMoves(), self.__playersTurn)
+        if isDraw:
+            logger.error("Draw declared")
+            return Result(Status.Report, MoveMessageDictionary[MoveEnum.Draw])
 
-            isInCheck = BoardHelpers.IsInCheck(self.GetBoard(), self.__playersTurn)
-            if isInCheck:
-                logger.error("Check")
-                return Result(Status.Report, MoveMessageDictionary[MoveEnum.Check])
+        # Change players turn
+        logger.error(TeamEnum(self.__playersTurn).name + " just finished their turn")
+        self.__playersTurn = BoardHelpers.GetOpposingTeam(self.__playersTurn)
+        logger.error("Now " + TeamEnum(self.__playersTurn).name + "'s turn")
+
+        isInCheck = BoardHelpers.IsInCheck(self.GetBoard(), self.__playersTurn)
+        if isInCheck:
+            logger.error("Check")
+            return Result(Status.Report, MoveMessageDictionary[MoveEnum.Check])
 
         return Result(Status.NoReport, MoveMessageDictionary[MoveEnum.Success])
 

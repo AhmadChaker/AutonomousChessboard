@@ -14,7 +14,7 @@ class CanMoveEnum:
 
 class MoveEnum:
     Success = 1
-    GeneralFailure = 2
+    FailedToMove = 2
     CheckMate = 3
     Check = 4
     Draw = 5
@@ -31,7 +31,7 @@ CanMoveMessageDictionary = {
 
 MoveMessageDictionary = {
     MoveEnum.Success: "Move successful",
-    MoveEnum.GeneralFailure: "Failed to move, try again",
+    MoveEnum.FailedToMove: "Failed to move, try again",
     MoveEnum.CheckMate: "Checkmate! Game over",
     MoveEnum.Check: "Player is in check",
     MoveEnum.Draw: "Draw has been declared",

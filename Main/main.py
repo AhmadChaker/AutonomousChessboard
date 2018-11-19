@@ -1,11 +1,11 @@
 import logging
-import Game
+from Main import Game
 from Miscellaneous.Messages import Status
 from Utilities.MoveHelpers import MoveHelpers
 from guizero import App, Text, TextBox, PushButton, info
 
 # setup logger
-logging.basicConfig(handlers=[logging.FileHandler('log.txt', 'w', 'utf-8')],
+logging.basicConfig(handlers=[logging.FileHandler('..\log.txt', 'w', 'utf-8')],
                     format='%(asctime)s.%(msecs)03d %(levelname)-8s %(name)s %(funcName)s %(message)s',
                     datefmt='%d-%m-%Y %H:%M:%S',
                     level=logging.DEBUG)
