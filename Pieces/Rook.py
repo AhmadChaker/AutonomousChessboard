@@ -1,6 +1,7 @@
 import sys
 import Board.Constants
 import Pieces.Constants
+from Board.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
@@ -47,6 +48,19 @@ class Rook(IBasePiece):
         if len(self.GetHistory()) > 1:
             self.__canCastleInTheFuture = False
             logger.debug("Rook has moved, returning False")
+            return False
+
+        # Check starting x/y coord in case game is started at a certain configuration
+        xCoord = self.GetCoordinates().GetX()
+        yCoord = self.GetCoordinates().GetY()
+
+        if xCoord != 0 and xCoord != Board.Constants.MAXIMUM_X_SQUARES-1:
+            self.__canCastleInTheFuture = False
+            return False
+
+        if (self.GetTeam() == TeamEnum.White and yCoord != 0) or \
+                (self.GetTeam() == TeamEnum.Black and yCoord != Board.Constants.MAXIMUM_Y_SQUARES-1):
+            self.__canCastleInTheFuture = False
             return False
 
         if enforceKingUnderAttackCheck:
