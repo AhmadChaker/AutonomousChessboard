@@ -18,6 +18,9 @@ class History:
 
         return True
 
+    def Clear(self):
+        self.__historicalMoves.clear()
+
     def AppendMovement(self, move: Movement):
         self.__historicalMoves.append(move)
 

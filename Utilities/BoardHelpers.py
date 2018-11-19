@@ -79,10 +79,10 @@ class BoardHelpers:
     # c) King and Knight vs King
     # d) King and Bishop versus King and Bishop with Bishops on same color.
     @staticmethod
-    def IsDrawByInsufficientPieces(board, currentTeam):
+    def IsDrawByInsufficientPieces(board, opposingTeam):
 
         logger.debug("Entered")
-        opposingTeam = BoardHelpers.GetOpposingTeam(currentTeam)
+        currentTeam = BoardHelpers.GetOpposingTeam(opposingTeam)
 
         pieceCountCurrentTeam = BoardHelpers.GetTeamPieceCounts(board, currentTeam)
         pieceCountOtherTeam = BoardHelpers.GetTeamPieceCounts(board, opposingTeam)
@@ -153,10 +153,8 @@ class BoardHelpers:
         return False
 
     @staticmethod
-    def IsDraw(board, history, currentTeam: TeamEnum):
+    def IsDraw(board, history, opposingTeam: TeamEnum):
         logger.debug("Entered")
-
-        opposingTeam = BoardHelpers.GetOpposingTeam(currentTeam)
 
         # Player whose turn it will now be has no legal moves but is not in check
         validMovesOpposingTeam = MoveHelpers.GetValidMovesForTeam(board, opposingTeam)
@@ -170,7 +168,7 @@ class BoardHelpers:
             logger.error("Draw by 75 moves rule, returning True")
             return True
 
-        if BoardHelpers.IsDrawByInsufficientPieces(board, currentTeam):
+        if BoardHelpers.IsDrawByInsufficientPieces(board, opposingTeam):
             logger.error("Draw by insufficient pieces is declared, returning True")
             return True
 

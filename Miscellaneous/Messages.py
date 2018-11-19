@@ -1,38 +1,17 @@
-class Status:
-    Report = 1
-    NoReport = 2
-
-
-class CanMoveEnum:
-    Success = 1
-    FromCoordOutOfRange = 2
-    ToCoordOutOfRange = 3
-    SlotHasNoTeam = 4
-    WrongTeam = 5
-    InvalidPieceCentricMove = 6
-
-
 class MoveEnum:
     Success = 1
-    FailedToMove = 2
-    CheckMate = 3
-    Check = 4
-    Draw = 5
+    CoordOutOfRange = 2
+    SlotHasNoTeam = 3
+    WrongTeam = 4
+    InvalidPieceCentricMove = 5
+    GameEnded = 6
 
-
-CanMoveMessageDictionary = {
-    CanMoveEnum.Success: "CanMove successful",
-    CanMoveEnum.FromCoordOutOfRange: "Invalid move, from coordinate is out of range",
-    CanMoveEnum.ToCoordOutOfRange: "Invalid move, to coordinate is out of range",
-    CanMoveEnum.SlotHasNoTeam: "Invalid move, attempted to move an empty slot",
-    CanMoveEnum.WrongTeam: "Invalid move, wrong team tried to move",
-    CanMoveEnum.InvalidPieceCentricMove: "Invalid move, piece can't move to this location"
-}
 
 MoveMessageDictionary = {
-    MoveEnum.Success: "Move successful",
-    MoveEnum.FailedToMove: "Failed to move, try again",
-    MoveEnum.CheckMate: "Checkmate! Game over",
-    MoveEnum.Check: "Player is in check",
-    MoveEnum.Draw: "Draw has been declared",
+    MoveEnum.Success: "Successful",
+    MoveEnum.CoordOutOfRange: "Invalid move, coordinate is out of range",
+    MoveEnum.SlotHasNoTeam: "Invalid move, no piece at coordinate",
+    MoveEnum.WrongTeam: "Invalid move, not this teams turn",
+    MoveEnum.InvalidPieceCentricMove: "Invalid move, piece can't move to this location",
+    MoveEnum.GameEnded: "Game has already ended, start a new game"
 }

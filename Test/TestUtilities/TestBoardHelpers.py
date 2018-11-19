@@ -193,7 +193,7 @@ class TestBoardHelpers(unittest.TestCase):
 
     def test_IsDraw_OpposingTeamNoMovesAndNotInCheck_ReturnsTrue(self):
         history = History()
-        currentTeam = TeamEnum.White
+        opposingTeam = TeamEnum.Black
 
         # White team haas no legal moves and is not in check
         self.chessBoard.RemoveAllPieces()
@@ -203,7 +203,7 @@ class TestBoardHelpers(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(0,0)))
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(2, 0)))
         self.chessBoard.UpdatePieceOnBoard(Bishop(TeamEnum.White, BoardPoints(1, 2)))
-        isDraw = BoardHelpers.IsDraw(self.chessBoard, history.GetHistoricalMoves(), currentTeam)
+        isDraw = BoardHelpers.IsDraw(self.chessBoard, history.GetHistoricalMoves(), opposingTeam)
         self.assertTrue(isDraw)
 
     def test_IsDraw_IsDrawBy75MovesEach_ReturnsTrue(self):

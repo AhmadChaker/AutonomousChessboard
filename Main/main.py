@@ -1,6 +1,7 @@
 import logging
-from Main import Game
-from Miscellaneous.Messages import Status
+from Main.Game import Game
+from Board.ChessBoard import ChessBoard
+from Board.History import History
 from Utilities.MoveHelpers import MoveHelpers
 from guizero import App, Text, TextBox, PushButton, info
 
@@ -10,8 +11,10 @@ logging.basicConfig(handlers=[logging.FileHandler('..\log.txt', 'w', 'utf-8')],
                     datefmt='%d-%m-%Y %H:%M:%S',
                     level=logging.DEBUG)
 
-t1 = Game.Game()
-MoveHelpers.Update(t1.GetHistory())
+history = History()
+chessBoard = ChessBoard()
+t1 = Game(history, chessBoard)
+MoveHelpers.Update(history)
 
 t1.PrintProperties()
 
@@ -21,13 +24,25 @@ def ClickedButton():
     toBoardCoordValue = ToCoordinateTextBox.value
 
     canMoveResult = t1.CanMove(fromBoardCoordValue, toBoardCoordValue)
-    if canMoveResult.GetStatus() == Status.Report:
+    if not canMoveResult.IsSuccessful():
         info("Alert", canMoveResult.GetMessage())
         return
 
     moveResult = t1.Move(fromBoardCoordValue, toBoardCoordValue)
-    if moveResult.GetStatus() == Status.Report:
+    if not moveResult.IsSuccessful():
         info("Alert", moveResult.GetMessage())
+        return
+
+    if t1.GetIsInCheckmate():
+        info("Alert", "Checkmate!")
+        return
+
+    if t1.GetIsDraw():
+        info("Alert", "Draw!")
+        return
+
+    if t1.GetIsInCheck():
+        info("Alert", "Check!")
         return
 
 
