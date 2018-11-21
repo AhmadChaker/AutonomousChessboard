@@ -149,26 +149,25 @@ class Game:
             logger.error("Points are not in range, FromCoord: " + fromCoord.ToString() + ", ToCoord: " + toCoord.ToString())
             return
 
-        # Check for en-passant before history check
-        isEnPassant = MoveHelpers.IsEnPassantMove(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord, self.GetHistory().GetLastMove())
-        if isEnPassant:
-            # Piece at new x coordinate and old y coordinate should now be empty as its captured
-            self.UpdatePieceOnBoard(NoPiece(BoardPoints(toCoord.GetX(), fromCoord.GetY())))
-
+        move = Movement(pieceBeingMoved.GetTeam(),
+                        pieceBeingMoved.GetPieceEnum(),
+                        self.GetPieceAtCoordinate(toCoord).GetPieceEnum(),
+                        fromCoord,
+                        toCoord,
+                        self.GetHistory().GetLastMove())
         # Update history
-        self.GetHistory().AppendMovement(Movement(pieceBeingMoved.GetTeam(),
-                                                  pieceBeingMoved.GetPieceEnum(),
-                                                  self.GetPieceAtCoordinate(toCoord).GetPieceEnum(),
-                                                  fromCoord,
-                                                  toCoord,
-                                                  isEnPassant))
+        self.GetHistory().AppendMovement(move)
 
         # Update board
         self.UpdatePieceOnBoard(pieceBeingMoved)
         self.UpdatePieceOnBoard(NoPiece(fromCoord))
 
-        isCastleMove = MoveHelpers.IsCastleMove(pieceBeingMoved.GetPieceEnum(), fromCoord, toCoord)
-        if isCastleMove:
+        if move.IsEnPassantMove():
+            # Piece at new x coordinate and old y coordinate should now be empty as its captured
+            self.UpdatePieceOnBoard(NoPiece(BoardPoints(toCoord.GetX(), fromCoord.GetY())))
+            return
+
+        if move.IsCastleMove():
             # It's a castle move so we need to move the corresponding rook as well.
             commonYCoord = fromCoord.GetY()
             isCastleToTheLeft = True if fromCoord.GetX() - toCoord.GetX() > 0 else False
@@ -182,7 +181,8 @@ class Game:
             self.GetHistory().AppendMovement(Movement(self.GetPieceAtCoordinate(oldRookCoords),
                                                       self.GetPieceAtCoordinate(newRookCoords),
                                                       oldRookCoords,
-                                                      newRookCoords))
+                                                      newRookCoords,
+                                                      self.GetHistory().GetLastMove()))
 
             rook = self.GetPieceAtCoordinate(oldRookCoords)
             rook.ForceMove(newRookCoords)
@@ -246,14 +246,16 @@ class Game:
         self.__hasGameEnded = hasGameEnded
 
     def SetIsInCheckmate(self, isInCheckmate):
-        self.SetHasGameEnded(isInCheckmate)
+        if isInCheckmate:
+            self.SetHasGameEnded(isInCheckmate)
         self.__isInCheckmate = isInCheckmate
 
     def GetIsInCheckmate(self):
         return self.__isInCheckmate
 
     def SetIsDraw(self, isDraw):
-        self.SetHasGameEnded(isDraw)
+        if isDraw:
+            self.SetHasGameEnded(isDraw)
         self.__isDraw = isDraw
 
     def GetIsDraw(self):

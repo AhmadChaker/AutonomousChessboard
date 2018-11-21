@@ -213,7 +213,7 @@ class TestPawn(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(blackPawnAfterMove)
 
         # Last move needs to have been a double step from black
-        movement = Movement(blackPawnBeforeMove.GetTeam(), blackPawnBeforeMove.GetPieceEnum(), NoPiece(coordAfterMove).GetPieceEnum(), blackPawnCoordBeforeMove, coordAfterMove, False)
+        movement = Movement(blackPawnBeforeMove.GetTeam(), blackPawnBeforeMove.GetPieceEnum(), NoPiece(coordAfterMove).GetPieceEnum(), blackPawnCoordBeforeMove, coordAfterMove, None)
         self.history.AppendMovement(movement)
 
         actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
@@ -306,7 +306,7 @@ class TestPawn(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(whitePawnAfterMove)
 
         # Last move needs to have been a double step from white
-        movement = Movement(whitePawnBeforeMove.GetTeam(), whitePawnBeforeMove.GetPieceEnum(), NoPiece(coordAfterMove).GetPieceEnum(), whitePawnCoordBeforeMove, coordAfterMove, False)
+        movement = Movement(whitePawnBeforeMove.GetTeam(), whitePawnBeforeMove.GetPieceEnum(), NoPiece(coordAfterMove).GetPieceEnum(), whitePawnCoordBeforeMove, coordAfterMove, None)
         self.history.AppendMovement(movement)
 
         actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)

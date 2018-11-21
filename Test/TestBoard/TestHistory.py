@@ -1,4 +1,5 @@
 import unittest
+import Utilities.BoardHelpers
 from Board.Movement import Movement
 from Board.History import History
 from Pieces.Rook import Rook
@@ -21,11 +22,10 @@ class TestHistory(unittest.TestCase):
         move1Pawn = Pawn(TeamEnum.Black, BoardPoints(4,4))
         move2Rook = Rook(TeamEnum.Black, BoardPoints(2,2))
         move2Pawn = Pawn(TeamEnum.White, BoardPoints(3,3))
-        isEnPassantMove = False
 
         # Start methods
-        move1 = Movement(move1Rook.GetTeam(), move1Rook.GetPieceEnum(), move1Pawn.GetPieceEnum(), move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), isEnPassantMove)
-        move2 = Movement(move2Rook.GetTeam(), move2Pawn.GetPieceEnum(), move2Rook.GetPieceEnum(),  move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), isEnPassantMove)
+        move1 = Movement(move1Rook.GetTeam(), move1Rook.GetPieceEnum(), move1Pawn.GetPieceEnum(), move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), None)
+        move2 = Movement(move2Rook.GetTeam(), move2Pawn.GetPieceEnum(), move2Rook.GetPieceEnum(),  move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), None)
         hist.AppendMovement(move1)
         hist.AppendMovement(move2)
 
@@ -39,11 +39,10 @@ class TestHistory(unittest.TestCase):
         move1Pawn = Pawn(TeamEnum.Black, BoardPoints(4,4))
         move2Rook = Rook(TeamEnum.Black, BoardPoints(2,2))
         move2Pawn = Pawn(TeamEnum.White, BoardPoints(3,3))
-        isEnPassantMove = False
 
         # Start methods
-        move1 = Movement(move1Rook.GetPieceEnum(), move1Rook.GetPieceEnum(), move1Pawn.GetPieceEnum(), move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), isEnPassantMove)
-        move2 = Movement(move2Rook.GetPieceEnum(), move2Rook.GetPieceEnum(), move2Pawn.GetPieceEnum(), move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), isEnPassantMove)
+        move1 = Movement(move1Rook.GetPieceEnum(), move1Rook.GetPieceEnum(), move1Pawn.GetPieceEnum(), move1Rook.GetCoordinates(), move1Pawn.GetCoordinates(), None)
+        move2 = Movement(move2Rook.GetPieceEnum(), move2Rook.GetPieceEnum(), move2Pawn.GetPieceEnum(), move2Rook.GetCoordinates(), move2Pawn.GetCoordinates(), None)
         hist.AppendMovement(move1)
         hist.AppendMovement(move2)
 

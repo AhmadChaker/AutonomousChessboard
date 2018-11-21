@@ -405,7 +405,7 @@ class TestMoveHelpers(unittest.TestCase):
         enforceKingUnderAttack = False
         directionVector = Points(1,-1)
 
-        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(3,1), BoardPoints(3,3), False)
+        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(3,1), BoardPoints(3,3), None)
         self.history.AppendMovement(lastMove)
 
         actualValidMoves = MoveHelpers.GetValidMoves(blackPawn, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
@@ -489,9 +489,7 @@ class TestMoveHelpers(unittest.TestCase):
         self.assertFalse(isEnPassant)
 
     def test_IsEnPassantMove_PieceMovingIsNotPawn_ReturnsFalse(self):
-        # Standard two square move
-        isLastMoveAnEnPassant = False
-        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,3), isLastMoveAnEnPassant)
+        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,3), None)
         pieceMovingEnum = PieceEnums.Queen
         oldPieceCoords = BoardPoints(0,3)
         newCoords = BoardPoints(1,2)
@@ -511,9 +509,7 @@ class TestMoveHelpers(unittest.TestCase):
         self.assertFalse(isEnPassant)
 
     def test_IsEnPassantMove_LastMoveIsPawnButNotTwoMoves_ReturnsFalse(self):
-        # Standard two square move
-        isLastMoveAnEnPassant = False
-        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,2), isLastMoveAnEnPassant)
+        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,2), None)
         pieceMovingEnum = PieceEnums.Pawn
         oldPieceCoords = BoardPoints(0,3)
         newCoords = BoardPoints(1,2)
@@ -523,8 +519,7 @@ class TestMoveHelpers(unittest.TestCase):
 
     def test_IsEnPassantMove_ConditionsValidButNotEnPassantMove_ReturnsFalse(self):
         # Standard two square move
-        isLastMoveAnEnPassant = False
-        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,3), isLastMoveAnEnPassant)
+        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,3), None)
         pieceMovingEnum = PieceEnums.Pawn
         oldPieceCoords = BoardPoints(0,3)
         # Standard move down
@@ -535,8 +530,7 @@ class TestMoveHelpers(unittest.TestCase):
 
     def test_IsEnPassantMove_IsBlackEnPassantMove_ReturnsTrue(self):
         # Standard two square move
-        isLastMoveAnEnPassant = False
-        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,3), isLastMoveAnEnPassant)
+        lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,1), BoardPoints(1,3), None)
         pieceMovingEnum = PieceEnums.Pawn
         oldPieceCoords = BoardPoints(0,3)
         # Killing move across to an empty square
@@ -546,9 +540,7 @@ class TestMoveHelpers(unittest.TestCase):
         self.assertTrue(isEnPassant)
 
     def test_IsEnPassantMove_IsWhiteEnPassantMove_ReturnsTrue(self):
-        # Standard two square move
-        isLastMoveAnEnPassant = False
-        lastMove = Movement(TeamEnum.Black, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,6), BoardPoints(1,4), isLastMoveAnEnPassant)
+        lastMove = Movement(TeamEnum.Black, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(1,6), BoardPoints(1,4), None)
         pieceMovingEnum = PieceEnums.Pawn
         oldPieceCoords = BoardPoints(0,4)
         # Killing move across to an empty square

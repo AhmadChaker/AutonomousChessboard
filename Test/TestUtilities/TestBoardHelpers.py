@@ -138,52 +138,48 @@ class TestBoardHelpers(unittest.TestCase):
 
     def test_IsDrawBySeventyFiveMovesEachRule_LessThan75MovesEach_ReturnsFalse(self):
         history = History()
-        isEnPassant = False
         history.AppendMovement(Movement(TeamEnum.White,
                                         PieceEnums.Pawn,
                                         PieceEnums.Queen,
                                         BoardPoints(1,1),
                                         BoardPoints(2,2),
-                                        isEnPassant))
+                                        None))
         isDraw = BoardHelpers.IsDrawBySeventyFiveMovesEachRule(history.GetHistoricalMoves())
         self.assertFalse(isDraw)
 
     def test_IsDrawBySeventyFiveMovesEachRule_MoreThanXMoves_CaptureMade_ReturnsFalse(self):
         history = History()
-        isEnPassant = False
         for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
             history.AppendMovement(Movement(TeamEnum.White,
                                             PieceEnums.Knight,
                                             PieceEnums.Queen,
                                             BoardPoints(1,1),
                                             BoardPoints(2,2),
-                                            isEnPassant))
+                                            None))
         isDraw = BoardHelpers.IsDrawBySeventyFiveMovesEachRule(history.GetHistoricalMoves())
         self.assertFalse(isDraw)
 
     def test_IsDrawBySeventyFiveMovesEachRule_MoreThanXMoves_PawnMoves_ReturnsFalse(self):
         history = History()
-        isEnPassant = False
         for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
             history.AppendMovement(Movement(TeamEnum.White,
                                             PieceEnums.Pawn,
                                             PieceEnums.NoPiece,
                                             BoardPoints(1,1),
                                             BoardPoints(2,2),
-                                            isEnPassant))
+                                            None))
         isDraw = BoardHelpers.IsDrawBySeventyFiveMovesEachRule(history.GetHistoricalMoves())
         self.assertFalse(isDraw)
 
     def test_IsDrawBySeventyFiveMovesEachRule_MoreThanXMoves_NoCaptureOrPawnMoves_ReturnsTrue(self):
         history = History()
-        isEnPassant = False
         for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
             history.AppendMovement(Movement(TeamEnum.White,
                                             PieceEnums.Knight,
                                             PieceEnums.NoPiece,
                                             BoardPoints(1,1),
                                             BoardPoints(2,2),
-                                            isEnPassant))
+                                            None))
         isDraw = BoardHelpers.IsDrawBySeventyFiveMovesEachRule(history.GetHistoricalMoves())
         self.assertTrue(isDraw)
 
@@ -208,14 +204,13 @@ class TestBoardHelpers(unittest.TestCase):
 
     def test_IsDraw_IsDrawBy75MovesEach_ReturnsTrue(self):
         history = History()
-        isEnPassant = False
         for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
             history.AppendMovement(Movement(TeamEnum.White,
                                             PieceEnums.Knight,
                                             PieceEnums.NoPiece,
                                             BoardPoints(1,1),
                                             BoardPoints(2,2),
-                                            isEnPassant))
+                                            None))
         currentTeam = TeamEnum.White
 
         isDraw = BoardHelpers.IsDraw(self.chessBoard, history.GetHistoricalMoves(), currentTeam)

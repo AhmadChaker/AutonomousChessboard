@@ -42,4 +42,3 @@ def ConvertInputToPointCoordinates(chessCoordinate: str) -> BoardPoints:
         return Miscellaneous.BoardPoints.BOARD_POINTS_UNDEFINED
 
     return BoardPoints(indexAlpha, indexNumeric)
-

@@ -7,7 +7,6 @@ import Utilities.BoardHelpers
 import logging
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
-from Board.History import History
 from Pieces.Constants import PieceEnums
 from Pieces.NoPiece import NoPiece
 
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 class MoveHelpers:
 
     @classmethod
-    def Update(cls, history: History):
+    def Update(cls, history):
         cls.History = history
 
     # This method gets all legal moves from the piece's perspective, this does not take into account board
