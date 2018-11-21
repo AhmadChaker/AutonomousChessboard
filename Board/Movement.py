@@ -17,7 +17,6 @@ class Movement:
         if self.__isEnPassantMove:
             self.__isCaptureMove = True
 
-        castleMove = MoveHelpers.IsCastleMove(pieceAtFromCoord, fromCoord, toCoord)
         self.__isCastleMove = MoveHelpers.IsCastleMove(pieceAtFromCoord, fromCoord, toCoord)
 
     def __eq__(self, other):

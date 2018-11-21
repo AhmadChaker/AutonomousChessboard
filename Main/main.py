@@ -23,14 +23,9 @@ def ClickedButton():
     fromBoardCoordValue = FromCoordinateTextBox.value
     toBoardCoordValue = ToCoordinateTextBox.value
 
-    canMoveResult = t1.CanMove(fromBoardCoordValue, toBoardCoordValue)
-    if not canMoveResult.IsSuccessful():
-        info("Alert", canMoveResult.GetMessage())
-        return
-
     moveResult = t1.Move(fromBoardCoordValue, toBoardCoordValue)
     if not moveResult.IsSuccessful():
-        info("Alert", moveResult.GetMessage())
+        info("Alert", moveResult.GetStatusCode())
         return
 
     if t1.GetIsInCheckmate():

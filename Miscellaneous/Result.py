@@ -1,11 +1,11 @@
 class Result:
 
-    def __init__(self, isSuccessful, message):
+    def __init__(self, isSuccessful, statusCode):
         self.__isSuccessful = isSuccessful
-        self.__message = message
+        self.__statusCode = statusCode
 
-    def GetMessage(self):
-        return self.__message
+    def GetStatusCode(self):
+        return self.__statusCode
 
     def IsSuccessful(self):
         return self.__isSuccessful
