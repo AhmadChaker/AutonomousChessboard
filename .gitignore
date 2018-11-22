@@ -42,4 +42,6 @@ venv/
 # Log file 
 log.txt
 
+# Doc file
+*~$*.docx
 
