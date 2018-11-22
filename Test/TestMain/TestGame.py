@@ -345,16 +345,24 @@ class TestGame(unittest.TestCase):
     def test_Move_GameHasEnded_ReturnsGameEndedEnum(self):
         self.Game.SetHasGameEnded(True)
 
+        C2CoordToArrayCoord = BoardPoints(2,1)
         moveResult = self.Game.Move("C2", "C4")
         self.assertFalse(moveResult.IsSuccessful())
         self.assertEqual(MoveEnum.GameEnded, moveResult.GetStatusCode())
 
+        # verify no movement
+        self.assertEqual(PieceEnums.Pawn, self.Game.GetPieceAtCoordinate(C2CoordToArrayCoord).GetPieceEnum())
+
     def test_Move_CantMove_ReturnsCantMoveEnum(self):
 
         # Pawn impossible move
+        C2CoordToArrayCoord = BoardPoints(2,1)
         moveResult = self.Game.Move("C2", "C5")
         self.assertEqual(False, moveResult.IsSuccessful())
         self.assertEqual(MoveEnum.InvalidPieceCentricMove, moveResult.GetStatusCode())
+
+        # verify no movement
+        self.assertEqual(PieceEnums.Pawn, self.Game.GetPieceAtCoordinate(C2CoordToArrayCoord).GetPieceEnum())
 
     def test_Move_ValidMove_NormalMoveVariablesSet(self):
 
@@ -430,5 +438,22 @@ class TestGame(unittest.TestCase):
 
         self.assertTrue(self.Game.GetIsDraw())
         self.assertTrue(self.Game.GetHasGameEnded())
+
+# endregion
+
+# region Miscellaneous tests
+
+    def test_SimulateEntireGame_FoolsMate(self):
+
+        self.Game.Move("F2", "F3")
+        self.Game.Move("E7", "E5")
+        self.Game.Move("G2", "G4")
+
+        # check that we are not in checkmate
+        self.assertFalse(self.Game.GetIsInCheckmate())
+
+        self.Game.Move("D8", "H4")
+
+        self.assertTrue(self.Game.GetIsInCheckmate)
 
 # endregion
