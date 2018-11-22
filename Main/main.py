@@ -16,8 +16,6 @@ chessBoard = ChessBoard()
 t1 = Game(history, chessBoard)
 MoveHelpers.Update(history)
 
-t1.PrintProperties()
-
 
 def ClickedButton():
     fromBoardCoordValue = FromCoordinateTextBox.value

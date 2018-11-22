@@ -115,8 +115,6 @@ class Game:
             return Result(hasMoved, MoveEnum.InvalidPieceCentricMove)
 
         self.PerformMoveProcessing(pieceBeingMoved, fromCoords, toCoords)
-        self.PrintProperties()
-        self.PrintHistory()
 
         # Change players turn
         opposingTeam = BoardHelpers.GetOpposingTeam(self.GetPlayersTurn())
@@ -132,6 +130,7 @@ class Game:
             if not isDraw:
                 self.SetIsInCheck(BoardHelpers.IsInCheck(self.GetBoard(), self.GetPlayersTurn()))
 
+        self.PrintProperties()
         return Result(hasMoved, MoveEnum.Success)
 
     def PerformPawnPromotionCheck(self, pieceBeingMoved):
@@ -190,41 +189,15 @@ class Game:
 
         self.PerformPawnPromotionCheck(pieceBeingMoved)
 
-    def PrintAllValidMoves(self):
-        logger.info("Printing all valid white moves")
-
-        MoveHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.White)
-        MoveHelpers.GetValidMovesForTeam(self.GetBoard(), Board.Constants.TeamEnum.Black)
-
-    def PrintPieceProperties(self):
-        for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
-            # cycle over y coordinates
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = self.GetPieceAtCoordinate(BoardPoints(xCoord, yCoord))
-                if piece.GetPieceEnum() == PieceEnums.NoPiece:
-                    continue
-                logger.info("Start printing properties for: " + piece.GetPieceStr())
-                logger.info("Board coordinates: " + BoardPoints(xCoord, yCoord).ToString())
-                logger.info("Self reported coordinates: " + piece.GetCoordinates().ToString())
-                logger.info("History: ")
-                for historicalMove in piece.GetHistory():
-                    logger.info(historicalMove.ToString())
-                logger.info("End printing properties for: " + piece.GetPieceStr())
-
     def PrintProperties(self):
+        logger.info("Printing board")
         self.GetBoard().PrintBoard()
-        self.PrintAllValidMoves()
-        self.PrintPieceProperties()
-
-    def PrintHistory(self):
-        logger.error("Printing history")
-
-        for historicalMove in self.GetHistory().GetHistoricalMoves():
-            strToPrint = PieceEnums(historicalMove.GetPieceEnumFrom()).name + " at [" + \
-                         historicalMove.GetFromCoord().ToString() + "] moved to [" + \
-                         historicalMove.GetToCoord().ToString() + "], IsCaptureMove: " + \
-                         str(historicalMove.IsCaptureMove())
-            logger.error(strToPrint)
+        logger.info("Printing all valid white moves")
+        MoveHelpers.PrintValidMoves(self.GetBoard(), Board.Constants.TeamEnum.White)
+        logger.info("Printing all valid black moves")
+        MoveHelpers.PrintValidMoves(self.GetBoard(), Board.Constants.TeamEnum.Black)
+        logger.info("Printing history")
+        self.GetHistory().PrintHistory()
 
     # region Property setters and getters
 

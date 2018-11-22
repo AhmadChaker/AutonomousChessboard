@@ -29,6 +29,11 @@ class Movement:
                self.__isCastleMove == other.__isCastleMove and \
                self.__isEnPassantMove == other.__isEnPassantMove
 
+    def ToString(self):
+        return str(self.GetTeamMoved()) + " " + PieceEnums(self.GetPieceEnumFrom()).name + " at [" + \
+               self.GetFromCoord().ToString() + "] moved to [" + self.GetToCoord().ToString() + "] (" + \
+               PieceEnums(self.GetPieceEnumTo()).name + ")" + ", IsCaptureMove: " + str(self.IsCaptureMove())
+
     def IsCaptureMove(self):
         return self.__isCaptureMove
 

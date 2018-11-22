@@ -47,7 +47,8 @@ class BoardHelpers:
 
         teamAKing = teamAKingArray[0]
         teamB = BoardHelpers.GetOpposingTeam(teamA)
-        teamBMoves = MoveHelpers.GetPieceCentricMovesForTeam(board, teamB)
+        enforceCheckCondition = False
+        teamBMoves = MoveHelpers.GetPieceCentricMovesForTeam(board, teamB, enforceCheckCondition)
         for teamBMove in teamBMoves:
             if teamBMove == teamAKing.GetCoordinates():
                 return True
@@ -67,7 +68,8 @@ class BoardHelpers:
     def IsInCheckMate(board, team: TeamEnum):
         logger.debug("Entered")
         # Check if King is in check and that there are NO valid moves
-        validMoves = MoveHelpers.GetValidMovesForTeam(board, team)
+        enforceCheckCondition = True
+        validMoves = MoveHelpers.GetPieceCentricMovesForTeam(board, team, enforceCheckCondition)
         isInCheck = BoardHelpers.IsInCheck(board, team)
         if len(validMoves) == 0 and isInCheck:
             return True
@@ -157,7 +159,8 @@ class BoardHelpers:
         logger.debug("Entered")
 
         # Player whose turn it will now be has no legal moves but is not in check
-        validMovesOpposingTeam = MoveHelpers.GetValidMovesForTeam(board, opposingTeam)
+        enforceCheckCondition = True
+        validMovesOpposingTeam = MoveHelpers.GetPieceCentricMovesForTeam(board, opposingTeam, enforceCheckCondition)
         isInCheck = BoardHelpers.IsInCheck(board, opposingTeam)
 
         if len(validMovesOpposingTeam) == 0 and not isInCheck:

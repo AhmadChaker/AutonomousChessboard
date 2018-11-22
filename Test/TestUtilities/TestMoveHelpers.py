@@ -30,8 +30,7 @@ class TestMoveHelpers(unittest.TestCase):
 
     # region GetPieceCentricMovesForTeam tests
 
-    # Tests here don't take into account moves where after the move is made, the king (of moving team) is in check
-    def test_GetPieceCentricMovesForTeam_GetsValidMoves(self):
+    def test_GetPieceCentricMovesForTeam_EnforceCheckConditionFalse_GetsValidMoves(self):
         self.chessBoard.RemoveAllPieces()
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
         self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
@@ -42,7 +41,8 @@ class TestMoveHelpers(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(5, 0)))
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
 
-        actualMoves = MoveHelpers.GetPieceCentricMovesForTeam(self.chessBoard, TeamEnum.Black)
+        enforceCheckCondition = False
+        actualMoves = MoveHelpers.GetPieceCentricMovesForTeam(self.chessBoard, TeamEnum.Black, enforceCheckCondition)
         uniqueActualMoves = Helper.GetUniqueElements(actualMoves)
         uniqueActualMoves.sort()
 
@@ -69,13 +69,7 @@ class TestMoveHelpers(unittest.TestCase):
         uniqueExpectedMoves.sort()
         self.assertEqual(uniqueActualMoves, uniqueExpectedMoves)
 
-    # endregion
-
-    # region GetValidMovesForTeam tests
-
-    # Tests here take into account the king of the team being in check as part of the move
-
-    def test_GetValidMovesForTeam_GetsValidMoves(self):
+    def test_GetPieceCentricMovesForTeam_EnforceCheckConditionTrue_GetsValidMoves(self):
         self.chessBoard.RemoveAllPieces()
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(0,0)))
         self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.White, BoardPoints(1, 0)))
@@ -86,7 +80,8 @@ class TestMoveHelpers(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(Rook(TeamEnum.Black, BoardPoints(5, 0)))
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(7, 0)))
 
-        actualMoves = MoveHelpers.GetValidMovesForTeam(self.chessBoard, TeamEnum.Black)
+        enforceCheckCondition = True
+        actualMoves = MoveHelpers.GetPieceCentricMovesForTeam(self.chessBoard, TeamEnum.Black, enforceCheckCondition)
         uniqueActualMoves = Helper.GetUniqueElements(actualMoves)
         uniqueActualMoves.sort()
 

@@ -23,7 +23,7 @@ class MoveHelpers:
     # This method gets all legal moves from the piece's perspective, this does not take into account board
     # considerations such as being in check
     @staticmethod
-    def GetPieceCentricMovesForTeam(board, teamToGet: Board.Constants.TeamEnum):
+    def GetPieceCentricMovesForTeam(board, teamToGet: Board.Constants.TeamEnum, enforceKingUnderAttackCheck):
         moves = []
         for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
             # cycle over y coordinates
@@ -34,7 +34,6 @@ class MoveHelpers:
                     continue
 
                 # Get valid moves from the perspective of the piece independent of the board
-                enforceKingUnderAttackCheck = False
                 pieceCentricValidMoves = piece.GetValidMoves(board, enforceKingUnderAttackCheck)
                 moves.extend(pieceCentricValidMoves)
         return moves
@@ -137,33 +136,6 @@ class MoveHelpers:
 
         return MoveHelpers.FilterPieceMovesThatPutPlayerInCheck(board, piece, potentialMoves)
 
-    # Gets all valid moves for the team, this takes into account moves which result in the player being in check
-    @staticmethod
-    def GetValidMovesForTeam(board, teamToPrint: Board.Constants.TeamEnum):
-
-        moves = []
-        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            # cycle over y coordinates
-
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
-                piece = board.GetPieceAtCoordinate(BoardPoints(xCoord,yCoord))
-                if piece.GetTeam() != teamToPrint:
-                    continue
-
-                enforceKingUnderAttackCheck = True
-                validPieceMoves = piece.GetValidMoves(board, enforceKingUnderAttackCheck)
-                if len(validPieceMoves) == 0:
-                    continue
-
-                logger.info("Printing valid moves (" + str(len(validPieceMoves)) + ") " + "for: " + piece.GetPieceStr()
-                            + ", at: " + piece.GetCoordinates().ToString())
-                for validMove in validPieceMoves:
-                    logger.info(validMove.ToString())
-
-                moves.extend(validPieceMoves)
-
-        return moves
-
     @staticmethod
     def IsEnPassantMove(pieceMovingEnum, oldPieceCoords, newPotentialCoords, lastMove):
         if lastMove is not None and \
@@ -181,3 +153,24 @@ class MoveHelpers:
     def IsCastleMove(pieceEnum, frmOrd: BoardPoints, toOrd:BoardPoints):
         return pieceEnum == PieceEnums.King and \
                abs(frmOrd.GetX() - toOrd.GetX()) == Board.Constants.KING_CASTLE_SQUARE_MOVES
+
+    @staticmethod
+    def PrintValidMoves(board, teamToPrint: Board.Constants.TeamEnum):
+
+        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
+            # cycle over y coordinates
+
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
+                piece = board.GetPieceAtCoordinate(BoardPoints(xCoord,yCoord))
+                if piece.GetTeam() != teamToPrint:
+                    continue
+
+                enforceKingUnderAttackCheck = True
+                validPieceMoves = piece.GetValidMoves(board, enforceKingUnderAttackCheck)
+                if len(validPieceMoves) == 0:
+                    continue
+
+                logger.info("Printing valid moves (" + str(len(validPieceMoves)) + ") " + "for: " + piece.GetPieceStr()
+                            + ", at: " + piece.GetCoordinates().ToString())
+                for validMove in validPieceMoves:
+                    logger.info(validMove.ToString())

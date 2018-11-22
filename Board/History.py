@@ -1,4 +1,8 @@
+import logging
 from Board.Movement import Movement
+
+
+logger = logging.getLogger(__name__)
 
 
 class History:
@@ -31,3 +35,9 @@ class History:
         if len(self.__historicalMoves) != 0:
             return self.__historicalMoves[-1]
         return None
+
+    def PrintHistory(self):
+        for historicalMove in self.GetHistoricalMoves():
+            logger.info(historicalMove.ToString())
+
+
