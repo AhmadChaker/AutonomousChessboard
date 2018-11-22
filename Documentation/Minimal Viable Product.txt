@@ -1,0 +1,10 @@
+1) Hook up electromagnet
+	A) See it's strength through a wooden surface
+2) Get a pressure distribution array sensor
+	A) API
+	B) electrical input?
+3) X-Y table
+	A) Electrical input?
+	B) API ?
+
+

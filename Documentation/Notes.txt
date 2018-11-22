@@ -3,10 +3,4 @@ Notes:
 
 Enhancements:
 1) Starting off at a certain configuration on the chess board
-
-Detecting pieces - Mesh?
-
-Rooks need validation of their starting position ! in case we want to start at a specific configuration
-Don't want castling in "middle" of a configured game.
-
-
+2) Handle misregistered move
