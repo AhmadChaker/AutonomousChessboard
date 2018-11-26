@@ -44,4 +44,4 @@ log.txt
 
 # Doc file
 *~$*.docx
-
+*~*.tmp

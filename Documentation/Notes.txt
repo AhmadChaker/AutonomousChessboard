@@ -1,6 +1,2 @@
 Notes:
 - Castling can only be triggered by the King, can't be triggered by the rooks as they can normally move to their post castling position without issue
-
-Enhancements:
-1) Starting off at a certain configuration on the chess board
-2) Handle misregistered move
