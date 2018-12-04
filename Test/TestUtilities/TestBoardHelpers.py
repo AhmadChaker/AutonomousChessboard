@@ -18,11 +18,6 @@ class TestBoardHelpers(unittest.TestCase):
     def setUp(self):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
-        self.history = History()
-        MoveHelpers.Update(self.history)
-
-    def tearDown(self):
-        MoveHelpers.Update(None)
 
     # region GetOpposingTeam Tests
 
@@ -188,7 +183,6 @@ class TestBoardHelpers(unittest.TestCase):
     # region IsDraw Tests
 
     def test_IsDraw_OpposingTeamNoMovesAndNotInCheck_ReturnsTrue(self):
-        history = History()
         opposingTeam = TeamEnum.Black
 
         # White team haas no legal moves and is not in check
@@ -199,13 +193,12 @@ class TestBoardHelpers(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(0,0)))
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(2, 0)))
         self.chessBoard.UpdatePieceOnBoard(Bishop(TeamEnum.White, BoardPoints(1, 2)))
-        isDraw = BoardHelpers.IsDraw(self.chessBoard, history.GetHistoricalMoves(), opposingTeam)
+        isDraw = BoardHelpers.IsDraw(self.chessBoard, opposingTeam)
         self.assertTrue(isDraw)
 
     def test_IsDraw_IsDrawBy75MovesEach_ReturnsTrue(self):
-        history = History()
         for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
-            history.AppendMovement(Movement(TeamEnum.White,
+            self.chessBoard.AppendToHistory(Movement(TeamEnum.White,
                                             PieceEnums.Knight,
                                             PieceEnums.NoPiece,
                                             BoardPoints(1,1),
@@ -213,11 +206,10 @@ class TestBoardHelpers(unittest.TestCase):
                                             None))
         currentTeam = TeamEnum.White
 
-        isDraw = BoardHelpers.IsDraw(self.chessBoard, history.GetHistoricalMoves(), currentTeam)
+        isDraw = BoardHelpers.IsDraw(self.chessBoard, currentTeam)
         self.assertTrue(isDraw)
 
     def test_IsDraw_IsDrawByInsufficientPieces_ReturnsTrue(self):
-        history = History()
         currentTeam = TeamEnum.White
 
         # Only Kings on the board
@@ -225,14 +217,13 @@ class TestBoardHelpers(unittest.TestCase):
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(0,0)))
         self.chessBoard.UpdatePieceOnBoard(King(TeamEnum.White, BoardPoints(2, 0)))
 
-        isDraw = BoardHelpers.IsDraw(self.chessBoard, history.GetHistoricalMoves(), currentTeam)
+        isDraw = BoardHelpers.IsDraw(self.chessBoard, currentTeam)
         self.assertTrue(isDraw)
 
     def test_IsDraw_NoDraw_ReturnsFalse(self):
-        history = History()
         currentTeam = TeamEnum.White
 
-        isDraw = BoardHelpers.IsDraw(self.chessBoard, history.GetHistoricalMoves(), currentTeam)
+        isDraw = BoardHelpers.IsDraw(self.chessBoard, currentTeam)
         self.assertFalse(isDraw)
 
     # endregion

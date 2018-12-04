@@ -13,10 +13,6 @@ class TestKing(unittest.TestCase):
     def setUp(self):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
-        MoveHelpers.Update(History())
-
-    def tearDown(self):
-        MoveHelpers.Update(None)
 
     # region GetValidMoves
 

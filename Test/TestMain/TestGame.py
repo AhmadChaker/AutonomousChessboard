@@ -20,14 +20,11 @@ class TestGame(unittest.TestCase):
 
     def setUp(self):
         # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
-        self.history = History()
-        self.Game = Game(self.history, self.chessBoard)
-        MoveHelpers.Update(self.history)
+        self.Game = Game()
+        self.chessBoard = self.Game.GetBoard()
 
     def tearDown(self):
         self.Game = None
-        MoveHelpers.Update(None)
 
 # region CanMove tests
 
@@ -175,8 +172,8 @@ class TestGame(unittest.TestCase):
     def test_ResetGame_AllRelevantVariablesReset(self):
 
         # Set all variables that will need to be reset
-        self.Game.GetHistory().AppendMovement(Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.Pawn,
-                                                       BoardPoints(2,2), BoardPoints(3,3), None))
+        self.Game.AppendToHistory((Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.Pawn,
+                                            BoardPoints(2,2), BoardPoints(3,3), None)))
         self.Game.GetBoard().RemoveAllPieces()
         self.Game.SetPlayersTurn(TeamEnum.Black)
         self.Game.SetHasGameEnded(True)
@@ -194,7 +191,7 @@ class TestGame(unittest.TestCase):
         # Assertions
         self.assertEqual(16, actualwhitePieces)
         self.assertEqual(16, actualBlackPieces)
-        self.assertEqual(0, len(self.Game.GetHistory().GetHistoricalMoves()))
+        self.assertEqual(0, len(self.chessBoard.GetHistoricalMoves()))
         self.assertEqual(TeamEnum.White, self.Game.GetPlayersTurn())
         self.assertFalse(self.Game.GetHasGameEnded())
         self.assertFalse(self.Game.GetIsInCheckmate())
@@ -226,8 +223,8 @@ class TestGame(unittest.TestCase):
         expectedPieceAtPostMoveCoordinate = PieceEnums.Rook
 
         # assertions
-        self.assertEqual(1, len(self.Game.GetHistory().GetHistoricalMoves()))
-        self.assertEqual(expectedMove, self.Game.GetHistory().GetLastMove())
+        self.assertEqual(1, len(self.chessBoard.GetHistoricalMoves()))
+        self.assertEqual(expectedMove, self.chessBoard.GetLastHistoricalMove())
         self.assertEqual(expectedPieceAtPreMoveCoordinate,self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPreMove).GetPieceEnum())
         self.assertEqual(expectedPieceAtPostMoveCoordinate, self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPostMove).GetPieceEnum())
 
@@ -240,7 +237,7 @@ class TestGame(unittest.TestCase):
         byPassCoordinates = BoardPoints(2,3)
         self.Game.GetBoard().UpdatePieceOnBoard(Pawn(TeamEnum.White, byPassCoordinates))
         previousMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(2,1), byPassCoordinates, None)
-        self.Game.GetHistory().AppendMovement(previousMove)
+        self.Game.AppendToHistory(previousMove)
 
         coordinatesPreMove = BoardPoints(1,3)
         pawn = Pawn(TeamEnum.Black, coordinatesPreMove)
@@ -257,7 +254,7 @@ class TestGame(unittest.TestCase):
         expectedPieceAtByPassCoordinate = PieceEnums.NoPiece
 
         # assertions
-        self.assertEqual(2, len(self.Game.GetHistory().GetHistoricalMoves()))
+        self.assertEqual(2, len(self.chessBoard.GetHistoricalMoves()))
         self.assertEqual(expectedPieceAtPreMoveCoordinate,self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPreMove).GetPieceEnum())
         self.assertEqual(expectedPieceAtPostMoveCoordinate, self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPostMove).GetPieceEnum())
         self.assertEqual(expectedPieceAtByPassCoordinate, self.Game.GetBoard().GetPieceAtCoordinate(byPassCoordinates).GetPieceEnum())
@@ -288,7 +285,7 @@ class TestGame(unittest.TestCase):
         expectedHistory.AppendMovement(secondMove)
 
         self.assertTrue(hasMoved)
-        self.assertEqual(expectedHistory, self.Game.GetHistory())
+        self.assertEqual(expectedHistory, self.chessBoard.GetHistory())
         self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveKingCoords).GetPieceEnum())
         self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveRookCoords).GetPieceEnum())
         actualRook = self.Game.GetBoard().GetPieceAtCoordinate(postMoveRookCoords)
@@ -322,7 +319,7 @@ class TestGame(unittest.TestCase):
         expectedHistory.AppendMovement(secondMove)
 
         self.assertTrue(hasMoved)
-        self.assertEqual(expectedHistory, self.Game.GetHistory())
+        self.assertEqual(expectedHistory, self.chessBoard.GetHistory())
         self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveKingCoords).GetPieceEnum())
         self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveRookCoords).GetPieceEnum())
         actualRook = self.Game.GetBoard().GetPieceAtCoordinate(postMoveRookCoords)

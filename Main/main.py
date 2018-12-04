@@ -11,11 +11,8 @@ logging.basicConfig(handlers=[logging.FileHandler('..\log.txt', 'w', 'utf-8')],
                     datefmt='%d-%m-%Y %H:%M:%S',
                     level=logging.DEBUG)
 
-history = History()
-chessBoard = ChessBoard()
-t1 = Game(history, chessBoard)
-MoveHelpers.Update(history)
-
+t1 = Game()
+t1.PrintProperties()
 
 def ClickedButton():
     fromBoardCoordValue = FromCoordinateTextBox.value

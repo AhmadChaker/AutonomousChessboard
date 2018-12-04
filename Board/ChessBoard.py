@@ -10,6 +10,7 @@ from Pieces.Bishop import Bishop
 from Pieces.Queen import Queen
 from Pieces.King import King
 from Board.Constants import TeamEnum
+from Board.History import History
 from Miscellaneous.BoardPoints import BoardPoints
 
 
@@ -20,6 +21,8 @@ class ChessBoard:
 
     def __init__(self):
         logger.debug("Entered constructor")
+
+        self.__history = History()
 
         # Initialise chess board 2D structure
         self.__board = [None] * Board.Constants.MAXIMUM_X_SQUARES
@@ -45,9 +48,25 @@ class ChessBoard:
 
         return self.__board[pieceCoords.GetX()][pieceCoords.GetY()]
 
+    def AppendToHistory(self, movement):
+        self.__history.AppendMovement(movement)
+
+    def GetLastHistoricalMove(self):
+        return self.__history.GetLastMove()
+
+    def GetHistoricalMoves(self):
+        return self.__history.GetHistoricalMoves()
+
+    def GetHistory(self):
+        return self.__history
+
     def ResetToDefault(self):
 
-        logger.debug("Entered ResetBoard")
+        logger.debug("Entered ResetToDefault")
+
+        # clear history
+        self.__history.Clear()
+
         # Set empty pieces first
 
         yIndexNoPieces = [2, 3, 4, 5]
@@ -88,7 +107,7 @@ class ChessBoard:
         self.UpdatePieceOnBoard(Queen(TeamEnum.Black, BoardPoints(3, 7)))
         self.UpdatePieceOnBoard(King(TeamEnum.Black, BoardPoints(4, 7)))
 
-        logger.debug("End ResetBoard")
+        logger.debug("End ResetToDefault")
 
     def RemoveAllPieces(self):
         for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
@@ -118,3 +137,7 @@ class ChessBoard:
         # Bottom reference coordinates
         logger.error("")
         logger.error(boardReferenceAlphabeticalDigits)
+
+    def PrintHistory(self):
+        self.__history.PrintHistory()
+

@@ -22,11 +22,6 @@ class TestMoveHelpers(unittest.TestCase):
     def setUp(self):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
-        self.history = History()
-        MoveHelpers.Update(self.history)
-
-    def tearDown(self):
-        MoveHelpers.Update(None)
 
     # region GetPieceCentricMovesForTeam tests
 
@@ -401,7 +396,7 @@ class TestMoveHelpers(unittest.TestCase):
         directionVector = Points(1,-1)
 
         lastMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(3,1), BoardPoints(3,3), None)
-        self.history.AppendMovement(lastMove)
+        self.chessBoard.AppendToHistory(lastMove)
 
         actualValidMoves = MoveHelpers.GetValidMoves(blackPawn, self.chessBoard, directionVector, moveIterations, enforceKingUnderAttack)
         expectedValidMoves = [BoardPoints(3,2)]

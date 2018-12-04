@@ -16,10 +16,6 @@ logger = logging.getLogger(__name__)
 
 class MoveHelpers:
 
-    @classmethod
-    def Update(cls, history):
-        cls.History = history
-
     # This method gets all legal moves from the piece's perspective, this does not take into account board
     # considerations such as being in check
     @staticmethod
@@ -64,11 +60,10 @@ class MoveHelpers:
 
         return validMoves
 
-    @classmethod
+    @staticmethod
     # Direction vector is the direction with which to move.
     # moveIterations variable corresponds to iterations of the direction vector.
-    def GetValidMoves(cls, piece: Pieces.IBasePiece, board, directionVector: Points, moveIterations: int,
-                      enforceKingUnderAttackCheck):
+    def GetValidMoves(piece: Pieces.IBasePiece, board, directionVector: Points, moveIterations: int, enforceKingUnderAttackCheck):
 
         pieceToMoveTeam = piece.GetTeam()
         pieceToMovePieceEnum = piece.GetPieceEnum()
@@ -116,7 +111,10 @@ class MoveHelpers:
                         potentialMoves.append(potentialPoint)
                     else:
                         # no team at calculated position, check for en-passant
-                        if MoveHelpers.IsEnPassantMove(piece.GetPieceEnum(), piece.GetCoordinates(), potentialPoint, cls.History.GetLastMove()):
+                        if MoveHelpers.IsEnPassantMove(piece.GetPieceEnum(),
+                                                       piece.GetCoordinates(),
+                                                       potentialPoint,
+                                                       board.GetLastHistoricalMove()):
                             potentialMoves.append(potentialPoint)
                 else:
                     # Straight move

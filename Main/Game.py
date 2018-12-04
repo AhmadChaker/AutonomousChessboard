@@ -7,6 +7,7 @@ from Pieces.IBasePiece import IBasePiece
 from Pieces.Queen import Queen
 from Pieces.NoPiece import NoPiece
 from Board.Constants import TeamEnum
+from Board.ChessBoard import ChessBoard
 from Pieces.Constants import PieceEnums
 from Miscellaneous.BoardPoints import BoardPoints
 from Board.Movement import Movement
@@ -19,11 +20,10 @@ logger = logging.getLogger(__name__)
 
 class Game:
 
-    def __init__(self, history, chessBoard):
+    def __init__(self):
         logger.debug("Entered constructor")
 
-        self.__history = history
-        self.__board = chessBoard
+        self.__board = ChessBoard()
 
         # Variables constantly checked for during game play
         self.__playersTurn = TeamEnum.White
@@ -32,17 +32,15 @@ class Game:
         self.__isDraw = False
         self.__isInCheck = False
 
-        self.ResetGame()
-
     def ResetGame(self):
-        self.GetHistory().Clear()
         self.GetBoard().ResetToDefault()
-
         self.SetPlayersTurn(TeamEnum.White)
         self.SetHasGameEnded(False)
         self.SetIsInCheckmate(False)
         self.SetIsDraw(False)
         self.SetIsInCheck(False)
+
+    # region Board interfaces
 
     def UpdatePieceOnBoard(self, piece: IBasePiece):
         self.GetBoard().UpdatePieceOnBoard(piece)
@@ -50,8 +48,16 @@ class Game:
     def GetPieceAtCoordinate(self, pieceCoords:BoardPoints):
         return self.GetBoard().GetPieceAtCoordinate(pieceCoords)
 
+    def AppendToHistory(self, movement):
+        self.GetBoard().AppendToHistory(movement)
+
+    def GetLastHistoricalMove(self):
+        return self.GetBoard().GetLastHistoricalMove()
+
     def GetBoard(self):
         return self.__board
+
+    # endregion
 
     def CanMove(self, fromBoardCoords: str, toBoardCoords: str):
         logger.debug("Entered, FromBoardCoords: " + fromBoardCoords + ", ToBoardCoords: " + toBoardCoords)
@@ -125,7 +131,7 @@ class Game:
         isInCheckMate = BoardHelpers.IsInCheckMate(self.GetBoard(), self.GetPlayersTurn())
         self.SetIsInCheckmate(isInCheckMate)
         if not isInCheckMate:
-            isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetHistory().GetHistoricalMoves(), self.GetPlayersTurn())
+            isDraw = BoardHelpers.IsDraw(self.GetBoard(), self.GetPlayersTurn())
             self.SetIsDraw(isDraw)
             if not isDraw:
                 self.SetIsInCheck(BoardHelpers.IsInCheck(self.GetBoard(), self.GetPlayersTurn()))
@@ -144,15 +150,16 @@ class Game:
 
         logger.debug("Entered method")
 
+        lastMove = self.GetLastHistoricalMove()
         move = Movement(pieceBeingMoved.GetTeam(),
                         pieceBeingMoved.GetPieceEnum(),
                         self.GetPieceAtCoordinate(toCoord).GetPieceEnum(),
                         fromCoord,
                         toCoord,
-                        self.GetHistory().GetLastMove())
+                        self.GetLastHistoricalMove())
 
         # Update history
-        self.GetHistory().AppendMovement(move)
+        self.AppendToHistory(move)
 
         # Update board
         self.UpdatePieceOnBoard(pieceBeingMoved)
@@ -175,12 +182,12 @@ class Game:
 
             rookBeingMoved = self.GetPieceAtCoordinate(oldRookCoords)
             # Update history
-            self.GetHistory().AppendMovement(Movement(rookBeingMoved.GetTeam(),
-                                                      rookBeingMoved.GetPieceEnum(),
-                                                      self.GetPieceAtCoordinate(newRookCoords).GetPieceEnum(),
-                                                      oldRookCoords,
-                                                      newRookCoords,
-                                                      self.GetHistory().GetLastMove()))
+            self.AppendToHistory(Movement(rookBeingMoved.GetTeam(),
+                                          rookBeingMoved.GetPieceEnum(),
+                                          self.GetPieceAtCoordinate(newRookCoords).GetPieceEnum(),
+                                          oldRookCoords,
+                                          newRookCoords,
+                                          self.GetLastHistoricalMove()))
 
             rookBeingMoved.ForceMove(newRookCoords)
             self.UpdatePieceOnBoard(rookBeingMoved)
@@ -197,12 +204,9 @@ class Game:
         logger.info("Printing all valid black moves")
         MoveHelpers.PrintValidMoves(self.GetBoard(), Board.Constants.TeamEnum.Black)
         logger.info("Printing history")
-        self.GetHistory().PrintHistory()
+        self.GetBoard().PrintHistory()
 
     # region Property setters and getters
-
-    def GetHistory(self):
-        return self.__history
 
     def GetPlayersTurn(self):
         return self.__playersTurn

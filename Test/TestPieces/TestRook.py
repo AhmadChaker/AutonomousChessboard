@@ -16,11 +16,6 @@ class TestRook(unittest.TestCase):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
 
-        MoveHelpers.Update(History())
-
-    def tearDown(self):
-        MoveHelpers.Update(None)
-
     # region GetValidMoves tests
 
     def test_GetValidMoves__CastlingNotAnOption_ReturnsValidMoves(self):

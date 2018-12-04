@@ -1,7 +1,6 @@
 import Pieces.IBasePiece
 import Pieces.Constants
 import Board.Constants
-import Board.Constants
 import logging
 from Miscellaneous.BoardPoints import BoardPoints
 from Board.Constants import TeamEnum
@@ -155,7 +154,7 @@ class BoardHelpers:
         return False
 
     @staticmethod
-    def IsDraw(board, history, opposingTeam: TeamEnum):
+    def IsDraw(board, opposingTeam: TeamEnum):
         logger.debug("Entered")
 
         # Player whose turn it will now be has no legal moves but is not in check
@@ -167,7 +166,7 @@ class BoardHelpers:
             logger.error("Player whose turn it is has no legal move and is not in check, returning True")
             return True
 
-        if BoardHelpers.IsDrawBySeventyFiveMovesEachRule(history):
+        if BoardHelpers.IsDrawBySeventyFiveMovesEachRule(board.GetHistoricalMoves()):
             logger.error("Draw by 75 moves rule, returning True")
             return True
 

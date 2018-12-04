@@ -15,12 +15,6 @@ class TestPawn(unittest.TestCase):
     def setUp(self):
         # Initialise chess board 2D structure
         self.chessBoard = ChessBoard()
-        self.history = History()
-        MoveHelpers.Update(self.history)
-
-    def tearDown(self):
-        # get rid of persisted variables
-        MoveHelpers.Update(None)
 
     # region Tests of IBase methods
     # IBasePiece methods tested only in this class as they require implementations of abstract methods
@@ -214,7 +208,7 @@ class TestPawn(unittest.TestCase):
 
         # Last move needs to have been a double step from black
         movement = Movement(blackPawnBeforeMove.GetTeam(), blackPawnBeforeMove.GetPieceEnum(), NoPiece(coordAfterMove).GetPieceEnum(), blackPawnCoordBeforeMove, coordAfterMove, None)
-        self.history.AppendMovement(movement)
+        self.chessBoard.AppendToHistory(movement)
 
         actualValidMoves = whitePawn.GetValidMoves(self.chessBoard, False)
 
@@ -307,7 +301,7 @@ class TestPawn(unittest.TestCase):
 
         # Last move needs to have been a double step from white
         movement = Movement(whitePawnBeforeMove.GetTeam(), whitePawnBeforeMove.GetPieceEnum(), NoPiece(coordAfterMove).GetPieceEnum(), whitePawnCoordBeforeMove, coordAfterMove, None)
-        self.history.AppendMovement(movement)
+        self.chessBoard.AppendToHistory(movement)
 
         actualValidMoves = blackPawn.GetValidMoves(self.chessBoard, False)
 
