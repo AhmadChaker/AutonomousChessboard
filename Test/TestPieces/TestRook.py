@@ -143,6 +143,70 @@ class TestRook(unittest.TestCase):
 
     # endregion
 
+    # region IsQueenSideRookWithStartingCoordinates Tests
+
+    def test_IsQueenSideRookWithStartingCoordinates_XCoordinateIsNotZero_ReturnsFalse(self):
+        rook = Rook(TeamEnum.White, BoardPoints(1,0))
+        hasStartingPosition = rook.IsQueenSideRookWithStartingCoordinates()
+
+        self.assertFalse(hasStartingPosition)
+
+    def test_IsQueenSideRookWithStartingCoordinates_TeamWhiteYCoordinateIsNotZero_ReturnsFalse(self):
+        rook = Rook(TeamEnum.White, BoardPoints(0, 1))
+        hasStartingPosition = rook.IsQueenSideRookWithStartingCoordinates()
+
+        self.assertFalse(hasStartingPosition)
+
+    def test_IsQueenSideRookWithStartingCoordinates_TeamBlackYCoordinateIsNotSeven_ReturnsFalse(self):
+        rook = Rook(TeamEnum.Black, BoardPoints(0, 1))
+        hasStartingPosition = rook.IsQueenSideRookWithStartingCoordinates()
+
+        self.assertFalse(hasStartingPosition)
+
+    def test_IsQueenSideRookWithStartingCoordinates_ValidRook_ReturnsTrue(self):
+        whiteRook = Rook(TeamEnum.White, BoardPoints(0, 0))
+        isWhiteRookStartingPosition = whiteRook.IsQueenSideRookWithStartingCoordinates()
+
+        blackRook = Rook(TeamEnum.Black, BoardPoints(0, 7))
+        isBlackRookStartingPosition = blackRook.IsQueenSideRookWithStartingCoordinates()
+
+        self.assertTrue(isWhiteRookStartingPosition)
+        self.assertTrue(isBlackRookStartingPosition)
+
+    # endregion
+
+    # region IsKingSideRookWithStartingCoordinates Tests
+
+    def test_IsKingSideRookWithStartingCoordinates_XCoordinateIsNotSeven_ReturnsFalse(self):
+        rook = Rook(TeamEnum.White, BoardPoints(6,0))
+        hasStartingPosition = rook.IsKingSideRookWithStartingCoordinates()
+
+        self.assertFalse(hasStartingPosition)
+
+    def test_IsKingSideRookWithStartingCoordinates_TeamWhiteYCoordinateIsNotZero_ReturnsFalse(self):
+        rook = Rook(TeamEnum.White, BoardPoints(7, 1))
+        hasStartingPosition = rook.IsKingSideRookWithStartingCoordinates()
+
+        self.assertFalse(hasStartingPosition)
+
+    def test_IsKingSideRookWithStartingCoordinates_TeamBlackYCoordinateIsNotSeven_ReturnsFalse(self):
+        rook = Rook(TeamEnum.Black, BoardPoints(7, 6))
+        hasStartingPosition = rook.IsKingSideRookWithStartingCoordinates()
+
+        self.assertFalse(hasStartingPosition)
+
+    def test_IsKingSideRookWithStartingCoordinates_ValidRook_ReturnsTrue(self):
+        whiteRook = Rook(TeamEnum.White, BoardPoints(7, 0))
+        isWhiteRookStartingPosition = whiteRook.IsKingSideRookWithStartingCoordinates()
+
+        blackRook = Rook(TeamEnum.Black, BoardPoints(7, 7))
+        isBlackRookStartingPosition = blackRook.IsKingSideRookWithStartingCoordinates()
+
+        self.assertTrue(isWhiteRookStartingPosition)
+        self.assertTrue(isBlackRookStartingPosition)
+
+    # endregion
+
     # region CanCastle tests
 
     def test_CanCastle_CanCastleInFutureSetToFalse_ReturnsFalse(self):
@@ -176,50 +240,16 @@ class TestRook(unittest.TestCase):
         self.assertFalse(canCastle)
         self.assertFalse(rook.CanCastleInTheFuture())
 
-    def test_CanCastle_XCoordOfRookIsNotZeroOrSeven_ReturnsFalse(self):
+    def test_CanCastle_NotStartingPositionKingSideRookAndNotStartingPositionQueenSideRook_ReturnsFalse(self):
         rook = Rook(TeamEnum.White, BoardPoints(1, 0))
         self.chessBoard.UpdatePieceOnBoard(rook)
 
         # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(0, 0)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
-
-        canCastle = rook.CanCastle(self.chessBoard, False)
-        self.assertFalse(canCastle)
-        self.assertFalse(rook.CanCastleInTheFuture())
-
-    def test_CanCastle_YCoordOfWhiteRookIsNotZero_ReturnsFalse(self):
-        rook = Rook(TeamEnum.White, BoardPoints(0, 1))
-        self.chessBoard.UpdatePieceOnBoard(rook)
-
-        # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(0, 0)))
         self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 0)))
         self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 0)))
         self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 0)))
-        # clear second line as well
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 1)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 1)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 1)))
-
-        canCastle = rook.CanCastle(self.chessBoard, False)
-        self.assertFalse(canCastle)
-        self.assertFalse(rook.CanCastleInTheFuture())
-
-    def test_CanCastle_YCoordOfBlackRookIsNotSeven_ReturnsFalse(self):
-        rook = Rook(TeamEnum.White, BoardPoints(0, 6))
-        self.chessBoard.UpdatePieceOnBoard(rook)
-
-        # Clear out the right spaces between rook and king
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(0, 7)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 7)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 7)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 7)))
-        # clear second line
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(1, 6)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(2, 6)))
-        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(3, 6)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(5, 0)))
+        self.chessBoard.UpdatePieceOnBoard(NoPiece(BoardPoints(6, 0)))
 
         canCastle = rook.CanCastle(self.chessBoard, False)
         self.assertFalse(canCastle)

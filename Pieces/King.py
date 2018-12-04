@@ -18,7 +18,8 @@ class King(IBasePiece):
 
     def __init__(self, team, coords):
         IBasePiece.__init__( self, team, coords)
-        self.__canCastleInTheFuture = True
+        self.__canCastleQueenSideInTheFuture = True
+        self.__canCastleKingSideInTheFuture = True
 
     def GetPieceStr(self):
         team = self.GetTeam()
@@ -33,38 +34,87 @@ class King(IBasePiece):
         return Pieces.Constants.PieceEnums.King
 
     def SetCanCastleInTheFuture(self, canCastleInTheFuture):
-        self.__canCastleInTheFuture = canCastleInTheFuture
+        self.__canCastleKingSideInTheFuture = canCastleInTheFuture
+        self.__canCastleQueenSideInTheFuture = canCastleInTheFuture
 
     def CanCastleInTheFuture(self):
-        return self.__canCastleInTheFuture
+        return self.__canCastleKingSideInTheFuture or self.__canCastleQueenSideInTheFuture
+
+    def SetCanKingSideCastleInTheFuture(self, canCastleInTheFuture):
+        self.__canCastleKingSideInTheFuture = canCastleInTheFuture
+
+    def CanKingSideCastleInTheFuture(self):
+        return self.__canCastleKingSideInTheFuture
+
+    def SetCanQueenSideCastleInTheFuture(self, canCastleInTheFuture):
+        self.__canCastleQueenSideInTheFuture = canCastleInTheFuture
+
+    def CanQueenSideCastleInTheFuture(self):
+        return self.__canCastleQueenSideInTheFuture
+
+    def CanKingSideCastle(self, board, enforceKingIsInCheck):
+
+        if not self.CanKingSideCastleInTheFuture():
+            return False
+
+        if not self.CanCastleBaseChecks(board):
+            return False
+
+        arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
+        rookToCastle = None
+        for rook in arrayRooks:
+            if rook.IsKingSideRookWithStartingCoordinates():
+                rookToCastle = rook
+                break
+
+        if rookToCastle is None or not rookToCastle.CanCastleInTheFuture():
+            self.SetCanKingSideCastleInTheFuture(False)
+            return False
+
+        return rook.CanCastle(board, enforceKingIsInCheck)
+
+    def CanQueenSideCastle(self, board, enforceKingIsInCheck):
+
+        if not self.CanQueenSideCastleInTheFuture():
+            return False
+
+        if not self.CanCastleBaseChecks(board):
+            return False
+
+        arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
+        rookToCastle = None
+        for rook in arrayRooks:
+            # Y coord is verified in the CanCastle method in the rook
+            if rook.IsQueenSideRookWithStartingCoordinates():
+                rookToCastle = rook
+                break
+
+        if rookToCastle is None or not rookToCastle.CanCastleInTheFuture():
+            self.SetCanQueenSideCastleInTheFuture(False)
+            return False
+
+        return rook.CanCastle(board, enforceKingIsInCheck)
 
     def CanCastle(self, board, enforceKingIsInCheck):
 
+        if not self.CanKingSideCastle(board, enforceKingIsInCheck) and not self.CanQueenSideCastle(board, enforceKingIsInCheck):
+            return False
+
+        return True
+
+    def CanCastleBaseChecks(self, board):
         # Short circuit check
-        if not self.__canCastleInTheFuture:
+        if not self.CanCastleInTheFuture():
             return False
 
         if len(self.GetHistory()) > 1:
-            self.__canCastleInTheFuture = False
+            self.SetCanCastleInTheFuture(False)
             logger.debug("King has moved, returning False")
             return False
 
         arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
         if len(arrayRooks) == 0:
-            self.__canCastleInTheFuture = False
-            return False
-
-        rooksThatCanCastleRightNow = []
-        canAnyRookCastleInTheFuture = False
-        for rook in arrayRooks:
-            if rook.CanCastleInTheFuture():
-                canAnyRookCastleInTheFuture = True
-            if rook.CanCastle(board, enforceKingIsInCheck):
-                rooksThatCanCastleRightNow.append(rook)
-
-        if len(rooksThatCanCastleRightNow) == 0:
-            if not canAnyRookCastleInTheFuture:
-                self.__canCastleInTheFuture = False
+            self.SetCanCastleInTheFuture(False)
             return False
 
         return True
