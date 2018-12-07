@@ -1,0 +1,4 @@
+To do before leaving Dublin:
+1) Implement stubs for Moving chess piece with robot arm
+2) Implement stubs for hall effect sensor
+3) Download snapfish and program a few levels
