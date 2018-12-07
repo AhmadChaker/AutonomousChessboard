@@ -13,6 +13,8 @@ class King(IBasePiece):
 
     WhiteString = u'\u2654'
     BlackString = u'\u265A'
+    WhiteFenString = 'K'
+    BlackFenString = 'k'
 
     MoveIterations = 1
 
@@ -27,6 +29,15 @@ class King(IBasePiece):
             return King.WhiteString
         elif team == Board.Constants.TeamEnum.Black:
             return King.BlackString
+
+        return Pieces.Constants.BOARD_ERROR_STRING
+
+    def GetFenRepresentation(self):
+        team = self.GetTeam()
+        if team == Board.Constants.TeamEnum.White:
+            return King.WhiteFenString
+        elif team == Board.Constants.TeamEnum.Black:
+            return King.BlackFenString
 
         return Pieces.Constants.BOARD_ERROR_STRING
 

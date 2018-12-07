@@ -9,8 +9,10 @@ from Pieces.Knight import Knight
 from Pieces.Bishop import Bishop
 from Pieces.Queen import Queen
 from Pieces.King import King
+from Pieces.Constants import PieceEnums
 from Board.Constants import TeamEnum
 from Board.History import History
+from Board.Movement import Movement
 from Miscellaneous.BoardPoints import BoardPoints
 
 
@@ -19,10 +21,11 @@ logger = logging.getLogger(__name__)
 
 class ChessBoard:
 
-    def __init__(self):
+    def __init__(self, history):
         logger.debug("Entered constructor")
 
-        self.__history = History()
+        self.__history = history
+        self.__teamsTurn = TeamEnum.White
 
         # Initialise chess board 2D structure
         self.__board = [None] * Board.Constants.MAXIMUM_X_SQUARES
@@ -48,6 +51,74 @@ class ChessBoard:
 
         return self.__board[pieceCoords.GetX()][pieceCoords.GetY()]
 
+    def PerformMoveProcessing(self, pieceBeingMoved, fromCoord: BoardPoints, toCoord: BoardPoints):
+
+        logger.debug("Entered method")
+
+        move = Movement(pieceBeingMoved.GetTeam(),
+                        pieceBeingMoved.GetPieceEnum(),
+                        self.GetPieceAtCoordinate(toCoord).GetPieceEnum(),
+                        fromCoord,
+                        toCoord,
+                        self.GetLastHistoricalMove())
+
+        # Update history
+        self.AppendToHistory(move)
+
+        # Update board
+        self.UpdatePieceOnBoard(pieceBeingMoved)
+        self.UpdatePieceOnBoard(NoPiece(fromCoord))
+
+        # change team
+        logger.error(TeamEnum(self.GetTeamsTurn()).name + " just finished their turn")
+        opposingTeam = TeamEnum.Black if self.GetTeamsTurn() == TeamEnum.White else TeamEnum.Black
+        self.SetTeamsTurn(opposingTeam)
+        logger.error("Now " + TeamEnum(self.GetTeamsTurn()).name + "'s turn")
+
+        # do piece specific post move checks
+        if pieceBeingMoved.GetPieceEnum() == PieceEnums.Pawn:
+            self.PerformPawnPromotionCheck(pieceBeingMoved)
+            if move.IsEnPassantMove():
+                # Piece at new x coordinate and old y coordinate should now be empty as its captured
+                self.UpdatePieceOnBoard(NoPiece(BoardPoints(toCoord.GetX(), fromCoord.GetY())))
+                return
+
+        if move.IsCastleMove():
+            # It's a castle move so we need to move the corresponding rook as well.
+            commonYCoord = fromCoord.GetY()
+            isCastleToTheLeft = True if fromCoord.GetX() - toCoord.GetX() > 0 else False
+            oldRookXCoord = 0 if isCastleToTheLeft > 0 else Board.Constants.MAXIMUM_X_SQUARES-1
+            newRookXCoord = toCoord.GetX()+1 if isCastleToTheLeft else toCoord.GetX() - 1
+
+            oldRookCoords = BoardPoints(oldRookXCoord, commonYCoord)
+            newRookCoords = BoardPoints(newRookXCoord, commonYCoord)
+
+            rookBeingMoved = self.GetPieceAtCoordinate(oldRookCoords)
+            # Update history
+            self.AppendToHistory(Movement(rookBeingMoved.GetTeam(),
+                                          rookBeingMoved.GetPieceEnum(),
+                                          self.GetPieceAtCoordinate(newRookCoords).GetPieceEnum(),
+                                          oldRookCoords,
+                                          newRookCoords,
+                                          self.GetLastHistoricalMove()))
+
+            rookBeingMoved.ForceMove(newRookCoords)
+            self.UpdatePieceOnBoard(rookBeingMoved)
+            self.UpdatePieceOnBoard(NoPiece(oldRookCoords))
+            return
+
+    def PerformPawnPromotionCheck(self, pieceBeingMoved):
+        isPromotion = False
+        if pieceBeingMoved.GetPieceEnum() == PieceEnums.Pawn:
+            xCoord = pieceBeingMoved.GetCoordinates().GetX()
+            yCoord = pieceBeingMoved.GetCoordinates().GetY()
+            if yCoord == 0 or yCoord == Board.Constants.MAXIMUM_Y_SQUARES - 1:
+                self.UpdatePieceOnBoard(Queen(pieceBeingMoved.GetTeam(), BoardPoints(xCoord, yCoord)))
+                isPromotion = True
+        return isPromotion
+
+    # region History related
+
     def AppendToHistory(self, movement):
         self.__history.AppendMovement(movement)
 
@@ -60,9 +131,14 @@ class ChessBoard:
     def GetHistory(self):
         return self.__history
 
+    # endregion
+
     def ResetToDefault(self):
 
         logger.debug("Entered ResetToDefault")
+
+        # set team
+        self.SetTeamsTurn(TeamEnum.White)
 
         # clear history
         self.__history.Clear()
@@ -115,6 +191,27 @@ class ChessBoard:
             for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
                 self.UpdatePieceOnBoard(NoPiece(BoardPoints(xCoord, yCoord)))
 
+    def GetFenRepresentation(self):
+
+        fenRepresentation = ""
+        for yCoord in reversed(range(Board.Constants.MAXIMUM_Y_SQUARES)):
+            if yCoord != Board.Constants.MAXIMUM_Y_SQUARES-1:
+                fenRepresentation += "/"
+
+            countOfEmptySpaces = 0
+            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
+                piece = self.GetPieceAtCoordinate(BoardPoints(xCoord, yCoord))
+                if piece.GetPieceEnum() == PieceEnums.NoPiece:
+                    countOfEmptySpaces += 1
+                    if xCoord == Board.Constants.MAXIMUM_X_SQUARES-1:
+                        fenRepresentation += str(countOfEmptySpaces)
+                else:
+                    if countOfEmptySpaces > 0:
+                        fenRepresentation += str(countOfEmptySpaces)
+                        countOfEmptySpaces = 0
+                    fenRepresentation += piece.GetFenRepresentation()
+        logger.error(fenRepresentation)
+
     def PrintBoard(self):
 
         # Top reference coordinates
@@ -141,3 +238,8 @@ class ChessBoard:
     def PrintHistory(self):
         self.__history.PrintHistory()
 
+    def GetTeamsTurn(self):
+        return self.__teamsTurn
+
+    def SetTeamsTurn(self, teamsTurn):
+        self.__teamsTurn = teamsTurn

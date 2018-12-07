@@ -1,4 +1,5 @@
 import unittest
+from Board.History import History
 from Board.ChessBoard import ChessBoard
 from Pieces.NoPiece import NoPiece
 from Miscellaneous.BoardPoints import BoardPoints
@@ -7,8 +8,8 @@ from Miscellaneous.BoardPoints import BoardPoints
 class TestNoPiece(unittest.TestCase):
 
     def setUp(self):
-        # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
+        history = History()
+        self.chessBoard = ChessBoard(history)
 
     def test_GetValidMoves_BishopInMiddle_ReturnsValidMoves(self):
 

@@ -12,6 +12,9 @@ class NoPiece(IBasePiece):
         # Unicode dash character to match width of chess pieces in unicode
         return '\u2015'
 
+    def GetFenRepresentation(self):
+        return ''
+
     def GetPieceEnum(self):
         return PieceEnums.NoPiece
 

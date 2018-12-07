@@ -11,6 +11,8 @@ class Knight(IBasePiece):
 
     WhiteString = u'\u2658'
     BlackString = u'\u265E'
+    WhiteFenString = 'N'
+    BlackFenString = 'n'
     MoveIterations = 1
 
     def __init__(self, team, coords):
@@ -22,6 +24,15 @@ class Knight(IBasePiece):
             return Knight.WhiteString
         elif team == Board.Constants.TeamEnum.Black:
             return Knight.BlackString
+
+        return Pieces.Constants.BOARD_ERROR_STRING
+
+    def GetFenRepresentation(self):
+        team = self.GetTeam()
+        if team == Board.Constants.TeamEnum.White:
+            return Knight.WhiteFenString
+        elif team == Board.Constants.TeamEnum.Black:
+            return Knight.BlackFenString
 
         return Pieces.Constants.BOARD_ERROR_STRING
 

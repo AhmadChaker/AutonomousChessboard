@@ -17,7 +17,8 @@ class TestBoardHelpers(unittest.TestCase):
 
     def setUp(self):
         # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
+        history = History()
+        self.chessBoard = ChessBoard(history)
 
     # region GetOpposingTeam Tests
 

@@ -12,6 +12,8 @@ class Queen(IBasePiece):
 
     WhiteString = u'\u2655'
     BlackString = u'\u265B'
+    WhiteFenString = 'Q'
+    BlackFenString = 'q'
     MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
@@ -25,6 +27,15 @@ class Queen(IBasePiece):
             return Queen.BlackString
 
         return Board.Constants.BOARD_ERROR_STRING
+
+    def GetFenRepresentation(self):
+        team = self.GetTeam()
+        if team == Board.Constants.TeamEnum.White:
+            return Queen.WhiteFenString
+        elif team == Board.Constants.TeamEnum.Black:
+            return Queen.BlackFenString
+
+        return Pieces.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Queen

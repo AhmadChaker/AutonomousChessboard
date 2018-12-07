@@ -12,6 +12,8 @@ class Bishop(IBasePiece):
 
     WhiteString = u'\u2657'
     BlackString = u'\u265D'
+    WhiteFenString = 'B'
+    BlackFenString = 'b'
     MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
@@ -23,6 +25,15 @@ class Bishop(IBasePiece):
             return Bishop.WhiteString
         elif team == Board.Constants.TeamEnum.Black:
             return Bishop.BlackString
+
+        return Pieces.Constants.BOARD_ERROR_STRING
+
+    def GetFenRepresentation(self):
+        team = self.GetTeam()
+        if team == Board.Constants.TeamEnum.White:
+            return Bishop.WhiteFenString
+        elif team == Board.Constants.TeamEnum.Black:
+            return Bishop.BlackFenString
 
         return Pieces.Constants.BOARD_ERROR_STRING
 

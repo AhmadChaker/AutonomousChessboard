@@ -2,14 +2,15 @@ import unittest
 from Board.ChessBoard import ChessBoard
 from Pieces.Bishop import Bishop
 from Board.Constants import TeamEnum
+from Board.History import History
 from Miscellaneous.BoardPoints import BoardPoints
 
 
 class TestBishop(unittest.TestCase):
 
     def setUp(self):
-        # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
+        history = History()
+        self.chessBoard = ChessBoard(history)
 
     def test_GetValidMoves_ReturnsValidMoves(self):
 

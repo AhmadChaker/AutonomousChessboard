@@ -12,6 +12,8 @@ class Pawn(IBasePiece):
 
     WhiteString = u'\u2659'
     BlackString = u'\u265F'
+    WhiteFenString = 'P'
+    BlackFenString = 'p'
 
     def __init__(self, team, coords):
         IBasePiece.__init__(self, team, coords)
@@ -24,6 +26,15 @@ class Pawn(IBasePiece):
             return Pawn.BlackString
 
         return Board.Constants.BOARD_ERROR_STRING
+
+    def GetFenRepresentation(self):
+        team = self.GetTeam()
+        if team == Board.Constants.TeamEnum.White:
+            return Pawn.WhiteFenString
+        elif team == Board.Constants.TeamEnum.Black:
+            return Pawn.BlackFenString
+
+        return Pieces.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
         return Pieces.Constants.PieceEnums.Pawn

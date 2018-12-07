@@ -3,6 +3,7 @@ from Board.ChessBoard import ChessBoard
 from Pieces.Rook import Rook
 from Pieces.King import King
 from Pieces.NoPiece import NoPiece
+from Board.History import History
 from Board.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 from Utilities.MoveHelpers import MoveHelpers
@@ -13,8 +14,8 @@ from Board.History import History
 class TestRook(unittest.TestCase):
 
     def setUp(self):
-        # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
+        history = History()
+        self.chessBoard = ChessBoard(history)
 
     # region GetValidMoves tests
 

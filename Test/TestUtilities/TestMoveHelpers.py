@@ -20,8 +20,8 @@ from Test.Helpers.Helper import Helper
 class TestMoveHelpers(unittest.TestCase):
 
     def setUp(self):
-        # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
+        history = History()
+        self.chessBoard = ChessBoard(history)
 
     # region GetPieceCentricMovesForTeam tests
 

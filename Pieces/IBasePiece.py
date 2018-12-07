@@ -19,6 +19,10 @@ class IBasePiece(ABC):
         pass
 
     @abstractmethod
+    def GetFenRepresentation(self):
+        pass
+
+    @abstractmethod
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         pass
 

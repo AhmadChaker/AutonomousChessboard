@@ -15,6 +15,8 @@ class Rook(IBasePiece):
 
     WhiteString = u'\u2656'
     BlackString = u'\u265C'
+    WhiteFenString = 'R'
+    BlackFenString = 'r'
     MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
@@ -27,6 +29,15 @@ class Rook(IBasePiece):
             return Rook.WhiteString
         elif team == Board.Constants.TeamEnum.Black:
             return Rook.BlackString
+
+        return Pieces.Constants.BOARD_ERROR_STRING
+
+    def GetFenRepresentation(self):
+        team = self.GetTeam()
+        if team == Board.Constants.TeamEnum.White:
+            return Rook.WhiteFenString
+        elif team == Board.Constants.TeamEnum.Black:
+            return Rook.BlackFenString
 
         return Pieces.Constants.BOARD_ERROR_STRING
 

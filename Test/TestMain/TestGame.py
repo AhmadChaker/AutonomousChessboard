@@ -19,8 +19,9 @@ from Main.Game import Game
 class TestGame(unittest.TestCase):
 
     def setUp(self):
-        # Initialise chess board 2D structure
-        self.Game = Game()
+        history = History()
+        chessBoard = ChessBoard(history)
+        self.Game = Game(chessBoard)
         self.chessBoard = self.Game.GetBoard()
 
     def tearDown(self):
@@ -87,54 +88,6 @@ class TestGame(unittest.TestCase):
 
 # endregion
 
-# region PerformPawnPromotionCheck tests
-
-    def test_PerformPawnPromotionCheck_NotPawnMoving_NoChangeInPieceType(self):
-        self.chessBoard.RemoveAllPieces()
-        pieceOfInterest = Rook(TeamEnum.White, BoardPoints(0, 0))
-        self.chessBoard.UpdatePieceOnBoard(pieceOfInterest)
-
-        self.Game.PerformPawnPromotionCheck(pieceOfInterest)
-        pieceAtCoord = self.chessBoard.GetPieceAtCoordinate(BoardPoints(0,0))
-
-        expectedPieceType = PieceEnums.Rook
-        self.assertEqual(expectedPieceType, pieceAtCoord.GetPieceEnum())
-
-    def test_PerformPawnPromotionCheck_PawnMoving_YIndexNotZeroOrSeven_NoChange(self):
-        self.chessBoard.RemoveAllPieces()
-        pieceOfInterest = Pawn(TeamEnum.White, BoardPoints(0, 4))
-        self.chessBoard.UpdatePieceOnBoard(pieceOfInterest)
-
-        self.Game.PerformPawnPromotionCheck(pieceOfInterest)
-        pieceAtCoord = self.chessBoard.GetPieceAtCoordinate(BoardPoints(0,4))
-
-        expectedPieceType = PieceEnums.Pawn
-        self.assertEqual(expectedPieceType, pieceAtCoord.GetPieceEnum())
-
-    def test_PerformPawnPromotionCheck_PawnMoving_YIndexIsZero_PawnPromoted(self):
-        self.chessBoard.RemoveAllPieces()
-        pieceOfInterest = Pawn(TeamEnum.Black, BoardPoints(0, 0))
-        self.chessBoard.UpdatePieceOnBoard(pieceOfInterest)
-
-        self.Game.PerformPawnPromotionCheck(pieceOfInterest)
-        pieceAtCoord = self.chessBoard.GetPieceAtCoordinate(BoardPoints(0,0))
-
-        expectedPieceType = PieceEnums.Queen
-        self.assertEqual(expectedPieceType, pieceAtCoord.GetPieceEnum())
-
-    def test_PerformPawnPromotionCheck_PawnMoving_YIndexIsSeven_PawnPromoted(self):
-        self.chessBoard.RemoveAllPieces()
-        pieceOfInterest = Pawn(TeamEnum.White, BoardPoints(0, 7))
-        self.chessBoard.UpdatePieceOnBoard(pieceOfInterest)
-
-        self.Game.PerformPawnPromotionCheck(pieceOfInterest)
-        pieceAtCoord = self.chessBoard.GetPieceAtCoordinate(BoardPoints(0,7))
-
-        expectedPieceType = PieceEnums.Queen
-        self.assertEqual(expectedPieceType, pieceAtCoord.GetPieceEnum())
-
-# endregion
-
 # region SetIsCheckmate tests
 
     def test_SetIsCheckmate_IsCheckmateTrue_GameEndedTrue(self):
@@ -175,7 +128,7 @@ class TestGame(unittest.TestCase):
         self.Game.AppendToHistory((Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.Pawn,
                                             BoardPoints(2,2), BoardPoints(3,3), None)))
         self.Game.GetBoard().RemoveAllPieces()
-        self.Game.SetPlayersTurn(TeamEnum.Black)
+        self.Game.GetBoard().SetTeamsTurn(TeamEnum.Black)
         self.Game.SetHasGameEnded(True)
         self.Game.SetIsInCheckmate(True)
         self.Game.SetIsDraw(True)
@@ -192,148 +145,11 @@ class TestGame(unittest.TestCase):
         self.assertEqual(16, actualwhitePieces)
         self.assertEqual(16, actualBlackPieces)
         self.assertEqual(0, len(self.chessBoard.GetHistoricalMoves()))
-        self.assertEqual(TeamEnum.White, self.Game.GetPlayersTurn())
+        self.assertEqual(TeamEnum.White, self.Game.GetTeamsTurn())
         self.assertFalse(self.Game.GetHasGameEnded())
         self.assertFalse(self.Game.GetIsInCheckmate())
         self.assertFalse(self.Game.GetIsDraw())
         self.assertFalse(self.Game.GetIsInCheck())
-
-# endregion
-
-# region PerformMoveProcessing tests
-
-    def test_PerformMoveProcessing_RegularPieceMove(self):
-        self.Game.GetBoard().RemoveAllPieces()
-        # Note piece has already updated itself, the board however has not been updated to reflect its coordinates!
-        # we mirror this case
-        coordinatesPreMove = BoardPoints(0,0)
-        rook = Rook(TeamEnum.White, coordinatesPreMove)
-        self.Game.GetBoard().UpdatePieceOnBoard(rook)
-
-        # now move rook but not board
-        coordinatesPostMove = BoardPoints(0, 2)
-        rook.SetCoordinates(coordinatesPostMove)
-
-        self.Game.PerformMoveProcessing(rook, coordinatesPreMove, coordinatesPostMove)
-
-        # expectations
-        expectedMove = Movement(rook.GetTeam(), rook.GetPieceEnum(), PieceEnums.NoPiece,
-                                coordinatesPreMove, coordinatesPostMove, None)
-        expectedPieceAtPreMoveCoordinate = PieceEnums.NoPiece
-        expectedPieceAtPostMoveCoordinate = PieceEnums.Rook
-
-        # assertions
-        self.assertEqual(1, len(self.chessBoard.GetHistoricalMoves()))
-        self.assertEqual(expectedMove, self.chessBoard.GetLastHistoricalMove())
-        self.assertEqual(expectedPieceAtPreMoveCoordinate,self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPreMove).GetPieceEnum())
-        self.assertEqual(expectedPieceAtPostMoveCoordinate, self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPostMove).GetPieceEnum())
-
-    def test_PerformMoveProcessing_IsEnPassantMove(self):
-        self.Game.GetBoard().RemoveAllPieces()
-        # Note piece has already updated itself, the board however has not been updated to reflect its coordinates!
-        # we mirror this case
-
-        # set up for en-passant
-        byPassCoordinates = BoardPoints(2,3)
-        self.Game.GetBoard().UpdatePieceOnBoard(Pawn(TeamEnum.White, byPassCoordinates))
-        previousMove = Movement(TeamEnum.White, PieceEnums.Pawn, PieceEnums.NoPiece, BoardPoints(2,1), byPassCoordinates, None)
-        self.Game.AppendToHistory(previousMove)
-
-        coordinatesPreMove = BoardPoints(1,3)
-        pawn = Pawn(TeamEnum.Black, coordinatesPreMove)
-        self.Game.GetBoard().UpdatePieceOnBoard(pawn)
-
-        coordinatesPostMove = BoardPoints(2, 2)
-        pawn.SetCoordinates(coordinatesPostMove)
-
-        self.Game.PerformMoveProcessing(pawn, coordinatesPreMove, coordinatesPostMove)
-
-        # expectations
-        expectedPieceAtPreMoveCoordinate = PieceEnums.NoPiece
-        expectedPieceAtPostMoveCoordinate = PieceEnums.Pawn
-        expectedPieceAtByPassCoordinate = PieceEnums.NoPiece
-
-        # assertions
-        self.assertEqual(2, len(self.chessBoard.GetHistoricalMoves()))
-        self.assertEqual(expectedPieceAtPreMoveCoordinate,self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPreMove).GetPieceEnum())
-        self.assertEqual(expectedPieceAtPostMoveCoordinate, self.Game.GetBoard().GetPieceAtCoordinate(coordinatesPostMove).GetPieceEnum())
-        self.assertEqual(expectedPieceAtByPassCoordinate, self.Game.GetBoard().GetPieceAtCoordinate(byPassCoordinates).GetPieceEnum())
-
-    def test_PerformMoveProcessing_IsCastleMove_LeftCastle(self):
-        self.Game.GetBoard().RemoveAllPieces()
-        # Note piece has already updated itself, the board however has not been updated to reflect its coordinates!
-        # we mirror this case
-
-        preMoveKingCoords = BoardPoints(4,0)
-        preMoveRookCoords = BoardPoints(0,0)
-        king = King(TeamEnum.White, preMoveKingCoords)
-        rook = Rook(TeamEnum.White, preMoveRookCoords)
-        self.Game.GetBoard().UpdatePieceOnBoard(king)
-        self.Game.GetBoard().UpdatePieceOnBoard(rook)
-
-        postMoveKingCoords = BoardPoints(2,0)
-        postMoveRookCoords = BoardPoints(3,0)
-        hasMoved = king.Move(self.Game.GetBoard(), postMoveKingCoords)
-
-        self.Game.PerformMoveProcessing(king, preMoveKingCoords, postMoveKingCoords)
-
-        # Assertions
-        firstMove = Movement(TeamEnum.White, PieceEnums.King, PieceEnums.NoPiece, preMoveKingCoords, postMoveKingCoords, None)
-        secondMove = Movement(TeamEnum.White, PieceEnums.Rook, PieceEnums.NoPiece, preMoveRookCoords, postMoveRookCoords, None)
-        expectedHistory = History()
-        expectedHistory.AppendMovement(firstMove)
-        expectedHistory.AppendMovement(secondMove)
-
-        self.assertTrue(hasMoved)
-        self.assertEqual(expectedHistory, self.chessBoard.GetHistory())
-        self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveKingCoords).GetPieceEnum())
-        self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveRookCoords).GetPieceEnum())
-        actualRook = self.Game.GetBoard().GetPieceAtCoordinate(postMoveRookCoords)
-        self.assertEqual(PieceEnums.Rook, actualRook.GetPieceEnum())
-        self.assertEqual(BoardPoints(3, 0), actualRook.GetCoordinates())
-        self.assertEqual(PieceEnums.King, self.Game.GetBoard().GetPieceAtCoordinate(postMoveKingCoords).GetPieceEnum())
-
-    def test_PerformMoveProcessing_IsCastleMove_RightCastle(self):
-        self.Game.GetBoard().RemoveAllPieces()
-        # Note piece has already updated itself, the board however has not been updated to reflect its coordinates!
-        # we mirror this case
-
-        preMoveKingCoords = BoardPoints(4,0)
-        preMoveRookCoords = BoardPoints(7,0)
-        king = King(TeamEnum.White, preMoveKingCoords)
-        rook = Rook(TeamEnum.White, preMoveRookCoords)
-        self.Game.GetBoard().UpdatePieceOnBoard(king)
-        self.Game.GetBoard().UpdatePieceOnBoard(rook)
-
-        postMoveKingCoords = BoardPoints(6,0)
-        postMoveRookCoords = BoardPoints(5,0)
-        hasMoved = king.Move(self.Game.GetBoard(), postMoveKingCoords)
-
-        self.Game.PerformMoveProcessing(king, preMoveKingCoords, postMoveKingCoords)
-
-        # Assertions
-        firstMove = Movement(TeamEnum.White, PieceEnums.King, PieceEnums.NoPiece, preMoveKingCoords, postMoveKingCoords, None)
-        secondMove = Movement(TeamEnum.White, PieceEnums.Rook, PieceEnums.NoPiece, preMoveRookCoords, postMoveRookCoords, None)
-        expectedHistory = History()
-        expectedHistory.AppendMovement(firstMove)
-        expectedHistory.AppendMovement(secondMove)
-
-        self.assertTrue(hasMoved)
-        self.assertEqual(expectedHistory, self.chessBoard.GetHistory())
-        self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveKingCoords).GetPieceEnum())
-        self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(preMoveRookCoords).GetPieceEnum())
-        actualRook = self.Game.GetBoard().GetPieceAtCoordinate(postMoveRookCoords)
-        self.assertEqual(PieceEnums.Rook, actualRook.GetPieceEnum())
-        self.assertEqual(BoardPoints(5, 0), actualRook.GetCoordinates())
-        self.assertEqual(PieceEnums.King, self.Game.GetBoard().GetPieceAtCoordinate(postMoveKingCoords).GetPieceEnum())
-
-    def test_PerformPawnPromotionCheck_PawnPromoted(self):
-        self.Game.GetBoard().RemoveAllPieces()
-
-        pawn = Pawn(TeamEnum.White, BoardPoints(0,7))
-        self.Game.PerformMoveProcessing(pawn, BoardPoints(0, 6), BoardPoints(0, 7))
-
-        self.assertEqual(PieceEnums.Queen, self.Game.GetPieceAtCoordinate(BoardPoints(0,7)).GetPieceEnum())
 
 # endregion
 
@@ -374,7 +190,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(BoardPoints(2,3), movedPawn.GetCoordinates())
         self.assertEqual(PieceEnums.Pawn, movedPawn.GetPieceEnum())
         self.assertEqual(PieceEnums.NoPiece, self.Game.GetBoard().GetPieceAtCoordinate(BoardPoints(2, 1)).GetPieceEnum())
-        self.assertEqual(TeamEnum.Black, self.Game.GetPlayersTurn())
+        self.assertEqual(TeamEnum.Black, self.Game.GetTeamsTurn())
         self.assertFalse(self.Game.GetIsInCheckmate())
         self.assertFalse(self.Game.GetIsDraw())
         self.assertFalse(self.Game.GetIsInCheck())

@@ -1,6 +1,7 @@
 import unittest
 from Board.ChessBoard import ChessBoard
 from Pieces.Queen import Queen
+from Board.History import History
 from Board.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 
@@ -8,8 +9,8 @@ from Miscellaneous.BoardPoints import BoardPoints
 class TestQueen(unittest.TestCase):
 
     def setUp(self):
-        # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
+        history = History()
+        self.chessBoard = ChessBoard(history)
 
     def test_GetValidMoves_ReturnsValidMoves(self):
 

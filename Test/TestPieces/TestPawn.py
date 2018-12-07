@@ -2,6 +2,7 @@ import unittest
 import Miscellaneous.BoardPoints
 from Pieces.NoPiece import NoPiece
 from Pieces.Pawn import Pawn
+from Board.History import History
 from Board.Constants import TeamEnum
 from Board.ChessBoard import ChessBoard
 from Board.Movement import Movement
@@ -13,8 +14,8 @@ from Board.History import History
 class TestPawn(unittest.TestCase):
 
     def setUp(self):
-        # Initialise chess board 2D structure
-        self.chessBoard = ChessBoard()
+        history = History()
+        self.chessBoard = ChessBoard(history)
 
     # region Tests of IBase methods
     # IBasePiece methods tested only in this class as they require implementations of abstract methods
