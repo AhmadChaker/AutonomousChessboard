@@ -1,11 +1,9 @@
 import unittest
-import Utilities.BoardHelpers
 from Board.Movement import Movement
 from Pieces.NoPiece import NoPiece
 from Pieces.Pawn import Pawn
 from Pieces.King import King
-from Pieces.Constants import PieceEnums
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import PieceEnums, TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 
 
@@ -61,16 +59,6 @@ class TestMovement(unittest.TestCase):
         king = King(TeamEnum.White, BoardPoints(4, 0))
         move = Movement(TeamEnum.White, king.GetPieceEnum(), PieceEnums.NoPiece, king.GetCoordinates(), BoardPoints(5, 0), None)
         self.assertFalse(move.IsCastleMove())
-
-    def test_GetXMovement(self):
-        move1PawnA = Pawn(TeamEnum.White, BoardPoints(4, 4))
-        move1PawnB = Pawn(TeamEnum.Black, BoardPoints(3, 5))
-        lastMove = Movement(TeamEnum.Black, PieceEnums.Queen, PieceEnums.NoPiece, BoardPoints(0,0), BoardPoints(1,0), None)
-        move1 = Movement(move1PawnA.GetTeam(), move1PawnA.GetPieceEnum(), move1PawnB.GetPieceEnum(), move1PawnA.GetCoordinates(), move1PawnB.GetCoordinates(),
-                         lastMove)
-
-        expectedXMovement = 1
-        self.assertEqual(move1.GetXMovement(), expectedXMovement)
 
     def test_GetYMovement(self):
         move1PawnA = Pawn(TeamEnum.White, BoardPoints(4, 4))

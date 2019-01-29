@@ -1,13 +1,11 @@
 import unittest
-import Board.Constants
+import Miscellaneous.Constants
 from Utilities.BoardHelpers import BoardHelpers
-from Utilities.MoveHelpers import MoveHelpers
 from Miscellaneous.BoardPoints import BoardPoints
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import TeamEnum, PieceEnums
 from Board.History import History
 from Board.Movement import Movement
 from Board.ChessBoard import ChessBoard
-from Pieces.Constants import PieceEnums
 from Pieces.King import King
 from Pieces.Bishop import Bishop
 from Pieces.Pawn import Pawn
@@ -145,7 +143,7 @@ class TestBoardHelpers(unittest.TestCase):
 
     def test_IsDrawBySeventyFiveMovesEachRule_MoreThanXMoves_CaptureMade_ReturnsFalse(self):
         history = History()
-        for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
+        for i in range(Miscellaneous.Constants.DRAW_CONDITION_TOTAL_MOVES):
             history.AppendMovement(Movement(TeamEnum.White,
                                             PieceEnums.Knight,
                                             PieceEnums.Queen,
@@ -157,7 +155,7 @@ class TestBoardHelpers(unittest.TestCase):
 
     def test_IsDrawBySeventyFiveMovesEachRule_MoreThanXMoves_PawnMoves_ReturnsFalse(self):
         history = History()
-        for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
+        for i in range(Miscellaneous.Constants.DRAW_CONDITION_TOTAL_MOVES):
             history.AppendMovement(Movement(TeamEnum.White,
                                             PieceEnums.Pawn,
                                             PieceEnums.NoPiece,
@@ -169,7 +167,7 @@ class TestBoardHelpers(unittest.TestCase):
 
     def test_IsDrawBySeventyFiveMovesEachRule_MoreThanXMoves_NoCaptureOrPawnMoves_ReturnsTrue(self):
         history = History()
-        for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
+        for i in range(Miscellaneous.Constants.DRAW_CONDITION_TOTAL_MOVES):
             history.AppendMovement(Movement(TeamEnum.White,
                                             PieceEnums.Knight,
                                             PieceEnums.NoPiece,
@@ -198,7 +196,7 @@ class TestBoardHelpers(unittest.TestCase):
         self.assertTrue(isDraw)
 
     def test_IsDraw_IsDrawBy75MovesEach_ReturnsTrue(self):
-        for i in range(Board.Constants.DRAW_CONDITION_TOTAL_MOVES):
+        for i in range(Miscellaneous.Constants.DRAW_CONDITION_TOTAL_MOVES):
             self.chessBoard.AppendToHistory(Movement(TeamEnum.White,
                                             PieceEnums.Knight,
                                             PieceEnums.NoPiece,

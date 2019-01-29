@@ -1,11 +1,10 @@
 import unittest
 from Board.ChessBoard import ChessBoard
-from Pieces.Constants import PieceEnums
+from Miscellaneous.Constants import PieceEnums, TeamEnum
 from Pieces.Bishop import Bishop
 from Pieces.Rook import Rook
 from Pieces.Pawn import Pawn
 from Pieces.King import King
-from Board.Constants import TeamEnum
 from Board.History import History
 from Board.Movement import Movement
 from Miscellaneous.BoardPoints import BoardPoints
@@ -13,11 +12,13 @@ from Miscellaneous.BoardPoints import BoardPoints
 
 class TestChessBoard(unittest.TestCase):
 
+    # NOTE: Unit tests for GetFenRepresentation are done in TestGame.py
+
     def setUp(self):
         history = History()
         self.chessBoard = ChessBoard(history)
 
-# region PerformPawnPromotionCheck tests
+    # region PerformPawnPromotionCheck tests
 
     def test_PerformPawnPromotionCheck_NotPawnMoving_NoChangeInPieceType(self):
         self.chessBoard.RemoveAllPieces()
@@ -67,9 +68,9 @@ class TestChessBoard(unittest.TestCase):
         self.assertEqual(expectedPieceType, pieceAtCoord.GetPieceEnum())
         self.assertTrue(isPawnPromotion)
 
-# endregion
+    # endregion
 
-# region PerformMoveProcessing tests
+    # region PerformMoveProcessing tests
 
     def test_PerformMoveProcessing_RegularPieceMove(self):
         self.chessBoard.RemoveAllPieces()
@@ -204,9 +205,9 @@ class TestChessBoard(unittest.TestCase):
 
         self.assertEqual(PieceEnums.Queen, self.chessBoard.GetPieceAtCoordinate(BoardPoints(0,7)).GetPieceEnum())
 
-# endregion
+    # endregion
 
-# region ResetToDefault
+    # region ResetToDefault
 
     def test_ResetToDefault_RelevantValuesReset(self):
         # perform a standard move and then reset
@@ -232,4 +233,4 @@ class TestChessBoard(unittest.TestCase):
         self.assertEqual(TeamEnum.White, self.chessBoard.GetTeamsTurn())
         self.assertEqual(0, len(self.chessBoard.GetHistoricalMoves()))
 
-# endregion
+    # endregion

@@ -1,5 +1,5 @@
 import sys
-import Board.Constants
+import Miscellaneous.Constants
 from Miscellaneous.Points import Points
 
 
@@ -7,10 +7,11 @@ from Miscellaneous.Points import Points
 class BoardPoints(Points):
 
     def __init__(self, x, y):
-        if 0 <= x < len(Board.Constants.ALPHABETICAL_BOARD_ORDINATES) and 0 <= y < len(Board.Constants.NUMERICAL_BOARD_ORDINATES):
+        if 0 <= x < len(Miscellaneous.Constants.ALPHABETICAL_BOARD_ORDINATES) and 0 <= y < len(
+                Miscellaneous.Constants.NUMERICAL_BOARD_ORDINATES):
             Points.__init__(self, x, y)
-            self.__xBoard = Board.Constants.ALPHABETICAL_BOARD_ORDINATES[x]
-            self.__yBoard = Board.Constants.NUMERICAL_BOARD_ORDINATES[y]
+            self.__xBoard = Miscellaneous.Constants.ALPHABETICAL_BOARD_ORDINATES[x]
+            self.__yBoard = Miscellaneous.Constants.NUMERICAL_BOARD_ORDINATES[y]
             return
 
         Points.__init__(self, -sys.maxsize, -sys.maxsize)

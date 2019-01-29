@@ -1,6 +1,5 @@
-from Pieces.Constants import PieceEnums
+from Miscellaneous.Constants import PieceEnums, TeamEnum
 from Pieces.IBasePiece import IBasePiece
-from Board.Constants import TeamEnum
 
 
 class NoPiece(IBasePiece):

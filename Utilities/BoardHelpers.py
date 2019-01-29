@@ -1,22 +1,14 @@
-import Pieces.IBasePiece
-import Pieces.Constants
-import Board.Constants
 import logging
+import Miscellaneous.Constants
+import Utilities.MoveHelpers    # Don't do a from MoveHelpers import MoveHelpers as a dependency issue arises
 from Miscellaneous.BoardPoints import BoardPoints
-from Board.Constants import TeamEnum
-from Board.History import History
-from Pieces.Constants import PieceEnums
-from Utilities.MoveHelpers import MoveHelpers
+from Miscellaneous.Constants import TeamEnum, PieceEnums
 
 
 logger = logging.getLogger(__name__)
 
 
 class BoardHelpers:
-
-    @classmethod
-    def UpdateVariables(cls, history: History):
-        cls.History = history
 
     # Due to three part nature of the TeamEnum, this functions gets black team when white is fed, otherwise white
     @staticmethod
@@ -26,10 +18,10 @@ class BoardHelpers:
         return TeamEnum.Black if team == TeamEnum.White else TeamEnum.White
 
     @staticmethod
-    def GetPieceByPieceType(board, pieceType, team: Board.Constants.TeamEnum):
+    def GetPieceByPieceType(board, pieceType, team: TeamEnum):
         pieces = []
-        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
+        for yCoord in range(Miscellaneous.Constants.MAXIMUM_Y_SQUARES):
+            for xCoord in range(Miscellaneous.Constants.MAXIMUM_X_SQUARES):
                 piece = board.GetPieceAtCoordinate(BoardPoints(xCoord,yCoord))
                 if piece.GetTeam() == team and piece.GetPieceEnum() == pieceType:
                     pieces.append(piece)
@@ -37,8 +29,8 @@ class BoardHelpers:
 
     # For the team passed in, check if that King is in check
     @staticmethod
-    def IsInCheck(board, teamA: Board.Constants.TeamEnum):
-        teamAKingArray = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.King, teamA)
+    def IsInCheck(board, teamA: Miscellaneous.Constants.TeamEnum):
+        teamAKingArray = BoardHelpers.GetPieceByPieceType(board, PieceEnums.King, teamA)
         if len(teamAKingArray) == 0:
             # Should never happen really
             logger.error("Can't find a King for this team! Something horrible has happened")
@@ -47,17 +39,17 @@ class BoardHelpers:
         teamAKing = teamAKingArray[0]
         teamB = BoardHelpers.GetOpposingTeam(teamA)
         enforceCheckCondition = False
-        teamBMoves = MoveHelpers.GetPieceCentricMovesForTeam(board, teamB, enforceCheckCondition)
+        teamBMoves = Utilities.MoveHelpers.MoveHelpers.GetPieceCentricMovesForTeam(board, teamB, enforceCheckCondition)
         for teamBMove in teamBMoves:
             if teamBMove == teamAKing.GetCoordinates():
                 return True
         return False
 
     @staticmethod
-    def GetTeamPieceCounts(board, currentTeam:Board.Constants.TeamEnum):
+    def GetTeamPieceCounts(board, currentTeam: Miscellaneous.Constants.TeamEnum):
         count = 0
-        for yIndex in range(Board.Constants.MAXIMUM_Y_SQUARES):
-            for xIndex in range(Board.Constants.MAXIMUM_X_SQUARES):
+        for yIndex in range(Miscellaneous.Constants.MAXIMUM_Y_SQUARES):
+            for xIndex in range(Miscellaneous.Constants.MAXIMUM_X_SQUARES):
                 piece = board.GetPieceAtCoordinate(BoardPoints(xIndex, yIndex))
                 if piece.GetTeam() == currentTeam:
                     count = count + 1
@@ -68,9 +60,10 @@ class BoardHelpers:
         logger.debug("Entered")
         # Check if King is in check and that there are NO valid moves
         enforceCheckCondition = True
-        validMoves = MoveHelpers.GetPieceCentricMovesForTeam(board, team, enforceCheckCondition)
+        validMoves = Utilities.MoveHelpers.MoveHelpers.GetPieceCentricMovesForTeam(board, team, enforceCheckCondition)
         isInCheck = BoardHelpers.IsInCheck(board, team)
         if len(validMoves) == 0 and isInCheck:
+            logger.error("Game is in checkmate!")
             return True
         return False
 
@@ -132,9 +125,9 @@ class BoardHelpers:
     # If in the previous 75 moves by EACH side, no pawn has moved and no capture has been made
     @staticmethod
     def IsDrawBySeventyFiveMovesEachRule(history):
-        if len(history) >= Board.Constants.DRAW_CONDITION_TOTAL_MOVES:
+        if len(history) >= Miscellaneous.Constants.DRAW_CONDITION_TOTAL_MOVES:
             # Get last x moves
-            pertinentMoves = history[-Board.Constants.DRAW_CONDITION_TOTAL_MOVES:]
+            pertinentMoves = history[-Miscellaneous.Constants.DRAW_CONDITION_TOTAL_MOVES:]
 
             hasPawnMoved = False
             hasCaptureBeenMade = False
@@ -144,7 +137,7 @@ class BoardHelpers:
                     hasCaptureBeenMade = True
                     break
 
-                if move.GetPieceEnumFrom() == Pieces.Constants.PieceEnums.Pawn:
+                if move.GetPieceEnumFrom() == PieceEnums.Pawn:
                     hasPawnMoved = True
                     break
 
@@ -159,7 +152,7 @@ class BoardHelpers:
 
         # Player whose turn it will now be has no legal moves but is not in check
         enforceCheckCondition = True
-        validMovesOpposingTeam = MoveHelpers.GetPieceCentricMovesForTeam(board, opposingTeam, enforceCheckCondition)
+        validMovesOpposingTeam = Utilities.MoveHelpers.MoveHelpers.GetPieceCentricMovesForTeam(board, opposingTeam, enforceCheckCondition)
         isInCheck = BoardHelpers.IsInCheck(board, opposingTeam)
 
         if len(validMovesOpposingTeam) == 0 and not isInCheck:

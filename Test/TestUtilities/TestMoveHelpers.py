@@ -1,17 +1,14 @@
 import unittest
-from Utilities.BoardHelpers import BoardHelpers
 from Utilities.MoveHelpers import MoveHelpers
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import TeamEnum, PieceEnums
 from Board.History import History
 from Board.Movement import Movement
 from Board.ChessBoard import ChessBoard
-from Pieces.Constants import PieceEnums
 from Pieces.King import King
 from Pieces.Queen import Queen
 from Pieces.Rook import Rook
-from Pieces.Bishop import Bishop
 from Pieces.Pawn import Pawn
 from Pieces.NoPiece import NoPiece
 from Test.Helpers.Helper import Helper
@@ -538,5 +535,33 @@ class TestMoveHelpers(unittest.TestCase):
 
         isEnPassant = MoveHelpers.IsEnPassantMove(pieceMovingEnum, oldPieceCoords, newCoords, lastMove)
         self.assertTrue(isEnPassant)
+
+    # endregion
+
+    # region IsTwoStepPawnMove tests
+
+    def test_IsTwoStepPawnMove_NotAPawn_ReturnsFalse(self):
+        queen = Queen(TeamEnum.White, BoardPoints(0,0))
+        fromCoord = BoardPoints(0,1)
+        toCoord = BoardPoints(0, 3)
+
+        isTwoStepPawnMove = MoveHelpers.IsTwoStepPawnMove(queen.GetPieceEnum(), fromCoord, toCoord)
+        self.assertFalse(isTwoStepPawnMove)
+
+    def test_IsTwoStepPawnMove_PawnOneStepMove_ReturnsFalse(self):
+        pawn = Pawn(TeamEnum.White, BoardPoints(0,0))
+        fromCoord = BoardPoints(0,1)
+        toCoord = BoardPoints(0, 2)
+
+        isTwoStepPawnMove = MoveHelpers.IsTwoStepPawnMove(pawn.GetPieceEnum(), fromCoord, toCoord)
+        self.assertFalse(isTwoStepPawnMove)
+
+    def test_IsTwoStepPawnMove_PawnTwoStepMove_ReturnsTrue(self):
+        pawn = Pawn(TeamEnum.White, BoardPoints(0,0))
+        fromCoord = BoardPoints(0,1)
+        toCoord = BoardPoints(0, 3)
+
+        isTwoStepPawnMove = MoveHelpers.IsTwoStepPawnMove(pawn.GetPieceEnum(), fromCoord, toCoord)
+        self.assertTrue(isTwoStepPawnMove)
 
     # endregion

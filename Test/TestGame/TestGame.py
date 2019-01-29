@@ -1,19 +1,16 @@
 import unittest
 from Utilities.BoardHelpers import BoardHelpers
-from Utilities.MoveHelpers import MoveHelpers
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Messages import MoveEnum
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import TeamEnum, PieceEnums
 from Board.History import History
 from Board.Movement import Movement
 from Board.ChessBoard import ChessBoard
-from Pieces.Constants import PieceEnums
 from Pieces.King import King
 from Pieces.Rook import Rook
 from Pieces.Queen import Queen
-from Pieces.Pawn import Pawn
 from Pieces.NoPiece import NoPiece
-from Main.Game import Game
+from Game.Game import Game
 
 
 class TestGame(unittest.TestCase):
@@ -27,7 +24,7 @@ class TestGame(unittest.TestCase):
     def tearDown(self):
         self.Game = None
 
-# region CanMove tests
+    # region CanMove tests
 
     def test_CanMove_HasGameEndedSetToTrue_ReturnsFalse(self):
         fromCoord = "C2"
@@ -86,9 +83,9 @@ class TestGame(unittest.TestCase):
         self.assertTrue(canMoveResult.IsSuccessful())
         self.assertEqual(MoveEnum.Success, canMoveResult.GetStatusCode())
 
-# endregion
+    # endregion
 
-# region SetIsCheckmate tests
+    # region SetIsCheckmate tests
 
     def test_SetIsCheckmate_IsCheckmateTrue_GameEndedTrue(self):
         self.Game.SetIsInCheckmate(True)
@@ -102,9 +99,9 @@ class TestGame(unittest.TestCase):
         self.assertFalse(self.Game.GetIsInCheckmate())
         self.assertFalse(self.Game.GetHasGameEnded())
 
-# endregion
+    # endregion
 
-# region SetIsDraw tests
+    # region SetIsDraw tests
 
     def test_SetIsDraw_IsDrawTrue_GameEndedTrue(self):
         self.Game.SetIsDraw(True)
@@ -118,9 +115,9 @@ class TestGame(unittest.TestCase):
         self.assertFalse(self.Game.GetIsDraw())
         self.assertFalse(self.Game.GetHasGameEnded())
 
-# endregion
+    # endregion
 
-# region ResetGame tests
+    # region ResetGame tests
 
     def test_ResetGame_AllRelevantVariablesReset(self):
 
@@ -151,9 +148,9 @@ class TestGame(unittest.TestCase):
         self.assertFalse(self.Game.GetIsDraw())
         self.assertFalse(self.Game.GetIsInCheck())
 
-# endregion
+    # endregion
 
-# region Move tests
+    # region Move tests
 
     def test_Move_GameHasEnded_ReturnsGameEndedEnum(self):
         self.Game.SetHasGameEnded(True)
@@ -252,9 +249,37 @@ class TestGame(unittest.TestCase):
         self.assertTrue(self.Game.GetIsDraw())
         self.assertTrue(self.Game.GetHasGameEnded())
 
-# endregion
+    # endregion
 
-# region Miscellaneous tests
+    # region GetFenRepresentation Tests
+
+    def test_GetFenRepresentation_TwoStepPawnMove_EnPassantFlagSet(self):
+
+        self.Game.Move("c2", "c4")
+        actualFenRep = self.Game.GetFenRepresentation()
+        expectedFenRep = "rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq c3 0 0"
+
+        self.assertEqual(expectedFenRep, actualFenRep)
+
+    def test_GetFenRepresentation_NoCastling_NoEnPassant(self):
+
+        self.Game.Move("d2", "d4")
+        self.Game.Move("d7", "d5")
+
+        # move kings a position
+        self.Game.Move("e1", "d2")
+        self.Game.Move("e8", "d7")
+
+        # move kings back
+        self.Game.Move("d2", "e1")
+        self.Game.Move("d7", "e8")
+        actualFenRep = self.Game.GetFenRepresentation()
+        expectedFenRep = "rnbqkbnr/pp1ppppp/8/2p5/2P5/8/PP1PPPPP/RNBQKBNR w - - 0 3"
+        self.assertEqual(expectedFenRep, actualFenRep)
+
+    # endregion
+
+    # region Miscellaneous tests
 
     def test_SimulateEntireGame_FoolsMate(self):
 
@@ -269,4 +294,4 @@ class TestGame(unittest.TestCase):
 
         self.assertTrue(self.Game.GetIsInCheckmate)
 
-# endregion
+    # endregion

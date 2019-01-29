@@ -1,6 +1,6 @@
 import sys
-import Pieces.Constants
-import Board.Constants
+import Miscellaneous.Constants
+from Miscellaneous.Constants import PieceEnums, TeamEnum
 from Miscellaneous.Points import Points
 from Utilities.MoveHelpers import MoveHelpers
 from Pieces.IBasePiece import IBasePiece
@@ -21,24 +21,24 @@ class Bishop(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Bishop.WhiteString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Bishop.BlackString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Bishop.WhiteFenString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Bishop.BlackFenString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
-        return Pieces.Constants.PieceEnums.Bishop
+        return PieceEnums.Bishop
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []

@@ -2,12 +2,10 @@ import unittest
 import Miscellaneous.BoardPoints
 from Pieces.NoPiece import NoPiece
 from Pieces.Pawn import Pawn
-from Board.History import History
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import TeamEnum
 from Board.ChessBoard import ChessBoard
 from Board.Movement import Movement
 from Miscellaneous.BoardPoints import BoardPoints
-from Utilities.MoveHelpers import MoveHelpers
 from Board.History import History
 
 

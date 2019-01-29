@@ -1,13 +1,11 @@
 import Pieces.IBasePiece
-import Pieces.Constants
-import Board.Constants
 import Utilities.CoordinateConverters
-import Board.Constants
+import Miscellaneous.Constants
 import Utilities.BoardHelpers
 import logging
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
-from Pieces.Constants import PieceEnums
+from Miscellaneous.Constants import PieceEnums, TeamEnum
 from Pieces.NoPiece import NoPiece
 
 
@@ -19,12 +17,12 @@ class MoveHelpers:
     # This method gets all legal moves from the piece's perspective, this does not take into account board
     # considerations such as being in check
     @staticmethod
-    def GetPieceCentricMovesForTeam(board, teamToGet: Board.Constants.TeamEnum, enforceKingUnderAttackCheck):
+    def GetPieceCentricMovesForTeam(board, teamToGet: TeamEnum, enforceKingUnderAttackCheck):
         moves = []
-        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
+        for yCoord in range(Miscellaneous.Constants.MAXIMUM_Y_SQUARES):
             # cycle over y coordinates
 
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
+            for xCoord in range(Miscellaneous.Constants.MAXIMUM_X_SQUARES):
                 piece = board.GetPieceAtCoordinate(BoardPoints(xCoord, yCoord))
                 if piece.GetTeam() != teamToGet:
                     continue
@@ -76,7 +74,7 @@ class MoveHelpers:
                          ", Direction vector: " + directionVector.ToString())
             return []
 
-        if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.NoPiece or pieceToMoveTeam == Board.Constants.TeamEnum.NoTeam:
+        if pieceToMovePieceEnum == PieceEnums.NoPiece or pieceToMoveTeam == TeamEnum.NoTeam:
             logger.error("Trying to move empty piece or piece with no team, returning empty list")
             return []
 
@@ -101,8 +99,8 @@ class MoveHelpers:
             # Differentiate pawns as they have the following properties
             # 1) Can only kill diagonally of the opposite team (NOT vertically)
             # 2) They can only move forward in empty spaces of 1 (and 2 at the beginning)
-            if pieceToMovePieceEnum == Pieces.Constants.PieceEnums.Pawn:
-                hasTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() != Board.Constants.TeamEnum.NoTeam)
+            if pieceToMovePieceEnum == PieceEnums.Pawn:
+                hasTeamAtCalculatedPosition = (pieceAtCalculatedPosition.GetTeam() != TeamEnum.NoTeam)
 
                 if abs(directionVector.GetX()) == abs(directionVector.GetY()):
                     # Diagonal move, check that the opposite team is at this position (due to earlier if statement
@@ -123,7 +121,7 @@ class MoveHelpers:
                     potentialMoves.append(potentialPoint)
             else:
                 potentialMoves.append(potentialPoint)
-                if pieceAtCalculatedPosition.GetTeam() != Board.Constants.TeamEnum.NoTeam:
+                if pieceAtCalculatedPosition.GetTeam() != TeamEnum.NoTeam:
                     break
 
         if len(potentialMoves) == 0:
@@ -139,7 +137,7 @@ class MoveHelpers:
         if lastMove is not None and \
                 pieceMovingEnum == PieceEnums.Pawn and \
                 lastMove.GetPieceEnumFrom() == PieceEnums.Pawn and \
-                lastMove.GetYMovement() == Board.Constants.MAXIMUM_PAWN_FORWARD_MOVEMENT:
+                abs(lastMove.GetYMovement()) == Miscellaneous.Constants.MAXIMUM_PAWN_FORWARD_MOVEMENT:
             # if previous to moving the y coords match and then this move causes the x coordinates to match
             # then it corresponds to an en-passant move
             if lastMove.GetToCoord().GetY() == oldPieceCoords.GetY() and \
@@ -150,15 +148,20 @@ class MoveHelpers:
     @staticmethod
     def IsCastleMove(pieceEnum, frmOrd: BoardPoints, toOrd:BoardPoints):
         return pieceEnum == PieceEnums.King and \
-               abs(frmOrd.GetX() - toOrd.GetX()) == Board.Constants.KING_CASTLE_SQUARE_MOVES
+               abs(frmOrd.GetX() - toOrd.GetX()) == Miscellaneous.Constants.KING_CASTLE_SQUARE_MOVES
 
     @staticmethod
-    def PrintValidMoves(board, teamToPrint: Board.Constants.TeamEnum):
+    def IsTwoStepPawnMove(pieceEnum, frmOrd: BoardPoints, toOrd:BoardPoints):
+        return pieceEnum == PieceEnums.Pawn and \
+               abs(frmOrd.GetY() - toOrd.GetY()) == Miscellaneous.Constants.MAXIMUM_PAWN_FORWARD_MOVEMENT
 
-        for yCoord in range(Board.Constants.MAXIMUM_Y_SQUARES):
+    @staticmethod
+    def PrintValidMoves(board, teamToPrint: TeamEnum):
+
+        for yCoord in range(Miscellaneous.Constants.MAXIMUM_Y_SQUARES):
             # cycle over y coordinates
 
-            for xCoord in range(Board.Constants.MAXIMUM_X_SQUARES):
+            for xCoord in range(Miscellaneous.Constants.MAXIMUM_X_SQUARES):
                 piece = board.GetPieceAtCoordinate(BoardPoints(xCoord,yCoord))
                 if piece.GetTeam() != teamToPrint:
                     continue

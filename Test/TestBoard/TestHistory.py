@@ -1,10 +1,9 @@
 import unittest
-import Utilities.BoardHelpers
 from Board.Movement import Movement
 from Board.History import History
 from Pieces.Rook import Rook
 from Pieces.Pawn import Pawn
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 
 

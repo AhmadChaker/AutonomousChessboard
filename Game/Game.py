@@ -1,11 +1,8 @@
 import logging
 import Utilities.CoordinateConverters
-import Board.Constants
 from Utilities.BoardHelpers import BoardHelpers
-from Utilities.MoveHelpers import MoveHelpers
 from Pieces.IBasePiece import IBasePiece
-from Board.Constants import TeamEnum
-from Board.ChessBoard import ChessBoard
+from Miscellaneous.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Result import Result
 from Miscellaneous.Messages import MoveEnum
@@ -50,6 +47,9 @@ class Game:
 
     def GetTeamsTurn(self):
         return self.GetBoard().GetTeamsTurn()
+
+    def GetFenRepresentation(self):
+        return self.GetBoard().GetFenRepresentation()
 
     def GetBoard(self):
         return self.__board
@@ -134,9 +134,9 @@ class Game:
         logger.info("Printing board")
         self.GetBoard().PrintBoard()
         logger.info("Printing all valid white moves")
-        MoveHelpers.PrintValidMoves(self.GetBoard(), Board.Constants.TeamEnum.White)
+        Utilities.MoveHelpers.PrintValidMoves(self.GetBoard(), TeamEnum.White)
         logger.info("Printing all valid black moves")
-        MoveHelpers.PrintValidMoves(self.GetBoard(), Board.Constants.TeamEnum.Black)
+        Utilities.MoveHelpers.PrintValidMoves(self.GetBoard(), TeamEnum.Black)
         logger.info("Printing history")
         self.GetBoard().PrintHistory()
 

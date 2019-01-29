@@ -1,5 +1,5 @@
 from Miscellaneous.BoardPoints import BoardPoints
-from Pieces.Constants import PieceEnums
+from Miscellaneous.Constants import PieceEnums
 from Utilities.MoveHelpers import MoveHelpers
 
 
@@ -18,6 +18,7 @@ class Movement:
             self.__isCaptureMove = True
 
         self.__isCastleMove = MoveHelpers.IsCastleMove(pieceAtFromCoord, fromCoord, toCoord)
+        self.__isTwoStepPawnMove = MoveHelpers.IsTwoStepPawnMove(pieceAtFromCoord, fromCoord, toCoord)
 
     def __eq__(self, other):
         return self.__pieceEnumFromCoord == other.__pieceEnumFromCoord and \
@@ -27,12 +28,16 @@ class Movement:
                self.__teamMoved == other.__teamMoved and \
                self.__isCaptureMove == other.__isCaptureMove and \
                self.__isCastleMove == other.__isCastleMove and \
-               self.__isEnPassantMove == other.__isEnPassantMove
+               self.__isEnPassantMove == other.__isEnPassantMove and \
+               self.__isTwoStepPawnMove == other.__isTwoStepPawnMove
 
     def ToString(self):
         return str(self.GetTeamMoved()) + " " + PieceEnums(self.GetPieceEnumFrom()).name + " at [" + \
                self.GetFromCoord().ToString() + "] moved to [" + self.GetToCoord().ToString() + "] (" + \
                PieceEnums(self.GetPieceEnumTo()).name + ")" + ", IsCaptureMove: " + str(self.IsCaptureMove())
+
+    def IsTwoStepPawnMove(self):
+        return self.__isTwoStepPawnMove
 
     def IsCaptureMove(self):
         return self.__isCaptureMove
@@ -58,8 +63,5 @@ class Movement:
     def GetToCoord(self):
         return self.__toCoord
 
-    def GetXMovement(self):
-        return abs(self.GetFromCoord().GetX() - self.GetToCoord().GetX())
-
     def GetYMovement(self):
-        return abs(self.GetFromCoord().GetY() - self.GetToCoord().GetY())
+        return self.GetToCoord().GetY() - self.GetFromCoord().GetY()

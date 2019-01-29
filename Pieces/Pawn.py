@@ -1,7 +1,6 @@
-import Pieces.Constants
-import Board.Constants
+import Miscellaneous.Constants
+from Miscellaneous.Constants import TeamEnum, PieceEnums
 from Miscellaneous.Points import Points
-from Utilities.BoardHelpers import BoardHelpers
 from Utilities.MoveHelpers import MoveHelpers
 from Pieces.IBasePiece import IBasePiece
 import logging
@@ -20,31 +19,31 @@ class Pawn(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Pawn.WhiteString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Pawn.BlackString
 
-        return Board.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Pawn.WhiteFenString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Pawn.BlackFenString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
-        return Pieces.Constants.PieceEnums.Pawn
+        return Miscellaneous.Constants.PieceEnums.Pawn
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
-        isPieceMovingUpwards = (self.GetTeam() == Board.Constants.TeamEnum.White)
+        isPieceMovingUpwards = (self.GetTeam() == TeamEnum.White)
         # In case pawns are starting from a non standard position, need additional processing
         moveIterNonKillMoves = 1
-        if (isPieceMovingUpwards and self.GetCoordinates().GetY() == Board.Constants.WHITE_PAWNS_Y_ARRAY_COORDINATE) or \
-                ((not isPieceMovingUpwards) and self.GetCoordinates().GetY() == Board.Constants.BLACK_PAWNS_Y_ARRAY_COORDINATE):
+        if (isPieceMovingUpwards and self.GetCoordinates().GetY() == Miscellaneous.Constants.WHITE_PAWNS_Y_ARRAY_COORDINATE) or \
+                ((not isPieceMovingUpwards) and self.GetCoordinates().GetY() == Miscellaneous.Constants.BLACK_PAWNS_Y_ARRAY_COORDINATE):
             moveIterNonKillMoves = 2
 
         moveIterToKillMoves = 1

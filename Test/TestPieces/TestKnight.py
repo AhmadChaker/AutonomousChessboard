@@ -2,7 +2,7 @@ import unittest
 from Board.ChessBoard import ChessBoard
 from Pieces.Knight import Knight
 from Board.History import History
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 
 

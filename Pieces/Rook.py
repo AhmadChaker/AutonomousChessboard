@@ -1,7 +1,6 @@
 import sys
-import Board.Constants
-import Pieces.Constants
-from Board.Constants import TeamEnum
+import Miscellaneous.Constants
+from Miscellaneous.Constants import TeamEnum, PieceEnums
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
@@ -25,24 +24,24 @@ class Rook(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Rook.WhiteString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Rook.BlackString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Rook.WhiteFenString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Rook.BlackFenString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
-        return Pieces.Constants.PieceEnums.Rook
+        return PieceEnums.Rook
 
     def SetCanCastleInTheFuture(self, canCastleInTheFuture):
         self.__canCastleInTheFuture = canCastleInTheFuture
@@ -59,7 +58,7 @@ class Rook(IBasePiece):
         if self.GetTeam() == TeamEnum.White and yCoord != 0:
             return False
 
-        if self.GetTeam() == TeamEnum.Black and yCoord != Board.Constants.MAXIMUM_Y_SQUARES-1:
+        if self.GetTeam() == TeamEnum.Black and yCoord != Miscellaneous.Constants.MAXIMUM_Y_SQUARES-1:
             return False
 
         return True
@@ -67,13 +66,13 @@ class Rook(IBasePiece):
     def IsKingSideRookWithStartingCoordinates(self):
         xCoord = self.GetCoordinates().GetX()
         yCoord = self.GetCoordinates().GetY()
-        if xCoord != Board.Constants.MAXIMUM_X_SQUARES-1:
+        if xCoord != Miscellaneous.Constants.MAXIMUM_X_SQUARES-1:
             return False
 
         if self.GetTeam() == TeamEnum.White and yCoord != 0:
             return False
 
-        if self.GetTeam() == TeamEnum.Black and yCoord != Board.Constants.MAXIMUM_Y_SQUARES-1:
+        if self.GetTeam() == TeamEnum.Black and yCoord != Miscellaneous.Constants.MAXIMUM_Y_SQUARES-1:
             return False
         return True
 
@@ -98,7 +97,7 @@ class Rook(IBasePiece):
             if BoardHelpers.IsInCheck(board, self.GetTeam()):
                 return False
 
-        arrayKing = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.King, self.GetTeam())
+        arrayKing = BoardHelpers.GetPieceByPieceType(board, PieceEnums.King, self.GetTeam())
         if len(arrayKing) == 0:
             return False
 
@@ -119,14 +118,14 @@ class Rook(IBasePiece):
 
         # Ensure all spaces are empty
         for xCoord in xRangeToConsider:
-            if board.GetPieceAtCoordinate(BoardPoints(xCoord, yCoordRook)).GetPieceEnum() != Pieces.Constants.PieceEnums.NoPiece:
+            if board.GetPieceAtCoordinate(BoardPoints(xCoord, yCoordRook)).GetPieceEnum() != PieceEnums.NoPiece:
                 return False
 
         # Need check to see if King is in check as part of any movement
         kingValidMoves = MoveHelpers.GetValidMoves(king, board, kingDirectionVector,
-                                                    Board.Constants.KING_CASTLE_SQUARE_MOVES,
-                                                    enforceKingUnderAttackCheck)
-        if len(kingValidMoves) != Board.Constants.KING_CASTLE_SQUARE_MOVES:
+                                                   Miscellaneous.Constants.KING_CASTLE_SQUARE_MOVES,
+                                                   enforceKingUnderAttackCheck)
+        if len(kingValidMoves) != Miscellaneous.Constants.KING_CASTLE_SQUARE_MOVES:
             return False
 
         return True
@@ -140,9 +139,9 @@ class Rook(IBasePiece):
 
         isRookOnLeftOfBoard = True if xCoordRook == 0 else False
         if isRookOnLeftOfBoard:
-            return [BoardPoints(xCoordRook + Board.Constants.BISHOP_CASTLE_LEFT_TO_RIGHT_MOVES, yCoordRook)]
+            return [BoardPoints(xCoordRook + Miscellaneous.Constants.BISHOP_CASTLE_LEFT_TO_RIGHT_MOVES, yCoordRook)]
         else:
-            return [BoardPoints(xCoordRook - Board.Constants.BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES, yCoordRook)]
+            return [BoardPoints(xCoordRook - Miscellaneous.Constants.BISHOP_CASTLE_RIGHT_TO_LEFT_MOVES, yCoordRook)]
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []

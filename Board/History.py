@@ -1,4 +1,5 @@
 import logging
+import math
 from Board.Movement import Movement
 
 
@@ -9,6 +10,7 @@ class History:
 
     def __init__(self):
         self.__historicalMoves = []
+        self.__turns = 0
 
     def __eq__(self, other):
         firstHistMoves = self.GetHistoricalMoves()
@@ -24,9 +26,16 @@ class History:
 
     def Clear(self):
         self.__historicalMoves.clear()
+        self.__turns = 0
 
     def AppendMovement(self, move: Movement):
         self.__historicalMoves.append(move)
+
+        # There are two moves for a castle, the first is a king move (can only be done in a castle),
+        # The second is the rook move (not classified as a castle move per se). Since it's the same team we only increase
+        # by 0.5 at a time
+        if not move.IsCastleMove():
+            self.__turns += 0.5
 
     def GetHistoricalMoves(self):
         return self.__historicalMoves
@@ -40,4 +49,5 @@ class History:
         for historicalMove in self.GetHistoricalMoves():
             logger.info(historicalMove.ToString())
 
-
+    def GetNumberofTurns(self):
+        return math.floor(self.__turns)

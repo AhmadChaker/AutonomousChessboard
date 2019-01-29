@@ -3,10 +3,8 @@ from Board.ChessBoard import ChessBoard
 from Pieces.Rook import Rook
 from Pieces.King import King
 from Pieces.NoPiece import NoPiece
-from Board.History import History
-from Board.Constants import TeamEnum
+from Miscellaneous.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
-from Utilities.MoveHelpers import MoveHelpers
 from Test.Helpers.Helper import Helper
 from Board.History import History
 

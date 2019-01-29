@@ -1,5 +1,5 @@
-import Board.Constants
-import Pieces.Constants
+import Miscellaneous.Constants
+from Miscellaneous.Constants import TeamEnum, PieceEnums
 from Miscellaneous.Points import Points
 from Utilities.MoveHelpers import MoveHelpers
 from Pieces.IBasePiece import IBasePiece
@@ -20,24 +20,24 @@ class Knight(IBasePiece):
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Knight.WhiteString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Knight.BlackString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return Knight.WhiteFenString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return Knight.BlackFenString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
-        return Pieces.Constants.PieceEnums.Knight
+        return PieceEnums.Knight
 
     def GetValidMoves(self, board, enforceKingUnderAttackCheck):
         validMoves = []

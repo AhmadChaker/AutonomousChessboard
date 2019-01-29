@@ -1,5 +1,5 @@
-import Pieces.Constants
-import Board.Constants
+import Miscellaneous.Constants
+from Miscellaneous.Constants import PieceEnums, TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Points import Points
 from Utilities.BoardHelpers import BoardHelpers
@@ -20,79 +20,74 @@ class King(IBasePiece):
 
     def __init__(self, team, coords):
         IBasePiece.__init__( self, team, coords)
-        self.__canCastleQueenSideInTheFuture = True
-        self.__canCastleKingSideInTheFuture = True
+        self.CanCastleQueenSideInTheFuture = True
+        self.CanCastleKingSideInTheFuture = True
 
     def GetPieceStr(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return King.WhiteString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return King.BlackString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
-        if team == Board.Constants.TeamEnum.White:
+        if team == TeamEnum.White:
             return King.WhiteFenString
-        elif team == Board.Constants.TeamEnum.Black:
+        elif team == TeamEnum.Black:
             return King.BlackFenString
 
-        return Pieces.Constants.BOARD_ERROR_STRING
+        return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetPieceEnum(self):
-        return Pieces.Constants.PieceEnums.King
+        return PieceEnums.King
 
-    def SetCanCastleInTheFuture(self, canCastleInTheFuture):
-        self.__canCastleKingSideInTheFuture = canCastleInTheFuture
-        self.__canCastleQueenSideInTheFuture = canCastleInTheFuture
+    # region CanPotentiallyCastleInTheFutureBaseChecks
 
-    def CanCastleInTheFuture(self):
-        return self.__canCastleKingSideInTheFuture or self.__canCastleQueenSideInTheFuture
-
-    def SetCanKingSideCastleInTheFuture(self, canCastleInTheFuture):
-        self.__canCastleKingSideInTheFuture = canCastleInTheFuture
-
-    def CanKingSideCastleInTheFuture(self):
-        return self.__canCastleKingSideInTheFuture
-
-    def SetCanQueenSideCastleInTheFuture(self, canCastleInTheFuture):
-        self.__canCastleQueenSideInTheFuture = canCastleInTheFuture
-
-    def CanQueenSideCastleInTheFuture(self):
-        return self.__canCastleQueenSideInTheFuture
-
-    def CanKingSideCastle(self, board, enforceKingIsInCheck):
-
-        if not self.CanKingSideCastleInTheFuture():
+    # sideToCastle will either be queen or king side
+    def CanPotentiallyCastleInTheFutureBaseCheck(self, board, sideToCastle):
+        if len(self.GetHistory()) > 1:
+            logger.debug("King has moved, returning False")
             return False
 
-        if not self.CanCastleBaseChecks(board):
+        arrayRooks = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Rook, self.GetTeam())
+        if len(arrayRooks) == 0:
             return False
 
-        arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
         rookToCastle = None
         for rook in arrayRooks:
-            if rook.IsKingSideRookWithStartingCoordinates():
+            if (sideToCastle == PieceEnums.Queen and rook.IsQueenSideRookWithStartingCoordinates()) or \
+                    (sideToCastle == PieceEnums.King and rook.IsKingSideRookWithStartingCoordinates()):
                 rookToCastle = rook
                 break
 
         if rookToCastle is None or not rookToCastle.CanCastleInTheFuture():
-            self.SetCanKingSideCastleInTheFuture(False)
             return False
 
-        return rook.CanCastle(board, enforceKingIsInCheck)
+        return True
+
+    # endregion
+
+    # region Queen side castling properties/methods
+
+    def CanPotentiallyQueenSideCastleInTheFuture(self, board):
+        # short circuit check
+        if not self.CanCastleQueenSideInTheFuture:
+            return False
+
+        if not self.CanPotentiallyCastleInTheFutureBaseCheck(board, PieceEnums.Queen):
+            self.CanCastleQueenSideInTheFuture = False
+            return False
+
+        return True
 
     def CanQueenSideCastle(self, board, enforceKingIsInCheck):
-
-        if not self.CanQueenSideCastleInTheFuture():
+        if not self.CanPotentiallyQueenSideCastleInTheFuture(board):
             return False
 
-        if not self.CanCastleBaseChecks(board):
-            return False
-
-        arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
+        arrayRooks = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Rook, self.GetTeam())
         rookToCastle = None
         for rook in arrayRooks:
             # Y coord is verified in the CanCastle method in the rook
@@ -100,32 +95,41 @@ class King(IBasePiece):
                 rookToCastle = rook
                 break
 
-        if rookToCastle is None or not rookToCastle.CanCastleInTheFuture():
-            self.SetCanQueenSideCastleInTheFuture(False)
+        return rookToCastle.CanCastle(board, enforceKingIsInCheck)
+
+    # endregion
+
+    # region King side castling properties/methods
+
+    def CanPotentiallyKingSideCastleInTheFuture(self, board):
+        # short circuit check
+        if not self.CanCastleKingSideInTheFuture:
             return False
 
-        return rook.CanCastle(board, enforceKingIsInCheck)
-
-    def CanCastle(self, board, enforceKingIsInCheck):
-
-        if not self.CanKingSideCastle(board, enforceKingIsInCheck) and not self.CanQueenSideCastle(board, enforceKingIsInCheck):
+        if not self.CanPotentiallyCastleInTheFutureBaseCheck(board, PieceEnums.King):
+            self.CanCastleKingSideInTheFuture = False
             return False
 
         return True
 
-    def CanCastleBaseChecks(self, board):
-        # Short circuit check
-        if not self.CanCastleInTheFuture():
+    def CanKingSideCastle(self, board, enforceKingIsInCheck):
+        if not self.CanPotentiallyKingSideCastleInTheFuture(board):
             return False
 
-        if len(self.GetHistory()) > 1:
-            self.SetCanCastleInTheFuture(False)
-            logger.debug("King has moved, returning False")
-            return False
+        arrayRooks = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Rook, self.GetTeam())
+        rookToCastle = None
+        for rook in arrayRooks:
+            # Y coord is verified in the CanCastle method in the rook
+            if rook.IsKingSideRookWithStartingCoordinates():
+                rookToCastle = rook
+                break
 
-        arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
-        if len(arrayRooks) == 0:
-            self.SetCanCastleInTheFuture(False)
+        return rookToCastle.CanCastle(board, enforceKingIsInCheck)
+
+    # endregion
+
+    def CanCastle(self, board, enforceKingIsInCheck):
+        if not self.CanKingSideCastle(board, enforceKingIsInCheck) and not self.CanQueenSideCastle(board, enforceKingIsInCheck):
             return False
 
         return True
@@ -135,7 +139,7 @@ class King(IBasePiece):
         if not self.CanCastle(board, enforceKingIsInCheck):
             return []
 
-        arrayRooks = BoardHelpers.GetPieceByPieceType(board, Pieces.Constants.PieceEnums.Rook, self.GetTeam())
+        arrayRooks = BoardHelpers.GetPieceByPieceType(board, PieceEnums.Rook, self.GetTeam())
         kingXCoordinate = self.GetCoordinates().GetX()
         kingYCoordinate = self.GetCoordinates().GetY()
 
@@ -146,9 +150,9 @@ class King(IBasePiece):
                 rookXCoord = rook.GetCoordinates().GetX()
                 isLeftRook = True if rookXCoord == 0 else False
                 if isLeftRook:
-                    moves.append(BoardPoints(kingXCoordinate - Board.Constants.KING_CASTLE_SQUARE_MOVES, kingYCoordinate))
+                    moves.append(BoardPoints(kingXCoordinate - Miscellaneous.Constants.KING_CASTLE_SQUARE_MOVES, kingYCoordinate))
                 else:
-                    moves.append(BoardPoints(kingXCoordinate + Board.Constants.KING_CASTLE_SQUARE_MOVES, kingYCoordinate))
+                    moves.append(BoardPoints(kingXCoordinate + Miscellaneous.Constants.KING_CASTLE_SQUARE_MOVES, kingYCoordinate))
 
         return moves
 

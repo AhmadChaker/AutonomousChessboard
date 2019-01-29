@@ -1,50 +1,113 @@
 import logging
-from Main.Game import Game
-from Board.ChessBoard import ChessBoard
-from Board.History import History
-from Utilities.MoveHelpers import MoveHelpers
-from guizero import App, Text, TextBox, PushButton, info
-
-# setup logger
-logging.basicConfig(handlers=[logging.FileHandler('..\log.txt', 'w', 'utf-8')],
-                    format='%(asctime)s.%(msecs)03d %(levelname)-8s %(name)s %(funcName)s %(message)s',
-                    datefmt='%d-%m-%Y %H:%M:%S',
-                    level=logging.DEBUG)
-
-history = History()
-chessBoard = ChessBoard(history)
-t1 = Game(chessBoard)
-t1.GetBoard().GetFenRepresentation()
-t1.PrintProperties()
+from multiprocessing import Process, Queue
+import os
+from guizero import App, Text, TextBox, PushButton
+from Listeners.GameRequestListener import GameRequestListener
+from Listeners.EngineRequestListener import EngineRequestListener
+from Listeners.LogListener import LogListener
+import Miscellaneous.Constants
+from Listeners.Messages.EngineRequestMessages.EngineConfigurationMessage import EngineConfigurationMessage
+from Listeners.Messages.GameRequestMessages.GameConfigurationMessage import GameConfigurationMessage
+from Listeners.Messages.GameRequestMessages.GameMovementMessage import GameMovementMessage
+from Listeners.Messages.Common.BaseMessage import BaseMessage, Actions
+from Uci.Levels import LevelsList
+from Utilities.OSConfiguration import OSConfiguration
+from Miscellaneous.Constants import PlayerEnum
 
 
-def ClickedButton():
-    fromBoardCoordValue = FromCoordinateTextBox.value
-    toBoardCoordValue = ToCoordinateTextBox.value
+def StartFunction():
+    # Game type?  Human vs AI, AI vs AI, Human vs Human
+    # In case of Human vs AI - Get color we want to start with
+    gameType = Miscellaneous.Constants.GameType.AIvsAI
+    humanColour = Miscellaneous.Constants.TeamEnum.White
+    aiLevel = LevelsList[0]
 
-    moveResult = t1.Move(fromBoardCoordValue, toBoardCoordValue)
-    if not moveResult.IsSuccessful():
-        info("Alert", moveResult.GetStatusCode())
-        return
+    # Update the engine
+    EngineRequestQueue.put(BaseMessage(Actions.Configuration, EngineConfigurationMessage(aiLevel)))
 
-    if t1.GetIsInCheckmate():
-        info("Alert", "Checkmate!")
-        return
-
-    if t1.GetIsDraw():
-        info("Alert", "Draw!")
-        return
-
-    if t1.GetIsInCheck():
-        info("Alert", "Check!")
-        return
+    # Kick off message processing
+    GameRequestQueue.put(BaseMessage(Actions.Configuration, GameConfigurationMessage(gameType, humanColour)))
 
 
-app = App(title="Sheena", width=600, height=600, layout="grid")
-FromCoordinateTextBlock = Text(app, text="From Coordinates", grid=[0,0], align="left")
-FromCoordinateTextBox = TextBox(app, grid=[1,0], align="left")
-ToCoordinateTextBlock = Text(app, text="To Coordinates", grid=[2,0], align="left")
-ToCoordinateTextBox = TextBox(app, grid=[3,0], align="left")
-GoButton = PushButton(app, grid=[4,0], text="Go", command=ClickedButton)
-app.display()
+def ResetFunction():
+    # TODO figure out how to purge queues
+    EngineRequestQueue.put(BaseMessage(Actions.Reset, None))
+    GameRequestQueue.put(BaseMessage(Actions.Reset, None))
 
+
+def ClickedFunction():
+    logging.error("ClickedButton pid: " + str(os.getpid()))
+    logging.error("Entered ClickedButton")
+
+    moveCoords = MoveTextBox.value
+    fromCoord = moveCoords[0] + moveCoords[1]
+    toCoord = moveCoords[2] + moveCoords[3]
+    GameRequestQueue.put(BaseMessage(Actions.Movement, GameMovementMessage(PlayerEnum.Human, fromCoord, toCoord)))
+    MoveTextBox.clear()
+
+
+# Every new process should call this first to hookup logging
+def StartLogProcess(logQueue):
+    logListenerProcess = Process(target=LogListener.Listen, args=(logQueue,))
+    logListenerProcess.daemon = True
+    logListenerProcess.start()
+
+
+def ProcessStartupBaseTasks(logQueue):
+    handler = logging.handlers.QueueHandler(logQueue)
+    root = logging.getLogger()
+    root.addHandler(handler)
+    root.setLevel(logging.DEBUG)
+
+
+def StartProcesses(logQueue, gameRequestListenerObj, engineRequestListenerObj):
+    gameListenerProcess = Process(target=GameRequestListenerRunner, args=(logQueue, gameRequestListenerObj, ))
+    gameListenerProcess.daemon = True
+    gameListenerProcess.start()
+
+    engineListenerProcess = Process(target=EngineRequestListenerRunner, args=(logQueue, engineRequestListenerObj))
+    engineListenerProcess.daemon = True
+    engineListenerProcess.start()
+
+
+def GameRequestListenerRunner(logQueue, gameRequestListenerObj):
+    ProcessStartupBaseTasks(logQueue)
+    gameRequestListenerObj.StartListeningForRequests()
+
+
+def EngineRequestListenerRunner(logQueue, engineRequestListenerObj):
+    ProcessStartupBaseTasks(logQueue)
+    engineRequestListenerObj.SetupEngine()
+    engineRequestListenerObj.StartListeningForRequests()
+
+
+if __name__ == '__main__':
+    # Setup multi-process logging infrastructure
+    LoggingQueue = Queue()
+    StartLogProcess(LoggingQueue)
+
+    # Setup logging for main process
+    ProcessStartupBaseTasks(LoggingQueue)
+
+    # Read from config file
+    OSConfig = OSConfiguration()
+    OSConfig.ReadConfiguration()
+    # TODO handle case where EnginePath is not set due to not being able to read config file
+
+    # Setup rest of variables
+    GameRequestQueue = Queue()
+    EngineRequestQueue = Queue()
+    GameRequestListenerObj = GameRequestListener(GameRequestQueue, EngineRequestQueue)
+    EngineRequestListenerObj = EngineRequestListener(OSConfig.PathToEngine, GameRequestQueue, EngineRequestQueue)
+
+    # Run processes
+    StartProcesses(LoggingQueue, GameRequestListenerObj, EngineRequestListenerObj)
+
+    logging.error("Inside main pid: " + str(os.getpid()))
+    app = App(title="Sheena", width=600, height=600, layout="grid")
+    StartButton = PushButton(app, grid=[0, 0], text="Start", command=StartFunction)
+    MoveTextBlock = Text(app, text="Move", grid=[1,0], align="left")
+    MoveTextBox = TextBox(app, grid=[2, 0], align="left")
+    GoButton = PushButton(app, grid=[3,0], text="Go", command=ClickedFunction)
+    ResetButton = PushButton(app, grid=[4, 0], text="Reset", command=ResetFunction)
+    app.display()
