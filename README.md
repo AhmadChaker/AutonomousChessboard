@@ -27,6 +27,10 @@ The chess engine being used is StockFish. The choice of engine is due to the fol
 -	Cross-platform
 -	Easily configurable
 
+## Language choice
+Python is used as the language of choice in this project for the following reasons:
+1) Extensive and well supported python libraries for interacting with all Raspberry Pi peripherals (sensors, logic boards etc)
+2) A desire to learn a different style of programming language
 
 ## Installation guide
 TODO: More details on installation on various packages
