@@ -41,5 +41,11 @@ pip install guizero
 
 sudo pip3 install guizero
 
+## Major to do items remaining
+- Choice of offline audio processing library
+- Purchase and test hall effect sensors for piece detection
+- Hook into the 2 degree of freedom "robot table" obtained.
+
 ## Further information
 For further information consult the Documentation folder.
+
