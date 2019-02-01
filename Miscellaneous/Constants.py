@@ -1,6 +1,6 @@
 from enum import Enum
 
-BOARD_ERROR_STRING = "Err"
+BOARD_ERROR_STRING = "Board element has not been set"
 
 # Valid chess board coordinates
 ALPHABETICAL_BOARD_ORDINATES = "ABCDEFGH"
