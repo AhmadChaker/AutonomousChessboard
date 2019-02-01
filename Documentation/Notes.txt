@@ -1,30 +1,23 @@
-Notes:
+Chess notes:
 - Castling can only be triggered by the King, can't be triggered by the rooks as they can normally move to their post castling position without issue
 
-Stockfish UCI
-Python UCI library
+Python notes:
+- Python has a global interpretter lock (GIL) so multithreading is not really multithreading, we use multiprocess
 
-We need to keep board state
-
-
-Procedure for engine access
-
-- Initialise engine synchronously (Downsides? may take a while, who cares?)
-	-Pop engine
-	-Send uci command
-- Set board fen
-- Set engine position
+Engine notes:
+- Stockfish UCI
+- Python UCI library
+- For utilising stockfish we must keep the board state ourselves 
+How do I access the engine?
+- Initialise engine synchronously, no real drawback as it's running in its own process so won't block.
+- To run stockfish we run popengine() followed by uci()
 
 
-Breakdown:
+Code flow:
 - Main thread is simply interacting with the human user, it is simply waiting for human input and then it forwards that on.
-	- Main thread also needs to be able to receive input from another thread about what to display!
-- Move is submitted,
+	- Main thread also needs to be able to receive input from another thread about what to display, it should accept messages.
+- Move is submitted.
 	- Need to check that this move is coming from the expected person (AI or Human)
-- If a human move, then need to do relevant updated to our relevant board
-	- If an AI move, then need to do updates to their board.
-- Mechanism to receive moves from Human player is already done? Is it ? Not really done well. 
-- Need a mechanism to receive updates from the AI.
-	- Have a queue like mechanism for all moves received
- 
- https://docs.python.org/2/library/threading.html#threading.Event
+- If a human moves, then need to do relevant updates to our board state and then put the resultant board state on the relevant AI or human queue
+- Mechanism to receive moves from Human player is provided for free by the python GUI infrastructure.  
+- AI move generation needs to hook into the Game queue to send desired moves to the "central game authority", The "central game authority" needs to also request moves from the AI.
