@@ -1,14 +1,13 @@
 # Autonomous Chess
 ## Aim
-The aim of this project is to develop an autonomous chessboard that accepts voice commands to move physical chess pieces autonomously (i.e. without any human involvement).
-
+The aim of this project is to develop an autonomous chessboard that accepts voice commands to move physical chess pieces autonomously (i.e. without any human involvement)\
 The board will play in three modes:
 1) 1 Human vs 1 AI
 2) 1 Human vs 1 Human 
 3) 1 AI vs 1 AI (Demonstration purposes)
 
 ## Why work on this project?
-The primary driver for this project is a desire to allow disabled persons to enjoy the games they love at a low cost.
+The primary driver for this project is a desire to allow disabled persons to enjoy the games they love at a low cost.\
 The usage of a Raspberry Pi along with open-source components facilitates the development of a low-cost solution.
 
 ## Minimum viable product
@@ -38,4 +37,4 @@ pip install guizero
 sudo pip3 install guizero
 
 ## Further information
-For further information please consult the Documentation folder.
+For further information consult the Documentation folder.
