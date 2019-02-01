@@ -2,7 +2,7 @@ The minimum viable product needs to fulfil the following criteria
 -Only operate in standard mode
 -Allow a human player to either use their hand or issue audio commands to move pieces.
 -Pieces will move without touching each other
--Permit the selection of 10 difficulty levels.
+-Permit the selection of 15 difficulty levels.
 -Recognise conditions such as check/checkmate
 -Have a single electrical plug that will be rechargeable and supply 12V to the motor system and 5V to the raspberry pi.
--Handle some misregistered moves
+-Handle misregistered moves

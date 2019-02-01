@@ -1,6 +1,7 @@
 # Autonomous Chess
 ## Aim
 The aim of this project is to develop an autonomous chessboard that accepts voice commands to move physical chess pieces autonomously (i.e. without any human involvement).
+
 The board will play in three modes:
 1) 1 Human vs 1 AI
 2) 1 Human vs 1 Human 

@@ -16,10 +16,7 @@ Procedure for engine access
 - Set engine position
 
 
-Overall scheme:
-- Player makes move, AI then moves.
-
-Bigger breakdown:
+Breakdown:
 - Main thread is simply interacting with the human user, it is simply waiting for human input and then it forwards that on.
 	- Main thread also needs to be able to receive input from another thread about what to display!
 - Move is submitted,
