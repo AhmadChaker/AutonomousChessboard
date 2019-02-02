@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 
 class Pawn(IBasePiece):
 
-    WhiteString = u'\u2659'
-    BlackString = u'\u265F'
-    WhiteFenString = 'P'
-    BlackFenString = 'p'
+    WhitePieceString = u'\u2659'
+    BlackPieceString = u'\u265F'
+    WhitePieceFenString = 'P'
+    BlackPieceFenString = 'p'
 
     def __init__(self, team, coords):
         IBasePiece.__init__(self, team, coords)
@@ -20,18 +20,18 @@ class Pawn(IBasePiece):
     def GetPieceStr(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Pawn.WhiteString
+            return Pawn.WhitePieceString
         elif team == TeamEnum.Black:
-            return Pawn.BlackString
+            return Pawn.BlackPieceString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Pawn.WhiteFenString
+            return Pawn.WhitePieceFenString
         elif team == TeamEnum.Black:
-            return Pawn.BlackFenString
+            return Pawn.BlackPieceFenString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 

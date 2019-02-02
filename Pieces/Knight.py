@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 
 class Knight(IBasePiece):
 
-    WhiteString = u'\u2658'
-    BlackString = u'\u265E'
-    WhiteFenString = 'N'
-    BlackFenString = 'n'
+    WhitePieceString = u'\u2658'
+    BlackPieceString = u'\u265E'
+    WhitePieceFenString = 'N'
+    BlackPieceFenString = 'n'
     MoveIterations = 1
 
     def __init__(self, team, coords):
@@ -21,18 +21,18 @@ class Knight(IBasePiece):
     def GetPieceStr(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Knight.WhiteString
+            return Knight.WhitePieceString
         elif team == TeamEnum.Black:
-            return Knight.BlackString
+            return Knight.BlackPieceString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Knight.WhiteFenString
+            return Knight.WhitePieceFenString
         elif team == TeamEnum.Black:
-            return Knight.BlackFenString
+            return Knight.BlackPieceFenString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 

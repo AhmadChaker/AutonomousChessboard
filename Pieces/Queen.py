@@ -10,10 +10,10 @@ logger = logging.getLogger(__name__)
 
 class Queen(IBasePiece):
 
-    WhiteString = u'\u2655'
-    BlackString = u'\u265B'
-    WhiteFenString = 'Q'
-    BlackFenString = 'q'
+    WhitePieceString = u'\u2655'
+    BlackPieceString = u'\u265B'
+    WhitePieceFenString = 'Q'
+    BlackPieceFenString = 'q'
     MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
@@ -22,18 +22,18 @@ class Queen(IBasePiece):
     def GetPieceStr(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Queen.WhiteString
+            return Queen.WhitePieceString
         elif team == TeamEnum.Black:
-            return Queen.BlackString
+            return Queen.BlackPieceString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Queen.WhiteFenString
+            return Queen.WhitePieceFenString
         elif team == TeamEnum.Black:
-            return Queen.BlackFenString
+            return Queen.BlackPieceFenString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 

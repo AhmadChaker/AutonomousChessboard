@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 class Rook(IBasePiece):
 
-    WhiteString = u'\u2656'
-    BlackString = u'\u265C'
-    WhiteFenString = 'R'
-    BlackFenString = 'r'
+    WhitePieceString = u'\u2656'
+    BlackPieceString = u'\u265C'
+    WhitePieceFenString = 'R'
+    BlackPieceFenString = 'r'
     MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
@@ -25,18 +25,18 @@ class Rook(IBasePiece):
     def GetPieceStr(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Rook.WhiteString
+            return Rook.WhitePieceString
         elif team == TeamEnum.Black:
-            return Rook.BlackString
+            return Rook.BlackPieceString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Rook.WhiteFenString
+            return Rook.WhitePieceFenString
         elif team == TeamEnum.Black:
-            return Rook.BlackFenString
+            return Rook.BlackPieceFenString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 

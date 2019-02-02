@@ -10,10 +10,10 @@ logger = logging.getLogger(__name__)
 
 class Bishop(IBasePiece):
 
-    WhiteString = u'\u2657'
-    BlackString = u'\u265D'
-    WhiteFenString = 'B'
-    BlackFenString = 'b'
+    WhitePieceString = u'\u2657'
+    BlackPieceString = u'\u265D'
+    WhitePieceFenString = 'B'
+    BlackPieceFenString = 'b'
     MoveIterations = sys.maxsize
 
     def __init__(self, team, coords):
@@ -22,18 +22,18 @@ class Bishop(IBasePiece):
     def GetPieceStr(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Bishop.WhiteString
+            return Bishop.WhitePieceString
         elif team == TeamEnum.Black:
-            return Bishop.BlackString
+            return Bishop.BlackPieceString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return Bishop.WhiteFenString
+            return Bishop.WhitePieceFenString
         elif team == TeamEnum.Black:
-            return Bishop.BlackFenString
+            return Bishop.BlackPieceFenString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 

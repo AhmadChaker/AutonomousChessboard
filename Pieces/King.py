@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 class King(IBasePiece):
 
-    WhiteString = u'\u2654'
-    BlackString = u'\u265A'
-    WhiteFenString = 'K'
-    BlackFenString = 'k'
+    WhitePieceString = u'\u2654'
+    BlackPieceString = u'\u265A'
+    WhitePieceFenString = 'K'
+    BlackPieceFenString = 'k'
 
     MoveIterations = 1
 
@@ -26,18 +26,18 @@ class King(IBasePiece):
     def GetPieceStr(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return King.WhiteString
+            return King.WhitePieceString
         elif team == TeamEnum.Black:
-            return King.BlackString
+            return King.BlackPieceString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 
     def GetFenRepresentation(self):
         team = self.GetTeam()
         if team == TeamEnum.White:
-            return King.WhiteFenString
+            return King.WhitePieceFenString
         elif team == TeamEnum.Black:
-            return King.BlackFenString
+            return King.BlackPieceFenString
 
         return Miscellaneous.Constants.BOARD_ERROR_STRING
 
