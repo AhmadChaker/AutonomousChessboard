@@ -1,11 +1,12 @@
 import logging
 import Utilities.CoordinateConverters
+import Utilities.MoveHelpers
 from Utilities.BoardHelpers import BoardHelpers
 from Pieces.IBasePiece import IBasePiece
 from Miscellaneous.Constants import TeamEnum
 from Miscellaneous.BoardPoints import BoardPoints
 from Miscellaneous.Result import Result
-from Miscellaneous.Messages import MoveEnum
+from Miscellaneous.MoveMessages import MoveEnum
 
 
 logger = logging.getLogger(__name__)
@@ -133,12 +134,12 @@ class Game:
     def PrintProperties(self):
         logger.info("Printing board")
         self.GetBoard().PrintBoard()
-        logger.info("Printing all valid white moves")
-        Utilities.MoveHelpers.PrintValidMoves(self.GetBoard(), TeamEnum.White)
-        logger.info("Printing all valid black moves")
-        Utilities.MoveHelpers.PrintValidMoves(self.GetBoard(), TeamEnum.Black)
-        logger.info("Printing history")
-        self.GetBoard().PrintHistory()
+        #logger.info("Printing all valid white moves")
+        #Utilities.MoveHelpers.MoveHelpers.PrintValidMoves(self.GetBoard(), TeamEnum.White)
+        #logger.info("Printing all valid black moves")
+        #Utilities.MoveHelpers.MoveHelpers.PrintValidMoves(self.GetBoard(), TeamEnum.Black)
+        #logger.info("Printing history")
+        #self.GetBoard().PrintHistory()
 
     # region Game play properties
 
