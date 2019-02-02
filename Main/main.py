@@ -1,11 +1,10 @@
 import logging
+import Miscellaneous.Constants
 from multiprocessing import Process, Queue
-import os
 from guizero import App, Text, TextBox, PushButton
 from Listeners.GameRequestListener import GameRequestListener
 from Listeners.EngineRequestListener import EngineRequestListener
 from Listeners.LogListener import LogListener
-import Miscellaneous.Constants
 from Listeners.Messages.EngineRequestMessages.EngineConfigurationMessage import EngineConfigurationMessage
 from Listeners.Messages.GameRequestMessages.GameConfigurationMessage import GameConfigurationMessage
 from Listeners.Messages.GameRequestMessages.GameMovementMessage import GameMovementMessage
@@ -66,7 +65,10 @@ def ProcessStartupBaseTasks(logQueue):
     root.setLevel(logging.DEBUG)
 
 
-def StartProcesses(logQueue, gameRequestListenerObj, engineRequestListenerObj):
+# Starts the following processes:
+# 1) Game process to handle a new game iteration that accepts moves from a variety of sources
+# 2) Chess engine process to generate AI moves
+def StartInfrastructureProcesses(logQueue, gameRequestListenerObj, engineRequestListenerObj):
     gameListenerProcess = Process(target=GameRequestListenerRunner, args=(logQueue, gameRequestListenerObj, ))
     gameListenerProcess.daemon = True
     gameListenerProcess.start()
@@ -111,13 +113,12 @@ if __name__ == '__main__':
     OSConfig.ReadConfiguration()
     # TODO handle case where EnginePath is not set due to not being able to read config file
 
-    # Setup rest of variables
+    # Setup queues and listeners
     GameRequestQueue = Queue()
     EngineRequestQueue = Queue()
     GameRequestListenerObj = GameRequestListener(GameRequestQueue, EngineRequestQueue)
     EngineRequestListenerObj = EngineRequestListener(OSConfig.PathToEngine, GameRequestQueue, EngineRequestQueue)
 
-    # Run processes
-    StartProcesses(LoggingQueue, GameRequestListenerObj, EngineRequestListenerObj)
+    StartInfrastructureProcesses(LoggingQueue, GameRequestListenerObj, EngineRequestListenerObj)
 
     DrawGUI()
