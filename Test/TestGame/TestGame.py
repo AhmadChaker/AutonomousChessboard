@@ -1,7 +1,7 @@
 import unittest
 from Utilities.BoardHelpers import BoardHelpers
 from Miscellaneous.BoardPoints import BoardPoints
-from Miscellaneous.Messages import MoveEnum
+from Miscellaneous.MoveMessages import MoveEnum
 from Miscellaneous.Constants import TeamEnum, PieceEnums
 from Board.History import History
 from Board.Movement import Movement
