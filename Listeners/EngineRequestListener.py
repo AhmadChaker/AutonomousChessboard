@@ -16,23 +16,23 @@ class EngineRequestListener:
 
     def __init__(self, pathToEngine, gameRequestQueue, engineRequestQueue):
         self.__pathToEngine = pathToEngine
-        self.GameRequestQueue = gameRequestQueue
-        self.EngineRequestQueue = engineRequestQueue
-        self.Engine = None
-        self.Level = None
         self.__hasSetupBeenRun = False
+        self.__gameRequestQueue = gameRequestQueue
+        self.__engineRequestQueue = engineRequestQueue
+        self.__engine = None
+        self.__level = None
 
     def UpdateOptions(self, engineConfigMessage:EngineConfigurationMessage):
         logger.error("About to update options")
-        self.Level = engineConfigMessage.Level
-        self.Engine.ConfigureLevel(self.Level)
+        self.__level = engineConfigMessage.Level
+        self.__engine.ConfigureLevel(self.__level)
         logger.error("Updated options")
 
     def SetupEngine(self):
         logger.error("Setting up engine")
 
-        self.Engine = Engine(self.__pathToEngine)
-        hasStarted = self.Engine.StartEngine()
+        self.__engine = Engine(self.__pathToEngine)
+        hasStarted = self.__engine.StartEngine()
 
         self.__hasSetupBeenRun = True
         logging.error("Exiting setup, IsStarted: " + str(hasStarted))
@@ -43,7 +43,7 @@ class EngineRequestListener:
 
         while True:
             logger.error("Waiting to pop item off queue")
-            poppedItem = self.EngineRequestQueue.get()
+            poppedItem = self.__engineRequestQueue.get()
             logger.error("Item popped")
 
             if not self.__hasSetupBeenRun:
@@ -68,19 +68,19 @@ class EngineRequestListener:
 
     def ResetState(self):
         logging.info("About to purge engine queue")
-        while not self.EngineRequestQueue.empty():
-            self.EngineRequestQueue.get()
+        while not self.__engineRequestQueue.empty():
+            self.__engineRequestQueue.get()
         logging.info("Purged engine queue successfully")
 
     def GetMoveFromEngine(self, engineMoveObj:EngineMoveMessage):
-        if not self.Engine.IsAlive():
+        if not self.__engine.IsAlive():
             logger.error("Engine is dead, spwan a new engine")
             hasStarted = self.Setup()
             logger.error("Tried to startup engine, HasStarted: " + str(hasStarted))
             if not hasStarted:
                 # TODO how to handle this ? Keep trying to start the engine on loop every 10 seconds for about a minute
                 pass
-        moveObj = self.Engine.ObtainMove(engineMoveObj.FenRepresentation)
+        moveObj = self.__engine.ObtainMove(engineMoveObj.FenRepresentation)
         if moveObj is None or moveObj.bestmove is None:
             return None
         return moveObj.bestmove.uci()
@@ -98,5 +98,5 @@ class EngineRequestListener:
         fromCoord = bestMove[0] + bestMove[1]
         toCoord = bestMove[2] + bestMove[3]
 
-        self.GameRequestQueue.put(BaseMessage(Actions.Movement,
+        self.__gameRequestQueue.put(BaseMessage(Actions.Movement,
                                               GameMovementMessage(PlayerEnum.AI, fromCoord, toCoord)))
