@@ -39,7 +39,7 @@ class EngineRequestListener:
         return hasStarted
 
     def StartListeningForRequests(self):
-        logger.error("PID: " + str(os.getpid()))
+        logger.error("Started listening for requests, PID: " + str(os.getpid()))
 
         while True:
             logger.error("Waiting to pop item off queue")
@@ -58,7 +58,6 @@ class EngineRequestListener:
                 if obtainedMove is not None:
                     self.PropagateObtainedMove(obtainedMove)
             elif poppedItem.Action == Actions.Reset:
-                logging.info("Test for purging")
                 self.ResetState()
             else:
                 logger.error("popped item is of unknown type")

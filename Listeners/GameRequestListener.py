@@ -52,7 +52,7 @@ class GameRequestListener:
         logging.error("Exiting setup")
 
     def StartListeningForRequests(self):
-        logger.error("PID: " + str(os.getpid()))
+        logger.error("Started listening for requests, PID: " + str(os.getpid()))
 
         while True:
             logger.error("Waiting to pop item off queue")

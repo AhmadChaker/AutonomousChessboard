@@ -13,39 +13,9 @@ from Uci.Levels import LevelsList
 from Utilities.OSConfiguration import OSConfiguration
 from Miscellaneous.Constants import PlayerEnum
 
+# region Module globals
 
-# region GUI element handlers
-
-def StartClicked():
-
-    # Game type  Human vs AI, AI vs AI, Human vs Human
-    # In case of Human vs AI - Get color we want to start with
-
-    # TODO: These properties will be configurable via user selection, hard-code these for testing right now
-    gameType = Miscellaneous.Constants.GameType.AIvsAI
-    humanColour = Miscellaneous.Constants.TeamEnum.White
-    aiLevel = LevelsList[0]
-
-    # Update the engine
-    EngineRequestQueue.put(BaseMessage(Actions.Configuration, EngineConfigurationMessage(aiLevel)))
-
-    # Kick off message processing
-    GameRequestQueue.put(BaseMessage(Actions.Configuration, GameConfigurationMessage(gameType, humanColour)))
-
-
-def ResetClicked():
-    # TODO figure out how to purge queues
-    EngineRequestQueue.put(BaseMessage(Actions.Reset, None))
-    GameRequestQueue.put(BaseMessage(Actions.Reset, None))
-
-
-def MoveClicked():
-    # This is dummy input code. TODO: perform proper validation when audio inputter is working correctly
-    moveCoords = MoveTextBox.value
-    fromCoord = moveCoords[0] + moveCoords[1]
-    toCoord = moveCoords[2] + moveCoords[3]
-    GameRequestQueue.put(BaseMessage(Actions.Movement, GameMovementMessage(PlayerEnum.Human, fromCoord, toCoord)))
-    MoveTextBox.clear()
+MoveTextBox = None
 
 # endregion
 
@@ -58,7 +28,7 @@ def StartLogProcess(logQueue):
 
 
 # Every new process should call this method first to hookup multi-process logging
-def ProcessStartupBaseTasks(logQueue):
+def AttachLogQueueToProcess(logQueue):
     handler = logging.handlers.QueueHandler(logQueue)
     root = logging.getLogger()
     root.addHandler(handler)
@@ -79,24 +49,61 @@ def StartInfrastructureProcesses(logQueue, gameRequestListenerObj, engineRequest
 
 
 def GameRequestListenerRunner(logQueue, gameRequestListenerObj):
-    ProcessStartupBaseTasks(logQueue)
+    AttachLogQueueToProcess(logQueue)
     gameRequestListenerObj.StartListeningForRequests()
 
 
 def EngineRequestListenerRunner(logQueue, engineRequestListenerObj):
-    ProcessStartupBaseTasks(logQueue)
+    AttachLogQueueToProcess(logQueue)
     engineRequestListenerObj.SetupEngine()
     engineRequestListenerObj.StartListeningForRequests()
+
+# region GUI element handlers
+
+
+def StartClicked():
+
+    # Game type  Human vs AI, AI vs AI, Human vs Human
+    # In case of Human vs AI - Get color we want to start with
+
+    # TODO: These properties will be configurable via user selection, hard-code these for testing right now
+    gameType = Miscellaneous.Constants.GameType.HumanvsHuman
+    humanColour = Miscellaneous.Constants.TeamEnum.White
+    aiLevel = LevelsList[0]
+
+    # Update the engine
+    EngineRequestQueue.put(BaseMessage(Actions.Configuration, EngineConfigurationMessage(aiLevel)))
+
+    # Kick off message processing
+    GameRequestQueue.put(BaseMessage(Actions.Configuration, GameConfigurationMessage(gameType, humanColour)))
+
+
+def ResetClicked():
+    EngineRequestQueue.put(BaseMessage(Actions.Reset, None))
+    GameRequestQueue.put(BaseMessage(Actions.Reset, None))
+
+
+def MoveClicked():
+    # This is dummy input code. TODO: perform proper validation when audio inputter is working correctly
+    moveCoords = MoveTextBox.value
+    fromCoord = moveCoords[0] + moveCoords[1]
+    toCoord = moveCoords[2] + moveCoords[3]
+    GameRequestQueue.put(BaseMessage(Actions.Movement, GameMovementMessage(PlayerEnum.Human, fromCoord, toCoord)))
+    MoveTextBox.clear()
+
+# endregion
 
 
 def DrawGUI():
     # TODO: Implement actual proper test interaction interface instead of this dummy one
+
+    global MoveTextBox
     app = App(title="ChessBoard", width=260, height=60, layout="grid")
-    StartButton = PushButton(app, grid=[0, 0], text="Start", command=StartClicked)
-    MoveTextBlock = Text(app, text="Move", grid=[1,0], align="left")
+    PushButton(app, grid=[0, 0], text="Start", command=StartClicked)
+    Text(app, text="Move", grid=[1,0], align="left")
     MoveTextBox = TextBox(app, grid=[2, 0], align="left")
-    GoButton = PushButton(app, grid=[3,0], text="Go", command=MoveClicked)
-    ResetButton = PushButton(app, grid=[4, 0], text="Reset", command=ResetClicked)
+    PushButton(app, grid=[3,0], text="Go", command=MoveClicked)
+    PushButton(app, grid=[4, 0], text="Reset", command=ResetClicked)
     app.display()
 
 
@@ -106,7 +113,7 @@ if __name__ == '__main__':
     StartLogProcess(LoggingQueue)
 
     # Setup logging for main process
-    ProcessStartupBaseTasks(LoggingQueue)
+    AttachLogQueueToProcess(LoggingQueue)
 
     # Read from config file
     OSConfig = OSConfiguration()

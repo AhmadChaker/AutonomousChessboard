@@ -274,7 +274,7 @@ class TestGame(unittest.TestCase):
         self.Game.Move("d2", "e1")
         self.Game.Move("d7", "e8")
         actualFenRep = self.Game.GetFenRepresentation()
-        expectedFenRep = "rnbqkbnr/pp1ppppp/8/2p5/2P5/8/PP1PPPPP/RNBQKBNR w - - 0 3"
+        expectedFenRep = "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w - - 0 3"
         self.assertEqual(expectedFenRep, actualFenRep)
 
     # endregion
@@ -292,6 +292,6 @@ class TestGame(unittest.TestCase):
 
         self.Game.Move("D8", "H4")
 
-        self.assertTrue(self.Game.GetIsInCheckmate)
+        self.assertTrue(self.Game.GetIsInCheckmate())
 
     # endregion

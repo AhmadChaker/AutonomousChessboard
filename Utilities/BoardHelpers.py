@@ -28,11 +28,12 @@ class BoardHelpers:
         return pieces
 
     # For the team passed in, check if that King is in check
+    # Don't log in this method as it is called many times to determine valid moves
     @staticmethod
     def IsInCheck(board, teamA: Miscellaneous.Constants.TeamEnum):
         teamAKingArray = BoardHelpers.GetPieceByPieceType(board, PieceEnums.King, teamA)
         if len(teamAKingArray) == 0:
-            # Should never happen really
+            # Should never happen
             logger.error("Can't find a King for this team! Something horrible has happened")
             return True
 
@@ -43,6 +44,7 @@ class BoardHelpers:
         for teamBMove in teamBMoves:
             if teamBMove == teamAKing.GetCoordinates():
                 return True
+
         return False
 
     @staticmethod
@@ -57,14 +59,15 @@ class BoardHelpers:
 
     @staticmethod
     def IsInCheckMate(board, team: TeamEnum):
-        logger.debug("Entered")
         # Check if King is in check and that there are NO valid moves
         enforceCheckCondition = True
         validMoves = Utilities.MoveHelpers.MoveHelpers.GetPieceCentricMovesForTeam(board, team, enforceCheckCondition)
         isInCheck = BoardHelpers.IsInCheck(board, team)
         if len(validMoves) == 0 and isInCheck:
-            logger.error("Game is in checkmate!")
+            logger.error("Game is in checkmate")
             return True
+
+        logger.error("No checkmate")
         return False
 
     # Checkmate will not be possible for certain piece configurations, they are:
@@ -75,7 +78,6 @@ class BoardHelpers:
     @staticmethod
     def IsDrawByInsufficientPieces(board, opposingTeam):
 
-        logger.debug("Entered")
         currentTeam = BoardHelpers.GetOpposingTeam(opposingTeam)
 
         pieceCountCurrentTeam = BoardHelpers.GetTeamPieceCounts(board, currentTeam)
@@ -148,7 +150,6 @@ class BoardHelpers:
 
     @staticmethod
     def IsDraw(board, opposingTeam: TeamEnum):
-        logger.debug("Entered")
 
         # Player whose turn it will now be has no legal moves but is not in check
         enforceCheckCondition = True
