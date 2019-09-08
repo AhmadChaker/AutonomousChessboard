@@ -7,10 +7,6 @@ The board shall operate in three modes:
 2) 1 Human vs 1 Human 
 3) 1 AI vs 1 AI
 
-## Why work on this project?
-The primary driver for this project is a desire to allow disabled persons to enjoy the games they love at a low cost.\
-The usage of a Raspberry Pi along with open-source components facilitates the development of a low-cost solution.
-
 ## Minimum viable product
 The minimum viable product must fulfil the following criteria:
 - 	Allow a human player to either use their hand or issue audio commands to move pieces.
