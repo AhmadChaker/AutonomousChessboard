@@ -1,7 +1,0 @@
-1) Implement stubs for Moving chess piece with robot arm
-2) Implement stubs for hall effect sensor
-3) Figure out unit test runner in PyCharm
-
-To google:
-1) Send messages to UI thread
-2) Python best way for exceptions

@@ -10,6 +10,7 @@ The board shall operate in three modes:
 ## Minimum viable product
 The minimum viable product must fulfil the following criteria:
 - 	Allow a human player to either use their hand or issue audio commands to move pieces.
+- 	Board must handle misregistered moves
 - 	Pieces must navigate the board without touching each other.
 -	The board must permit the selection of 15 difficulty levels.
 -	Recognise check, checkmate and draw conditions and notify the user
