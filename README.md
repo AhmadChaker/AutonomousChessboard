@@ -5,7 +5,7 @@ The aim of this project is to develop an autonomous chessboard that accepts voic
 The board shall operate in three modes:
 1) 1 Human vs 1 AI
 2) 1 Human vs 1 Human 
-3) 1 AI vs 1 AI (Demonstration purposes)
+3) 1 AI vs 1 AI
 
 ## Why work on this project?
 The primary driver for this project is a desire to allow disabled persons to enjoy the games they love at a low cost.\
